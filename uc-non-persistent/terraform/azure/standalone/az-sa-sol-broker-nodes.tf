@@ -183,39 +183,6 @@ resource "local_file" "broker_nodes_file" {
   filename = "../../../shared-setup/broker-nodes.json"
 }
 
-#  TODO:
-# delete from here
-
-# resource "local_file" "solacebroker_inv_file" {
-#   content = templatefile("../../templates/inventory/sa-sol-broker-nodes.tpl",
-#     {
-#       solacebroker-nodes-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.public_ip_address
-#     }
-#   )
-#   filename = "../../../ansible/inventory/az-sa-sol-broker-nodes.inventory"
-# }
-#
-# resource "local_file" "start-sdkperf-c-pub" {
-#   count = var.solace_broker_count > "0" ? 1 : 0
-#
-#   content = templatefile("../../templates/playbooks/start-sdkperf-c-pub.tpl",
-#     {
-#       solacebroker-node-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
-#     }
-#   )
-#   filename = "../../../ansible/playbooks/sdkperf/az-sa-start-sdkperf-c-pub.yml"
-# }
-#
-# resource "local_file" "start-sdkperf-c-qcons" {
-#   count = var.solace_broker_count > "0" ? 1 : 0
-#
-#   content = templatefile("../../templates/playbooks/start-sdkperf-c-qcons.tpl",
-#     {
-#       solacebroker-node-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
-#     }
-#   )
-#   filename = "../../../ansible/playbooks/sdkperf/az-sa-start-sdkperf-c-qcons.yml"
-# }
 
 ###
 # The End.
