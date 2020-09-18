@@ -49,7 +49,7 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run Broker VM bootstrap
 
-  inventory="./inventory/bootstrap.yml"
+  inventory="./inventory/inventory.json"
   playbook="./broker.centos.bootstrap.playbook.yml"
   privateKeyFile="../keys/azure_key"
 
@@ -64,7 +64,7 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run Broker PubSub bootstrap
 
-  inventory="./inventory/bootstrap.yml"
+  inventory="./inventory/inventory.json"  
   playbook="./broker.pubsub.bootstrap.playbook.yml"
 
   ansible-playbook \
