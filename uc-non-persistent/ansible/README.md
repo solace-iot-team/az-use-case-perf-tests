@@ -43,6 +43,26 @@ export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
 - bash
 - [jq](https://stedolan.github.io/jq/download/)
 
+## Configure
+
+````bash
+cd vars
+vi bootstrap.vars.yml
+
+    # make sure this is the user create in the VMs
+    docker_centos_users: ["centos"]
+    # make sure the docker image info is correct
+    solace_image_name: solace-pubsub-evaluation
+    solace_image_version: 9.6.0.32
+````
+
+````bash
+cd docker-image
+less PubSub.docker-compose.template.yml
+  # make adjustments to experiment with different settings
+
+````
+
 ## Bootstrap
 
 Configure the VMs with their respective software.
