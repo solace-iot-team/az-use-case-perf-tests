@@ -1,0 +1,76 @@
+# docker-compose -f PubSubStandard_singleNode.yml up -d
+version: "3.3"
+
+services:
+  primary:
+    container_name: "PubSubSingleNode"
+    image: "{{ bootstrap.broker.docker_image.solace_image_name }}:{{ bootstrap.broker.docker_image.solace_image_version }}"
+    shm_size: 4g
+    network_mode: host
+    user: "4000"
+    cap_drop:
+    - ALL
+    cap_add:
+    - NET_RAW
+    ulimits:
+      core: -1
+      memlock: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: on-failure:3
+    volumes:
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/spool/softAdb:/usr/sw/internalSpool/softAdb:Z"
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/spool:/usr/sw/internalSpool:Z"
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/jail:/usr/sw/jail:Z"
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/diagnostics:/var/lib/solace/diags:Z"
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/adbBackup:/usr/sw/adb:Z"
+      - "{{ bootstrap.broker.ext_storage.solace_mount_path }}/var:/usr/sw/var:Z"
+    environment:
+      - username_admin_globalaccesslevel=admin
+      - username_admin_password=admin
+      - system_scaling_maxconnectioncount={{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}
+      - TZ=Europe/London
+
+
+# services:
+#   primary:
+#     ports:
+#     #Port Mappings:  Ports are mapped straight through from host to
+#     #container.  This may result in port collisions on commonly used
+#     #ports that will cause failure of the container to start.
+#       #Web transport
+#       #- '80:80'
+#       #Web transport over TLS
+#       #- '443:443'
+#       #SEMP over TLS
+#       #- '1943:1943'
+#       #MQTT Default VPN
+#       - '1883:1883'
+#       #AMQP Default VPN over TLS
+#       #- '5671:5671'
+#       #AMQP Default VPN
+#       #- '5672:5672'
+#       #MQTT Default VPN over WebSockets
+#       #- '8000:8000'
+#       #MQTT Default VPN over WebSockets / TLS
+#       #- '8443:8443'
+#       #MQTT Default VPN over TLS
+#       #- '8883:8883'
+#       #SEMP / PubSub+ Manager
+#       - '8080:8080'
+#       #REST Default VPN
+#       #- '9000:9000'
+#       #REST Default VPN over TLS
+#       #- '9443:9443'
+#       #SMF
+#       - '55555:55555'
+#       #SMF Compressed
+#       - '55003:55003'
+#       #SMF over TLS
+#       - '55443:55443'
+#     environment:
+#       - username_admin_globalaccesslevel=admin
+#       - username_admin_password=admin
+#       - system_scaling_maxconnectioncount=100
+#       #- routername=ansible-solace__test

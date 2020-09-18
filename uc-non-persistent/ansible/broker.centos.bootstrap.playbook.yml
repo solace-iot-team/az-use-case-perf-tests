@@ -1,0 +1,54 @@
+---
+- hosts: broker_centos
+
+  pre_tasks:
+    - include_vars:
+        file: "./vars/bootstrap.non-persistent.vars.yml"
+        name: bootstrap
+
+  tasks:
+
+    - name: "Centos Bootstrap: Setup Swap Tasks"
+      include_tasks: ./tasks/centos.bootstrap.yml
+
+    - name: "Broker Bootstrap: Setup External Storage Tasks"
+      include_tasks: ./tasks/centos.bootstrap.ext-storage.yml
+
+    - name: "Docker Bootstrap: Install Docker CE"
+      include_role:
+        name: centos/suzuki-shunsuke.docker_ce_centos
+      vars:
+        docker_centos_users: "{{ bootstrap.broker.centos_docker.docker_centos_users }}"
+        docker_centos_version: "{{ bootstrap.broker.centos_docker.docker_centos_version }}"
+        docker_centos_state: "{{ bootstrap.broker.centos_docker.docker_centos_state }}"
+        docker_centos_enabled: "{{ bootstrap.broker.centos_docker.docker_centos_enabled }}"
+        docker_centos_daemon_config: "{{ bootstrap.broker.centos_docker.docker_centos_daemon_config }}"
+
+    - name: "Docker Bootstrap: Install docker-compose"
+      get_url:
+        url : "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"
+        dest: "/usr/local/bin/docker-compose"
+        mode: "u=rwx,g=rx,o=rx"
+
+    - name: "Copy docker image to broker node"
+      copy:
+        src: "{{ bootstrap.broker.docker_image.solace_image_file_src }}"
+        dest: "{{ bootstrap.broker.docker_image.solace_image_file_dest }}"
+        owner: "{{ bootstrap.broker.docker_image.file_owner }}"
+        mode: "{{ bootstrap.broker.docker_image.file_mode }}"
+
+    - name: "Load Solace Docker Image"
+      command: docker load -i {{ bootstrap.broker.docker_image.solace_image_file_dest }}
+
+    - name: "Copy docker-compose template to broker node"
+      template:
+        src: "{{ bootstrap.broker.docker_image.docker_compose_file_src }}"
+        dest: "{{ bootstrap.broker.docker_image.docker_compose_file_dest }}"
+        owner: "{{ bootstrap.broker.docker_image.file_owner }}"
+        mode: "{{ bootstrap.broker.docker_image.file_mode }}"
+
+    - name: "Start Solace Broker Docker Container"
+      command: /usr/local/bin/docker-compose -f {{ bootstrap.broker.docker_image.docker_compose_file_dest }} up -d
+
+###
+# The End.

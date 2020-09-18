@@ -1,0 +1,20 @@
+---
+- hosts: default
+  roles:
+    - role: ansible-docker-ce-centos
+      docker_centos_state: started
+      docker_centos_enabled: true
+      docker_centos_users:
+        - vagrant
+      docker_centos_daemon_config:
+        log-opts:
+          max-size: 50m
+          max-file: "10"
+      become: true
+  tasks:
+    - name: Check docker version
+      command: docker --version
+      register: result
+      changed_when: false
+    - debug:
+        var: result.stdout
