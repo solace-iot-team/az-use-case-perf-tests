@@ -53,6 +53,8 @@ vi az-sa-sdkperf-nodes.tf
 
 ## Prepare
 
+**[See here for generating the keys](../../../keys).**
+
 ````bash
 # to enable terraform logging
 export TF_LOG_PATH=./tf_log.log
@@ -79,6 +81,16 @@ terraform apply
 cd {root}/shared-setup
   less broker-nodes.json
   less sdkperf-nodes.json
+````
+
+#### Login to the VMs
+
+````bash
+# find the public ip address of the vms:
+less {root}/shared-setup/broker-nodes.json
+less {root}/shared-setup/sdkperf-nodes.json
+# ssh ...
+ssh -i ../../../keys/azure_key centos@{public-ip-address}
 ````
 
 ### Destroy Resources

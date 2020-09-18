@@ -14,7 +14,7 @@ If there are no preexisting SSH Keys, they can be created by running the followi
 
 **_Note: `azure_key` is the default key name used in the scripts._**
 
-**_Note: scripts are configured to look for $root/keys/azure_key._**
+**_Note: scripts are configured to look for {root}/keys/azure_key._**
 
 
 ---
