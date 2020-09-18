@@ -28,13 +28,13 @@ variable "solace_broker_count" {
 
 # General Variables
 variable "tag_owner" {
-  default = "RJGU"
+  default = "{tag-owner}"
 }
 variable "tag_days" {
   default = "1"
 }
 variable "tag_name_prefix" {
-  default = "rjguzz"
+  default = "{prefix}"
 }
 
 variable "az_resgrp_name" {
