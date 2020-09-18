@@ -8,7 +8,7 @@ Follow the links to see installation & setup requirements.
 
 - [Generate Keys](./keys)
 
-- [Create Azure Resources: Terraform](./terraform)
+- [Create Azure Resources: Terraform](./terraform/azure/standalone)
   - generates output in `shared-setup`
 
 - [Check Output](./shared-setup)
