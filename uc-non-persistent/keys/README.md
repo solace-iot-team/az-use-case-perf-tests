@@ -6,6 +6,8 @@ If there are no preexisting SSH Keys, they can be created by running the followi
 
 ````bash
  ssh-keygen -f azure_key
+ # ensure the private key has the correct permissions
+ chmod 600 azure_key
 ````
 
 ## Notes

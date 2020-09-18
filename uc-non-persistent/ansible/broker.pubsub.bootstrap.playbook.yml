@@ -34,7 +34,7 @@
 
   pre_tasks:
     - include_vars:
-        file: "./vars/bootstrap.non-persistent.vars.yml"
+        file: "./vars/bootstrap.vars.yml"
         name: bootstrap
 
   tasks:
