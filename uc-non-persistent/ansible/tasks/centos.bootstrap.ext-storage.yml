@@ -1,3 +1,9 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
 ---
 # tasks file for solace-exstorage-bootstrap
 - name: Add the "solace" user with a specific uid

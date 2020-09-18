@@ -1,6 +1,12 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
 ---
 - hosts: broker_centos
- 
+
   pre_tasks:
     - include_vars:
         file: "./vars/bootstrap.vars.yml"
