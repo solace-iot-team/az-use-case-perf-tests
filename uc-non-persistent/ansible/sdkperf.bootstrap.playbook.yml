@@ -1,0 +1,31 @@
+---
+- hosts: "sdkperf_*"
+# - hosts: "sdkperf_publishers"
+# - hosts: "sdkperf_consumers"
+# - hosts: "sdkperf_latency"
+
+  # if required
+  pre_tasks:
+    - include_vars:
+        file: "./vars/bootstrap.vars.yml"
+        name: bootstrap
+
+  tasks:
+
+    - name: "Print inventory & facts info"
+      debug:
+        msg:
+          - "inventory_hostname={{ inventory_hostname}}"
+          - "broker.public_ip_address={{ broker_pubsub.public_ip_address }}"
+          - "broker.private_ip_address={{ broker_pubsub.private_ip_address }}"
+          - "ansible_facts="
+          - "{{ ansible_facts }}"
+
+    # - name: "Print vars info"
+    #   debug:
+    #     msg:
+    #       - "bootstrap:"
+    #       - "{{ bootstrap }}"
+
+###
+# The End.
