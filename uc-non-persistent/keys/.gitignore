@@ -1,0 +1,7 @@
+# do not upload keys to git
+*key*
+*.pub
+*.pem
+
+#Mac files
+.DS_Store
