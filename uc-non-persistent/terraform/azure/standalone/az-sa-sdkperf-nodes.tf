@@ -127,26 +127,5 @@ resource "local_file" "sdkperf_nodes_file" {
   filename = "../../../shared-setup/sdkperf-nodes.json"
 }
 
-
-# TODO: delete from here
-# resource "local_file" "sdkperf_inv_file" {
-#   #content = templatefile("${path.module}/templates/inventory/sdkperf-nodes.tpl",
-#   content = templatefile("../../templates/inventory/sdkperf-nodes.tpl",
-#     {
-#       sdkperf_node_ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.public_ip_address
-#     }
-#   )
-#   filename = "../../../ansible/inventory/az-sa-sdkperf-nodes.inventory"
-# }
-#
-# resource "local_file" "solace_vars_loop_queues" {
-#   content = templatefile("../../templates/playbooks/vars/testvpn-sol-brokers-vars.tpl",
-#     {
-#       sdkperf_node_ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.private_ip_address
-#     }
-#   )
-#   filename = "../../../ansible/playbooks/bootstrap/vars/az-sa-testvpn-sol-brokers-vars.yml"
-# }
-
 ###
 # The End.
