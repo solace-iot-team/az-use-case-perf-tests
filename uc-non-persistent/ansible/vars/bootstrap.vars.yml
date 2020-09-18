@@ -33,8 +33,8 @@ broker:
     solace_image_file_dest: "./solace-pubsub-evaluation-docker.tar.gz"
     solace_image_name: solace-pubsub-evaluation
     solace_image_version: 9.6.0.32
-    docker_compose_file_src: "./docker-image/PubSub.non-persistent.template.yml"
-    docker_compose_file_dest: "./PubSub.non-persistent.template.yml"
+    docker_compose_file_src: "./docker-image/PubSub.docker-compose.template.yml"
+    docker_compose_file_dest: "./PubSub.docker-compose.template.yml"
     file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
     file_mode: "0666"
     system_scaling_maxconnectioncount: 1000

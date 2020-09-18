@@ -14,8 +14,6 @@ echo
     export ANSIBLE_SOLACE_LOG_PATH="./ansible-solace.log"
     export ANSIBLE_SOLACE_ENABLE_LOGGING=True
 
-    inventory="./inventory/bootstrap.yml"
-
   # END SELECT
 
 ##############################################################################################################################
@@ -26,6 +24,7 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run Centos VM bootstrap
 
+  inventory="./inventory/bootstrap.yml"
   playbook="./broker.centos.bootstrap.playbook.yml"
   privateKeyFile="../keys/azure_key"
 
@@ -40,6 +39,7 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run Broker bootstrap
 
+  inventory="./inventory/bootstrap.yml"
   playbook="./broker.pubsub.bootstrap.playbook.yml"
 
   ansible-playbook \
