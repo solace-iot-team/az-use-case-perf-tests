@@ -1,3 +1,4 @@
+#!/bin/bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -44,8 +45,6 @@ rm -f ./*.log
                     # -vvv
 
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-
-exit
 
 ##############################################################################################################################
 # Run Broker VM bootstrap
