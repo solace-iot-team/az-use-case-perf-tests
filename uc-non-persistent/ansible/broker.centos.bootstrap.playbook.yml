@@ -1,6 +1,6 @@
 ---
 - hosts: broker_centos
-
+ 
   pre_tasks:
     - include_vars:
         file: "./vars/bootstrap.vars.yml"
