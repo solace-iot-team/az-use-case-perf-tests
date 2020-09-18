@@ -49,7 +49,7 @@ Configure the VMs with their respective software.
 #### Inputs Required
 
 [Keys](../keys) |
-[Shared Setup](./shared-setup)
+[Shared Setup](../shared-setup)
 
 #### Run Bootstrap
 ````bash
