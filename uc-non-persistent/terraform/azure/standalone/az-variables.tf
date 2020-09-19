@@ -4,12 +4,59 @@
 # (2) Make sure the account you're running terraform with has proper permissions in your Azure env
 ####################################################################################################
 
-# Azure config
+############################################################################################################
+# BEGIN CUSTOMIZATION
+#
+
+# the azure region
 variable "az_region" {
-  #  default = "West US" # No AZ Supports, Supports UltraD not in AZ - Total Regional vCPUs 100
-  # default = "West US 2" # Supports AZ, Supports UltraD in 3 AZ    - Total Regional vCPUs 10
-  #  default = "Japan East" # Supports AZ, Supports UltraD in 2 AZ   - Total Regional vCPUs 160
-  default = "West Europe"
+  #  default = "West US"
+  # default = "West US 2"
+  #  default = "Japan East"
+  # default = "West Europe"
+  default = "{azure-region}"
+}
+# prefix for all resources
+variable "tag_name_prefix" {
+  default = "{prefix}"
+}
+# the tag for all resources
+variable "tag_owner" {
+  default = "{owner}"
+}
+# the VM size for the solace broker node
+variable "solace_broker_node_vm_size" {
+  default = "{vm-size}"
+  # default = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 max IOPS)
+  # default = "Standard_D8s_v3"      # (8 Cores, 32GB RAM, 12800 max IOPS)
+}
+# the VM size for the sdk perf nodes
+variable "sdk_perf_nodes_vm_size" {
+  default = "{vm-size}"
+  # default = "Standard_F4s_v2" # (4 CPUs, 8 GB RAM, max IOPS: 6400)
+  # default = "Standard_F4s" # (4 CPUs, 8 GB RAM, max IOPS: 12800)
+  # default = "Standard_B1ms"
+  # default = "Standard_B4ms" # (4 CPUs, 16 GB RAM, max IOPS: 2880)
+}
+
+#
+# END CUSTOMIZATION
+############################################################################################################
+
+
+
+
+
+
+
+############################################################################################################
+#
+# DO NOT CHANGE ANY VARIABLES FROM HERE ONWARDS
+#
+############################################################################################################
+
+variable "tag_days" {
+  default = "1"
 }
 
 # sdkperf nodes count
@@ -26,16 +73,6 @@ variable "solace_broker_count" {
     description = "The number of Solace Broker nodes to be created."
 }
 
-# General Variables
-variable "tag_owner" {
-  default = "{tag-owner}"
-}
-variable "tag_days" {
-  default = "1"
-}
-variable "tag_name_prefix" {
-  default = "{prefix}"
-}
 
 variable "az_resgrp_name" {
   default = ""

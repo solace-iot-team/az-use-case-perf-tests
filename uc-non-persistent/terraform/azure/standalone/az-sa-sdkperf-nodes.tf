@@ -15,10 +15,7 @@ resource "azurerm_linux_virtual_machine" "sdkperf-nodes" {
   #If a Resource Group was specified we'll query its Location use it, otherwise use the location of the Res Group that was just created
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
-  # size                   = "Standard_B1ms"
-  # size                   = "Standard_F4s" # (4 CPUs, 8 GB RAM, max IOPS: 12800)
-  size                   = "Standard_F4s_v2" # (4 CPUs, 8 GB RAM, max IOPS: 6400)
-  # size                   = "Standard_B4ms" # (4 CPUs, 16 GB RAM, max IOPS: 2880)
+  size                   = var.sdk_perf_nodes_vm_size
   admin_username         = var.az_admin_username
   network_interface_ids  = [azurerm_network_interface.sdkperf-nodes-nic[count.index].id]
 #  zone                   = 1
