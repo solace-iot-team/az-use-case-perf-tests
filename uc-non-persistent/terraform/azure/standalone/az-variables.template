@@ -10,9 +10,9 @@
 
 # the azure region
 variable "az_region" {
-  #  default = "West US"
+  # default = "West US"
   # default = "West US 2"
-  #  default = "Japan East"
+  # default = "Japan East"
   # default = "West Europe"
   default = "{azure-region}"
 }
