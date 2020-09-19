@@ -64,7 +64,7 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run Broker PubSub bootstrap
 
-  inventory="./inventory/inventory.json"  
+  inventory="./inventory/inventory.json"
   playbook="./broker.pubsub.bootstrap.playbook.yml"
 
   ansible-playbook \

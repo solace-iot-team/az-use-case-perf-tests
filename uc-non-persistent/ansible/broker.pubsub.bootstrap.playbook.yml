@@ -113,5 +113,14 @@
           enabled: true
         state: present
 
+    - name: "Display Broker Console URL"
+      debug:
+        msg:
+          - "Log in to Broker Console:"
+          - "   browser incognito window"
+          - "   http://{{sempv2_host}}:{{sempv2_port}}"
+          - "   user: {{ sempv2_username }}"
+          - "   pass: {{ sempv2_password }}"
+          - "   vpn: {{bootstrap.broker.pubsub.vpn_name}}"
 ###
 # The End.
