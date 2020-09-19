@@ -14,13 +14,13 @@
 
   tasks:
 
-    - name: "Check docker image exists"
-      stat:
+    - name: "Check local docker image exists"
+      local_action:
+        module: stat
         path: "{{ bootstrap.broker.docker_image.solace_image_file_src }}"
+        follow: yes
       register: result
-
-    - name: "Error message if docker image does not exist"
-      fail:
+    - fail:
         msg: "docker image file does not exist: {{ bootstrap.broker.docker_image.solace_image_file_src }}"
       when: result.stat.exists == False
 
