@@ -7,7 +7,11 @@ Ansible scripts to:
 - run the tests
 - ...
 
-
+## Change Directory
+````bash
+# execute all commands in this directory
+cd {root}/uc-non-persistent/ansible
+````
 ## Pre-requisites
 
 #### Solace docker image
@@ -15,8 +19,14 @@ Ansible scripts to:
 ````bash
 cp {image-file} ./docker-image/solace-pubsub-docker.tar.gz
 # or create a link
-ln -s {image-file} ./docker-image/solace-pubsub-docker.tar.gz
+cd docker-image
+ln -s {image-file} solace-pubsub-docker.tar.gz
+cd ..
 ````
+
+Make a note of the image name and tag:
+- unzip the tar.gz
+- open the manifest
 
 #### Solace SDKPerf executables
 - download: https://products.solace.com/download/SDKPERF_C_LINUX64
@@ -24,7 +34,9 @@ ln -s {image-file} ./docker-image/solace-pubsub-docker.tar.gz
 ````bash
 cp {path}/pubSubTools ./sdk-perf-image/sdkperf-c-x64
 # or create a link
-ln -s {path}/pubSubTools ./sdk-perf-image/sdkperf-c-x64
+cd sdk-perf-image
+ln -s {path}/pubSubTools sdkperf-c-x64
+cd ..
 ````
 
 #### Ansible
