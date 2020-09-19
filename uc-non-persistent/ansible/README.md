@@ -16,17 +16,20 @@ cd {root}/uc-non-persistent/ansible
 
 #### Solace docker image
 - download: https://products.solace.com/download/PUBSUB_DOCKER_EVAL
-````bash
-cp {image-file} ./docker-image/solace-pubsub-docker.tar.gz
-# or create a link
-cd docker-image
-ln -s {image-file} solace-pubsub-docker.tar.gz
-cd ..
-````
-
-Make a note of the image name and tag:
-- unzip the tar.gz
-- open the manifest
+  ````bash
+  cp {image-file} ./docker-image/solace-pubsub-docker.tar.gz
+  # or create a link
+  cd docker-image
+  ln -s {image-file} solace-pubsub-docker.tar.gz
+  cd ..
+  ````
+- Make a note of the image name and tag:
+  ````bash
+  tar --extract --file=solace-pubsub-docker.tar.gz manifest.json
+  cat manifest.json | jq
+  # jot down:
+  # RepoTags: image name and tag/version 
+  ````
 
 #### Solace SDKPerf executables
 - download: https://products.solace.com/download/SDKPERF_C_LINUX64
@@ -90,6 +93,22 @@ Configure the VMs with their respective software.
 ````bash
 ./run.bootstrap.sh
 ````
+
+#### Login to the Broker Console
+
+Get the public ip address of the broker node:
+````bash
+less {root}/shared-setup/broker-nodes.json
+
+````
+
+In Incognito / Private Browser Window:
+```
+http://{broker-node-public-ip-address}:8080
+
+user: admin
+pass: admin
+```
 
 ## Run Tests
 ````bash
