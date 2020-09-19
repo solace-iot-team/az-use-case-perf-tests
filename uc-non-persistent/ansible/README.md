@@ -15,13 +15,16 @@ Ansible scripts to:
 ````bash
 cp {image-file} ./docker-image/solace-pubsub-docker.tar.gz
 # or create a link
+ln -s {image-file} ./docker-image/solace-pubsub-docker.tar.gz
 ````
 
 #### Solace SDKPerf executables
-- download: ??
+- download: https://products.solace.com/download/SDKPERF_C_LINUX64
+- unzip the tar.gz
 ````bash
-cp {the files} ./docker-image/what dir / name?
+cp {path}/pubSubTools ./sdk-perf-image/sdkperf-c-x64
 # or create a link
+ln -s {path}/pubSubTools ./sdk-perf-image/sdkperf-c-x64
 ````
 
 #### Ansible
