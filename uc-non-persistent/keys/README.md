@@ -1,13 +1,14 @@
-# /keys
+# SSH Keys
 
 SSH Keys to access the VMs are stored in this directory.
 
 If there are no preexisting SSH Keys, they can be created by running the following command:
 
 ````bash
- ssh-keygen -f azure_key
- # ensure the private key has the correct permissions
- chmod 600 azure_key
+cd {root}/uc-non-persistent/keys
+ssh-keygen -f azure_key
+# ensure the private key has the correct permissions
+chmod 600 azure_key
 ````
 
 ## Notes
