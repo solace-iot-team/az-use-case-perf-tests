@@ -14,6 +14,16 @@
 
   tasks:
 
+    - name: "Check docker image exists"
+      stat:
+        path: "{{ bootstrap.broker.docker_image.solace_image_file_src }}"
+      register: result
+
+    - name: "Error message if docker image does not exist"
+      fail:
+        msg: "docker image file does not exist: {{ bootstrap.broker.docker_image.solace_image_file_src }}"
+      when: result.stat.exists == False
+
     - name: "Centos Bootstrap: Setup Swap Tasks"
       include_tasks: ./tasks/centos.bootstrap.yml
 
