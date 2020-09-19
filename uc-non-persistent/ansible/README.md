@@ -25,10 +25,12 @@ cd {root}/uc-non-persistent/ansible
   ````
 - Make a note of the image name and tag:
   ````bash
+  cd docker-image
   tar --extract --file=solace-pubsub-docker.tar.gz manifest.json
   cat manifest.json | jq
   # jot down:
-  # RepoTags: image name and tag/version 
+  # RepoTags: image name and tag/version
+  cd ..
   ````
 
 #### Solace SDKPerf executables
