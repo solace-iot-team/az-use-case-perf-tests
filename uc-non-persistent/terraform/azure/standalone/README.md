@@ -83,6 +83,9 @@ terraform apply
 
 #### Check Output of Run
 
+Login into the Azure Portal and check the new resource group: _**{prefix}-sdkperf_resgrp**_.
+
+Check the generated output:
 ````bash
 cd {root}/shared-setup
   less broker-nodes.json
