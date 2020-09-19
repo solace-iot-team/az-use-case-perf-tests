@@ -3,6 +3,12 @@
 - creates azure resources for the use case.
 - generates output in {root}/shared-setup
 
+## Change Directory
+````bash
+# execute all commands in this directory
+cd {root}/uc-non-persistent/terraform/azure/standalone
+````
+
 ## Pre-Requisites
 
 ### Terraform
@@ -23,6 +29,8 @@ export ARM_TENANT_ID={tenant-id}
 Customizing the deployment to Azure:
 
 ````bash
+
+cp az-variables.template az-variables.tf
 
 vi az-variables.tf
 

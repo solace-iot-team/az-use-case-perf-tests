@@ -5,8 +5,5 @@
 *.tfstate
 *.tfstate.*
 
-# template files with your config info
-*.template
-
 #Mac files
 .DS_Store
