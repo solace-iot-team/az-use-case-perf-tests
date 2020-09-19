@@ -28,8 +28,7 @@ resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
   admin_username         = var.az_admin_username
   network_interface_ids  = [azurerm_network_interface.solacebroker-nodes-nic[count.index].id]
-  size                   = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 IOPS)
-  # size                   = "Standard_D8s_v3"     # (8CPU, 32GB, max: iOPS: 12800)
+  size                   = var.solace_broker_node_vm_size
 
 #NOTE: "ultra_ssd_enabled" HAS to be set when using UltraSSD_LRS data disks
   additional_capabilities {

@@ -26,29 +26,27 @@ Customizing the deployment to Azure:
 
 vi az-variables.tf
 
-    # change the prefix for all the resources
+    # the azure region
+    variable "az_region" {
+      default = "{azure-region}"
+    }
+    # prefix for all resources
     variable "tag_name_prefix" {
-      default = "my-prefix"
+      default = "{prefix}"
+    }
+    # the tag for all resources
+    variable "tag_owner" {
+      default = "{owner}"
+    }
+    # the VM size for the solace broker
+    variable "solace_broker_node_vm_size" {
+      default = "{vm-size}"
+    }
+    # the VM size for the sdk perf nodes
+    variable "sdk_perf_nodes_vm_size" {
+      default = "{vm-size}"
     }
 
-    # change the number of sdk perf nodes
-    variable "sdkperf_nodes_count" {
-        default = "4"
-        type        = string
-        description = "The number of sdkperf nodes to be created."
-    }
-````
-
-````bash
-vi az-sa-sol-broker-nodes.tf
-    # change the size of the vm
-    size = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 IOPS)
-````
-
-````bash
-vi az-sa-sdkperf-nodes.tf
-    # change the size of the vm
-    size = "Standard_F4s_v2" # (4 CPUs, 8 GB RAM, max IOPS: 6400)
 ````
 
 ## Prepare
