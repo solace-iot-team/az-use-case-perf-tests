@@ -1,0 +1,150 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- hosts: broker_pubsub
+  gather_facts: no
+  vars:
+    select_vpn_stats: >-
+      dataRxByteCount,
+      dataTxByteCount,
+      dataRxMsgCount,
+      dataTxMsgCount,
+      discardedRxMsgCount,
+      discardedTxMsgCount,
+      rate
+    pause_between_calls_secs: 60
+    count: 60
+    # pause_between_calls_secs: 3
+    # count: 2
+    select_client_connection_stats: >-
+      rxDiscardedMsgCount,
+      rxMsgCount,
+      rxMsgRate,
+      rxByteRate,
+      rxByteCount,
+      clientAddress,
+      clientName,
+      uptime
+
+
+  pre_tasks:
+    - include_vars:
+        file: "../vars/bootstrap.vars.yml"
+        name: bootstrap
+    - include_vars:
+        file: "{{ BROKER_NODES_FILE }}"
+        name: brokerNodes
+    - include_vars:
+        file: "{{ SDKPERF_NODES_FILE }}"
+        name: sdkPerfNodes
+
+
+  tasks:
+
+    - set_fact:
+        run_timestamp: "{{now(True)}}"
+    - set_fact:
+        result_dir: "{{ RESULT_DIR }}/run.{{ run_timestamp }}"
+    - set_fact:
+        success: True
+
+    - name: "Ensure {{RESULT_DIR}} exists"
+      file:
+        path: "{{ result_dir }}"
+        state: directory
+
+    - name: "Get Client Connections: Start"
+      uri:
+        # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+        # GET /msgVpns/{msgVpnName}/clients
+        url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{select_client_connection_stats|trim|replace(' ','')}}"
+        # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}"
+        method: GET
+        user: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        force_basic_auth: yes
+        status_code: "200"
+        return_content: yes
+      register: result
+
+    - set_fact:
+        number_connected_clients_start: "{{ result.json.data | length }}"
+        connected_client_list_start: "{{ result.json.data }}"
+
+    - name: "Number SDKPerf clients connected"
+      debug:
+        msg: "Number of Connected SDKPerf Clients={{number_connected_clients_start}}"
+
+    - name: "Check that 12 SDKPerf clients are connected"
+      fail:
+        msg: "Expecting 12 SDKPerf clients connected, instead got: {{number_connected_clients_start}}"
+      when: number_connected_clients_start != '12'
+
+    # - debug:
+    #     msg: "{{ result }}"
+    # - debug:
+    #     msg: "{{ result.json.data }}"
+
+    - name: "Clear VPN Stats"
+      uri:
+        # method: "PUT"
+        # uri: "http://51.136.121.254:8080/SEMP/v2/__private_action__/msgVpns/sdkperf/clearStats"
+       url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clearStats"
+       # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}?select={{select_vpn_stats|trim|replace(' ','')}}"
+       method: PUT
+       user: "{{ sempv2_username }}"
+       password: "{{ sempv2_password }}"
+       force_basic_auth: yes
+       body: "{}"
+       body_format: json
+       status_code: "200"
+       return_content: yes
+      register: result
+
+    - name: "Get Stats Periodically: VPN Stats Tasks"
+      include_tasks: ./tasks/vpn-stats.yml
+      with_sequence: "end={{ count }} start=0"
+
+    - name: "Get Client Connections: End"
+      uri:
+        # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+        # GET /msgVpns/{msgVpnName}/clients
+        url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{select_client_connection_stats|trim|replace(' ','')}}"
+        # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}"
+        method: GET
+        user: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        force_basic_auth: yes
+        status_code: "200"
+        return_content: yes
+      register: result
+
+    - set_fact:
+        number_connected_clients_end: "{{ result.json.data | length }}"
+        connected_client_list_end: "{{ result.json.data }}"
+
+    - set_fact:
+        result_file: "{{ result_dir }}/run.meta.json"
+
+    - name: "Write Test Meta Data to Results"
+      template:
+        src: "./lib/run.meta.j2"
+        dest: "{{ result_file }}"
+
+    - include_vars:
+        file: "{{ result_file }}"
+        name: test_result
+
+    - name: "Test Results"
+      debug:
+        msg:
+          - "{{ result_dir }}/run.meta.json"
+          - "{{ test_result }}"
+
+
+###
+# The End.

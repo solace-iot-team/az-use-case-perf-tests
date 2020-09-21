@@ -1,0 +1,62 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  - name: "Retrieve VPN Stats"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/msgVpn/getMsgVpn
+      # GET /SEMP/v2/monitor/msgVpns/{msgVpnName}?select=
+     url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}?select={{select_vpn_stats|trim|replace(' ','')}}"
+     method: GET
+     user: "{{ sempv2_username }}"
+     password: "{{ sempv2_password }}"
+     force_basic_auth: yes
+     status_code: "200"
+     return_content: yes
+    register: result
+    when: success == True
+
+  - name: "Write Stats to File"
+    local_action:
+      module: copy
+      content: "{{ result.json.data | to_nice_json }}"
+      dest: "{{ result_dir }}/vpn-stats.{{now()}}.json"
+    when: success == True
+
+  - name: "Check Discarded Received Msgs"
+    set_fact:
+      success: False
+      error_msg: "discarded received message count: {{result.json.data.discardedRxMsgCount}}"
+    when: success == True and result.json.data.discardedRxMsgCount > 0
+
+  - name: "Check Discarded Sent Msgs"
+    set_fact:
+      success: False
+      error_msg: "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
+    when: success == True and result.json.data.discardedTxMsgCount > 0
+
+  - name: "Check Received Message Loss"
+    debug:
+      msg:
+        - "success={{success}}"
+        - "discarded received message count: {{result.json.data.discardedRxMsgCount}}"
+        - "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
+    when: success == False and result.json is defined
+
+  # - name: "Faile when success = False"
+  #   fail:
+  #     msg:
+  #       - "discarded received message count: {{result.json.data.discardedRxMsgCount}}"
+  #       - "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
+  #   when: success == False
+
+  - name: "Pause for {{ pause_between_calls_secs }} seconds..."
+    pause:
+      seconds: "{{ pause_between_calls_secs }}"
+    when: success == True
+
+###
+# The End.

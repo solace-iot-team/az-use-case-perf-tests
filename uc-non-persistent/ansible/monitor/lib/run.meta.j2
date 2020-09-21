@@ -1,0 +1,29 @@
+
+
+{
+  "meta": {
+    "testStartTimestamp": "{{ run_timestamp }}",
+    "testEndTimestamp": "{{ now(True) }}",
+    "nodes": {
+      "broker_nodes": {{ brokerNodes.broker_nodes | to_nice_json }},
+      "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
+    },
+    "result": {
+      "success": "{{ success }}"
+      {% if success == False %}
+        ,
+        "error_msg": "{{ error_msg  }}"
+      {% endif %}
+    },
+    "client_connections": {
+      "start_test": {
+        "number": {{ number_connected_clients_start }},
+        "list": {{ connected_client_list_start }}
+      },
+      "end_test": {
+        "number": {{ number_connected_clients_end }},
+        "list": {{ connected_client_list_end }}
+      }
+    }
+  }
+}
