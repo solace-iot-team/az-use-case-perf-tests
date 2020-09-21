@@ -25,6 +25,7 @@
     count: 60
     # pause_between_calls_secs: 3
     # count: 2
+    
     select_client_connection_stats: >-
       rxDiscardedMsgCount,
       rxMsgCount,
@@ -89,17 +90,11 @@
         msg: "Expecting 12 SDKPerf clients connected, instead got: {{number_connected_clients_start}}"
       when: number_connected_clients_start != '12'
 
-    # - debug:
-    #     msg: "{{ result }}"
-    # - debug:
-    #     msg: "{{ result.json.data }}"
-
     - name: "Clear VPN Stats"
       uri:
         # method: "PUT"
         # uri: "http://51.136.121.254:8080/SEMP/v2/__private_action__/msgVpns/sdkperf/clearStats"
        url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clearStats"
-       # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}?select={{select_vpn_stats|trim|replace(' ','')}}"
        method: PUT
        user: "{{ sempv2_username }}"
        password: "{{ sempv2_password }}"
@@ -119,7 +114,6 @@
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
         # GET /msgVpns/{msgVpnName}/clients
         url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{select_client_connection_stats|trim|replace(' ','')}}"
-        # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}"
         method: GET
         user: "{{ sempv2_username }}"
         password: "{{ sempv2_password }}"
