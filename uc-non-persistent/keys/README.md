@@ -9,7 +9,7 @@ If there are no preexisting SSH Keys, they can be created by running the followi
 ````bash
 cd {root}/uc-non-persistent/keys
 
-ssh-keygen -f azure_key
+ssh-keygen -t rsa -b 4096 -f azure_key
 
   > EMPTY PASSPHRASE! # otherwise terraform scripts will fail
 
