@@ -15,7 +15,12 @@
       dataTxMsgCount,
       discardedRxMsgCount,
       discardedTxMsgCount,
-      rate
+      averageRxByteRate,
+      averageRxMsgRate,
+      averageTxByteRate,
+      averageTxMsgRate
+    # rate
+
     pause_between_calls_secs: 60
     count: 60
     # pause_between_calls_secs: 3
