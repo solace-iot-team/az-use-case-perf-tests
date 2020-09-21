@@ -27,7 +27,9 @@ sdkperf:
   msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
   # total_msg_number:
   msg_number: 100000000000 # how many total messages to send, but we don't want our test to stop until we tell it to via kill -2
-  msg_rate_per_second: 160000 # 0=max
+  # 0=max
+  # msg_rate_per_second: 160000 # too high, discarded messages
+  msg_rate_per_second: 100000
 
   #consumer configuration
   # topics_consumer_market: "market/>"
