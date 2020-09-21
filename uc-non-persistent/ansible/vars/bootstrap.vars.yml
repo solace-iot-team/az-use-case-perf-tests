@@ -37,7 +37,7 @@ broker:
     solace_image_file_src: "./docker-image/solace-pubsub-docker.tar.gz"
     solace_image_file_dest: "./solace-pubsub-evaluation-docker.tar.gz"
     solace_image_name: solace-pubsub-evaluation
-    solace_image_version: 9.6.0.32
+    solace_image_version: 9.6.0.38
     docker_compose_file_src: "./docker-image/PubSub.docker-compose.template.yml"
     docker_compose_file_dest: "./PubSub.docker-compose.template.yml"
     file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
@@ -49,8 +49,15 @@ broker:
     client_profile_name: "testCP"
     client_user_name: "testUsr"
     client_user_name_pwd: "solace123"
+sdkperf_nodes:
+  sdkperf_group: sdkperf
+  sdkperf_user: centos
+  sdkperf_root: "/opt/sdkperf"
+  sdkperf_log_root: "/opt/sdkperf/logs"
 
 
+  sdkperf_image_src_dir: "./sdk-perf-image/sdkperf-c-x64"
 
+ 
 ###
 # The End.

@@ -1,0 +1,84 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency
+  vars_files: 
+    - "./vars/bootstrap.vars.yml"
+
+  tasks:
+
+    - name: sdkperf | create sdkperf_group 
+      group:
+        name: "{{sdkperf_nodes.sdkperf_group}}"
+      become: true
+        
+    - name: sdkperf | create sdkperf_user
+      user:
+        name: "{{sdkperf_nodes.sdkperf_user}}"
+        group: "{{sdkperf_nodes.sdkperf_group}}"
+        system: yes
+      become: true
+
+    - name: sdkperf | create directories
+      file:
+        path: "/opt"
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+        recurse: false
+      become: true
+
+    - name: sdkperf | create base folder
+      file:
+          path: "{{sdkperf_nodes.sdkperf_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{sdkperf_nodes.sdkperf_group}}" 
+          #user and group share same name by convention in here
+          recurse: false
+      become: true
+
+    - name: sdkperf | create log folder
+      file:
+          path: "{{sdkperf_nodes.sdkperf_log_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{sdkperf_nodes.sdkperf_group}}" 
+          #user and group share same name by convention in here
+          recurse: false
+      become: true
+
+    - name: sdkperf | debug
+      debug:
+        msg: "root: {{sdkperf_nodes.sdkperf_root}}"
+    # update permissions of sdkperf folder and subfolders
+
+    - name: sdkperf | upload sdkperf tool 
+      copy:
+        src: "{{sdkperf_nodes.sdkperf_image_src_dir}}"
+        dest: "{{sdkperf_nodes.sdkperf_root}}"
+        owner: root
+        group: "{{sdkperf_nodes.sdkperf_group}}" 
+        mode: 0775
+      become: true
+
+
+    - name: sdkperf | adjust permissions in file system
+      file:
+          path: "{{sdkperf_nodes.sdkperf_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{sdkperf_nodes.sdkperf_group}}" 
+          recurse: true
+      become: true
+   
+###
+# The End.
