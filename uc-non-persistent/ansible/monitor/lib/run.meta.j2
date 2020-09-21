@@ -18,11 +18,11 @@
     "client_connections": {
       "start_test": {
         "number": {{ number_connected_clients_start }},
-        "list": {{ connected_client_list_start }}
+        "list": {{ connected_client_list_start | to_nice_json }}
       },
       "end_test": {
         "number": {{ number_connected_clients_end }},
-        "list": {{ connected_client_list_end }}
+        "list": {{ connected_client_list_end | to_nice_json }}
       }
     }
   }
