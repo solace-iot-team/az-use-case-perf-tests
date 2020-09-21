@@ -3,6 +3,7 @@
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
+
 clear
 ############################################################################################################################
 
@@ -20,7 +21,7 @@ clear
 
 ##############################################################################################################################
 # Start SDKPerf Consumers
-echo; 
+echo;
 echo "######################################"
 echo "#                                    #"
 echo "#    Starting SDKPerf Consumers      #"
@@ -38,9 +39,9 @@ echo "######################################"
                     # -vvv
 
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-  
+
 # Start SDKPerf Publishers
-echo; 
+echo;
 echo "######################################"
 echo "#                                    #"
 echo "#    Starting SDKPerf Publishers     #"
@@ -58,3 +59,7 @@ echo "######################################"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
+
+
+###
+# The End.
