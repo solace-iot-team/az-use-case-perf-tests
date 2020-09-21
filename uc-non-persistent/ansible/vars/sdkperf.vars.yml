@@ -7,7 +7,7 @@ sdkperf:
   datetimeprefix: "{{ ansible_date_time.date }}-{{ ansible_date_time.hour}}-{{ ansible_date_time.minute}}-{{ ansible_date_time.second}}"
   broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
   broker_port: 55555
-  broker_msg_vpn: "sdkperf"  
+  broker_msg_vpn: "sdkperf"
   client_publisher_username: "testUsr"
   client_publisher_password: "solace123"
   client_consumer_username: "testUsr"
@@ -16,16 +16,17 @@ sdkperf:
   #Parameters to control connect and reconnect behaviour of the clients
   epl: "SOLCLIENT_SESSION_PROP_CONNECT_TIMEOUT_MS,500, SOLCLIENT_SESSION_PROP_CONNECT_RETRIES,-1, SOLCLIENT_SESSION_PROP_RECONNECT_RETRIES,-1, SOLCLIENT_SESSION_PROP_RECONNECT_RETRY_WAIT_MS,200, SOLCLIENT_SESSION_PROP_CONNECT_RETRIES_PER_HOST,1"
   # Retry Count.  Number of times API will try to re-establish a failed connection. (Default 3)
-  rc:  100 
+  rc:  100
   ack_window: 255 #ack window size, only for durable (ignored for direct)
 
   #publisher configuration
-  topics_publisher: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"    
-  #topics_publisher: "market"    
+  topics_publisher: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
+  #topics_publisher: "market"
 
   client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
   msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-  msg_number: 100000000000 # how many total messages to send, but we don't want our test to stop until we tell it to via kill -2 
+  # total_msg_number:
+  msg_number: 100000000000 # how many total messages to send, but we don't want our test to stop until we tell it to via kill -2
   msg_rate_per_second: 160000 # 0=max
 
   #consumer configuration
@@ -37,8 +38,8 @@ sdkperf:
   #topics_consumer_group_2: "market"
 
 
-  # latency producer and consumer settings    
-  topics_latency: "private/direct/latency"    
+  # latency producer and consumer settings
+  topics_latency: "private/direct/latency"
   latency_msg_rate_per_second: 10 # 0=max
   latency_msg_number: 3000
   latency_msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
