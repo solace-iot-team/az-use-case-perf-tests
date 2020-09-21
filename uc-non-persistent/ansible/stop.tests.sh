@@ -23,12 +23,12 @@ clear
 echo; 
 echo "######################################"
 echo "#                                    #"
-echo "#    Starting SDKPerf Consumers      #"
+echo "#    Stopping SDKPerf Consumers      #"
 echo "#                                    #"
 echo "######################################"
 
   inventory="./inventory/inventory.json"
-  playbook="./sdkperf.consumer.start.playbook.yml"
+  playbook="./sdkperf.consumer.stop.playbook.yml"
   privateKeyFile="../keys/azure_key"
 
   ansible-playbook \
@@ -43,11 +43,11 @@ echo "######################################"
 echo; 
 echo "######################################"
 echo "#                                    #"
-echo "#    Starting SDKPerf Publishers     #"
+echo "#    Stopping SDKPerf Publishers     #"
 echo "#                                    #"
 echo "######################################"
   inventory="./inventory/inventory.json"
-  playbook="./sdkperf.publisher.start.playbook.yml"
+  playbook="./sdkperf.publisher.stop.playbook.yml"
   privateKeyFile="../keys/azure_key"
 
   ansible-playbook \

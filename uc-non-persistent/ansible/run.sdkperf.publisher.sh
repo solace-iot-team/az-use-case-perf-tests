@@ -21,10 +21,12 @@ echo
   # END SELECT
 
 ##############################################################################################################################
-# Prepare
-
-
-# Run SDKPerf VM bootstrap
+echo; 
+echo "######################################"
+echo "#                                    #"
+echo "#    Starting SDKPerf Publishers     #"
+echo "#                                    #"
+echo "######################################"
 
   inventory="./inventory/inventory.json"
   playbook="./sdkperf.publisher.start.playbook.yml"

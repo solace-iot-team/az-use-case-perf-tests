@@ -24,15 +24,16 @@ echo
 echo; 
 echo "###############################################################################################################"
 echo "#                                                                                                             #"
-echo "#    Starting SDKPerf Latency                                                                                 #"
+echo "#    Stopping SDKPerf Latency                                                                                 #"
 echo "#                                                                                                             #"                                                                              #"
-echo "#    (Latency tests will stop by themselves after sending defined amount of messages (see sdkperf.vars.yml)   #"
+echo "#    (Latency tests should stop by themselves after sending defined amount of messages (see sdkperf.vars.yml) #"
 echo "#                                                                                                             #"
 echo "###############################################################################################################"
 
 
+
   inventory="./inventory/inventory.json"
-  playbook="./sdkperf.latency.start.playbook.yml"
+  playbook="./sdkperf.latency.stop.playbook.yml"
   privateKeyFile="../keys/azure_key"
 
   ansible-playbook \
