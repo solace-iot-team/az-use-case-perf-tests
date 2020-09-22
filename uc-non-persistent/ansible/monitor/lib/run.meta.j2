@@ -4,6 +4,15 @@
   "meta": {
     "testStartTimestamp": "{{ run_timestamp }}",
     "testEndTimestamp": "{{ now(True) }}",
+    "test_setup": {
+      "topics_publisher": "{{topics_publisher}}",
+      "topics_consumer_group_1": "{{topics_consumer_group_1}}",
+      "topics_consumer_group_2": "{{topics_consumer_group_2}}",
+      "client_connection_count": "{{client_connection_count}}",
+      "msg_payload_size_bytes": "{{msg_payload_size_bytes}}",
+      "msg_number": "{{msg_number}}",
+      "msg_rate_per_second": "{{msg_rate_per_second}}"
+    },
     "nodes": {
       "broker_nodes": {{ brokerNodes.broker_nodes | to_nice_json }},
       "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
