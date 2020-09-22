@@ -6,9 +6,10 @@
 
 ---
 - hosts: broker_pubsub
-  gather_facts: no
   vars_files:
     - "./vars/monitor.vars.yml"
+    - "../vars/sdkperf.vars.yml"
+
   vars:
     select_vpn_stats: >-
       dataRxByteCount,
@@ -43,9 +44,6 @@
     - include_vars:
         file: "../vars/bootstrap.vars.yml"
         name: bootstrap
-    - include_vars:
-        file: "../vars/sdkperf.vars.yml"
-        name: sdkperf
     - include_vars:
         file: "{{ BROKER_NODES_FILE }}"
         name: brokerNodes
@@ -92,6 +90,7 @@
       fail:
         msg: "Expecting 12 SDKPerf clients connected, instead got: {{number_connected_clients_start}}"
       when: number_connected_clients_start != '12'
+      ignore_errors: yes
 
     - name: "Clear VPN Stats"
       uri:

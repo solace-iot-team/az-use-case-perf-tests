@@ -36,7 +36,11 @@ echo
 
 ./run.monitor.latency.sh 2>&1 > ./run.monitor.latency.log &
 pids+=" $!"
-
+echo ">>> Processes:"
+for p in $pids; do
+  ps -ef $p
+done
+echo;echo;
 for p in $pids; do
   if wait $p; then
           echo; echo ">>> SUCCESS: Process $p"
