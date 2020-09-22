@@ -5,18 +5,16 @@
 
 ---
 
-- name: pinging broker ... takes some time
-  shell: "ping -c {{sdkperf.ping_msg_number}} -q {{broker_pubsub.private_ip_address}} > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
+- name: "Ping broker node ..."
+  shell: "ping -c {{ping.msg_number}} -q {{broker_pubsub.private_ip_address}} > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
 
 - name: download ping log file
   become: true
   fetch:
     src: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
-    # dest: "{{sdkperf.latency_repeat_logs_download_folder}}"
     dest: "{{ result_dir }}/ping-stats.{{now(True)}}.log"
-    # dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
     flat: yes
-    
+
 - name: delete log file
   become: true
   file:

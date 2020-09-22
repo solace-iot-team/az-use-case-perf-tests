@@ -19,23 +19,31 @@ rm -f ./*.log
 rm -f $resultDir/*
 export TZ=UTC0
 timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+pids=""
+
 
 echo;
 echo "##############################################################################################################"
 echo "# Start VPN Stats Monitor ..."
 echo
-
-pids=""
-
   ./run.monitor.vpn-stats.sh 2>&1 > ./run.monitor.vpn-stats.log &
   pids+=" $!"
 
 echo "##############################################################################################################"
 echo "# Start Latency Stats Monitor ..."
 echo
+  ./run.monitor.latency.sh 2>&1 > ./run.monitor.latency.log &
+  pids+=" $!"
 
-./run.monitor.latency.sh 2>&1 > ./run.monitor.latency.log &
-pids+=" $!"
+echo "##############################################################################################################"
+echo "# Start Ping Latency Stats Monitor ..."
+echo
+  ./run.monitor.ping.sh 2>&1 > ./run.monitor.ping.log &
+  pids+=" $!"
+
+echo "##############################################################################################################"
+echo "# Waiting for Processes to finish ..."
+echo
 echo ">>> Processes:"
 for p in $pids; do
   ps -ef $p

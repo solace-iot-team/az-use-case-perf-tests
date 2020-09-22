@@ -23,7 +23,7 @@
 
     - name: Invoking repeating tasks
       include_tasks: ./tasks/sdkperf.latency.testrun.yml
-      with_sequence: "end={{latency.repeat_total_test_runs}} start=0"
+      with_sequence: "end={{general.count}} start=0"
 
 
 ###

@@ -4,6 +4,7 @@ Gathers stats during a load test run.
 
  * Broker Message VPN Stats
  * SDKPerf Latency Stats
+ * PING between latency node and broker node
 
 ### Customize
 
@@ -34,10 +35,13 @@ Results:
 ````bash
 ./run.monitor.vpn-stats.sh
 ````
-
 #### Run Latency only
 ````bash
 ./run.monitor.latency.sh
+````
+#### Run Ping only
+````bash
+./run.monitor.ping.sh
 ````
 
 ### Results
