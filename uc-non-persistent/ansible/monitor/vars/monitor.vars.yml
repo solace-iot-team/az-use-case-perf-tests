@@ -7,16 +7,16 @@
 ---
 vpn_stats:
     pause_between_calls_secs: 59
-    # count: 60
+    count: 60
     # pause_between_calls_secs: 2
-    count: 5
+    # count: 5
     ignore_message_loss: True
 latency:
     # repeating latency rest run: duration of latency test period in seconds
     repeat_single_test_run_duration_sec: 53
     # total amount of indiviual test runs
-    # repeat_total_test_runs: 60
-    repeat_total_test_runs: 5
+    repeat_total_test_runs: 60
+    # repeat_total_test_runs: 5
 
 
 ###
