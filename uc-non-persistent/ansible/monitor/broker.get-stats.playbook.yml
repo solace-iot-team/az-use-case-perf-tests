@@ -44,6 +44,9 @@
         file: "../vars/bootstrap.vars.yml"
         name: bootstrap
     - include_vars:
+        file: "../vars/sdkperf.vars.yml"
+        name: sdkperf
+    - include_vars:
         file: "{{ BROKER_NODES_FILE }}"
         name: brokerNodes
     - include_vars:
