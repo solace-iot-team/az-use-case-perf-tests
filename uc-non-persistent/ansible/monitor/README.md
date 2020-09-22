@@ -20,6 +20,19 @@ vi ./vars/monitor.vars.yml
 # log files:
 ls *.log
 ````
+Results:
+- interim: run.latest
+- moved to run.{timestamp} after completion
+
+#### Run VPN Stats only
+````bash
+./run.monitor.vpn-stats.sh
+````
+
+#### Run Latency only
+````bash
+./run.monitor.latency.sh
+````
 
 ### Results
 
