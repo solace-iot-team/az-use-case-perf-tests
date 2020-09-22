@@ -9,7 +9,7 @@
     uri:
       # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/msgVpn/getMsgVpn
       # GET /SEMP/v2/monitor/msgVpns/{msgVpnName}?select=
-     url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}?select={{select_vpn_stats|trim|replace(' ','')}}"
+     url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}?select={{select_vpn_stats|trim|replace(' ','')}}"
      method: GET
      user: "{{ sempv2_username }}"
      password: "{{ sempv2_password }}"

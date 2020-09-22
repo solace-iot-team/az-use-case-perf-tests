@@ -43,6 +43,8 @@ rm -f $resultDir/ping-stats.*.log
 ##############################################################################################################################
 # Run SDKPerf Latency
 
+  # test solace cloud to compare
+  inventory="../inventory/solace-cloud-inventory.json"
   inventory="../inventory/inventory.json"
   playbook="./sdkperf.ping.playbook.yml"
   privateKeyFile="$projectHome/keys/azure_key"

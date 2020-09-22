@@ -43,6 +43,8 @@ rm -f $resultDir/vpn-stats.*.json
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap
 
+  # test solace cloud to compare
+  inventory="../inventory/solace-cloud-inventory.json"
   inventory="../inventory/inventory.json"
   playbook="./broker.get-stats.playbook.yml"
 
