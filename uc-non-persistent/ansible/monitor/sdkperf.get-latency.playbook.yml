@@ -17,11 +17,6 @@
         # run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
 
-    - name: "Ensure {{RESULT_DIR}} exists"
-      file:
-        path: "{{ result_dir }}"
-        state: directory
-
     - name: kicking of playbook
       debug:
         msg: "kicking of playbook"
