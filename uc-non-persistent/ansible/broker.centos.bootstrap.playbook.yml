@@ -24,6 +24,21 @@
         msg: "docker image file does not exist: {{ bootstrap.broker.docker_image.solace_image_file_src }}"
       when: result.stat.exists == False
 
+    - name: "Extract the manifest from docker tar"
+      local_action:
+        module: command
+        cmd: "tar -C ./docker-image --extract --file={{ bootstrap.broker.docker_image.solace_image_file_src }} manifest.json"
+    - set_fact:
+        manifest: "{{lookup('file', './docker-image/manifest.json')}}"
+        configured: "{{bootstrap.broker.docker_image.solace_image_name}}:{{bootstrap.broker.docker_image.solace_image_version}}"
+    - name: "Compare versions of docker image"
+      fail:
+        msg:
+          - "Different version of docker image and configuration. fix either one."
+          - "manifest.RepoTags[0]={{manifest[0].RepoTags[0]}}"
+          - "bootstrap.vars.yml={{configured}}"
+      when: manifest[0].RepoTags[0] != configured
+
     - name: "Centos Bootstrap: Setup Swap Tasks"
       include_tasks: ./tasks/centos.bootstrap.yml
 
