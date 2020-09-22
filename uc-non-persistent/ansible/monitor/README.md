@@ -15,10 +15,16 @@ vi ./vars/monitor.vars.yml
 ### Run
 
 ````bash
-./run.monitor.sh
-# starts vpn stats & latency scripts in the background
+# start it in the background
+./run.monitor.sh &
+  # starts vpn stats & latency scripts in the background
+
+# get the pids
+ps -ef | grep run.monitor
+
 # log files:
 ls *.log
+
 ````
 Results:
 - interim: run.latest
