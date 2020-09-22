@@ -9,8 +9,8 @@
       "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
     },
     "result": {
-      "success": "{{ success }}"
-      {% if success == False %}
+      "is_message_loss": "{{ is_message_loss }}"
+      {% if is_message_loss == True %}
         ,
         "error_msg": "{{ error_msg  }}"
       {% endif %}

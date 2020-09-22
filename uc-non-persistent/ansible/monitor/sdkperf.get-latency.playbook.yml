@@ -1,0 +1,31 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+- hosts: sdkperf_latency
+  vars_files:
+    - "../vars/bootstrap.vars.yml"
+    - "../vars/sdkperf.vars.yml"
+    - "./vars/monitor.vars.yml"
+
+  tasks:
+
+
+    - set_fact:
+        # run_timestamp: "{{now(True)}}"
+        result_dir: "{{ RESULT_DIR }}"
+
+    - name: kicking of playbook
+      debug:
+        msg: "kicking of playbook"
+
+    - name: Invoking repeating tasks
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
+      with_sequence: "end={{latency.repeat_total_test_runs}} start=0"
+
+
+###
+# The End.

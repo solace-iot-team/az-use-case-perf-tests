@@ -17,34 +17,35 @@
      status_code: "200"
      return_content: yes
     register: result
-    when: success == True
+    when: vpn_stats.ignore_message_loss == True or (vpn_stats.ignore_message_loss == False and is_message_loss == False)
 
   - name: "Write Stats to File"
     local_action:
       module: copy
       content: "{{ result.json.data | to_nice_json }}"
-      dest: "{{ result_dir }}/vpn-stats.{{now()}}.json"
-    when: success == True
+      dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
+    when: vpn_stats.ignore_message_loss == True or (vpn_stats.ignore_message_loss == False and is_message_loss == False)
 
   - name: "Check Discarded Received Msgs"
     set_fact:
-      success: False
+      is_message_loss: True
       error_msg: "discarded received message count: {{result.json.data.discardedRxMsgCount}}"
-    when: success == True and result.json.data.discardedRxMsgCount > 0
+    # when: success == True and result.json.data.discardedRxMsgCount > 0
+    when: result.json is defined and result.json.data.discardedRxMsgCount > 0
 
   - name: "Check Discarded Sent Msgs"
     set_fact:
-      success: False
+      is_message_loss: True
       error_msg: "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
-    when: success == True and result.json.data.discardedTxMsgCount > 0
+    when: result.json is defined and result.json.data.discardedTxMsgCount > 0
 
   - name: "Check Received Message Loss"
     debug:
       msg:
-        - "success={{success}}"
+        - "is_message_loss={{is_message_loss}}"
         - "discarded received message count: {{result.json.data.discardedRxMsgCount}}"
         - "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
-    when: success == False and result.json is defined
+    when: is_message_loss and result.json is defined
 
   # - name: "Faile when success = False"
   #   fail:
@@ -53,10 +54,11 @@
   #       - "discarded sent message count: {{result.json.data.discardedTxMsgCount}}"
   #   when: success == False
 
-  - name: "Pause for {{ pause_between_calls_secs }} seconds..."
+  - name: "Pause for {{ vpn_stats.pause_between_calls_secs }} seconds..."
     pause:
-      seconds: "{{ pause_between_calls_secs }}"
-    when: success == True
+      seconds: "{{ vpn_stats.pause_between_calls_secs }}"
+    when: vpn_stats.ignore_message_loss == True or (vpn_stats.ignore_message_loss == False and is_message_loss == False)
+
 
 ###
 # The End.

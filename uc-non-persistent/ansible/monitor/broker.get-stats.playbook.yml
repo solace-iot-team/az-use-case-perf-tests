@@ -7,6 +7,8 @@
 ---
 - hosts: broker_pubsub
   gather_facts: no
+  vars_files:
+    - "./vars/monitor.vars.yml"
   vars:
     select_vpn_stats: >-
       dataRxByteCount,
@@ -21,17 +23,17 @@
       averageTxMsgRate
     # rate
 
-    pause_between_calls_secs: 60
-    count: 60
-    # pause_between_calls_secs: 3
-    # count: 2
-    
     select_client_connection_stats: >-
       rxDiscardedMsgCount,
       rxMsgCount,
       rxMsgRate,
       rxByteRate,
       rxByteCount,
+      txDiscardedMsgCount,
+      txMsgCount,
+      txMsgRate,
+      txByteRate,
+      txByteCount,
       clientAddress,
       clientName,
       uptime
@@ -53,10 +55,8 @@
 
     - set_fact:
         run_timestamp: "{{now(True)}}"
-    - set_fact:
-        result_dir: "{{ RESULT_DIR }}/run.{{ run_timestamp }}"
-    - set_fact:
-        success: True
+        result_dir: "{{ RESULT_DIR }}"
+        is_message_loss: False
 
     - name: "Ensure {{RESULT_DIR}} exists"
       file:
@@ -107,7 +107,7 @@
 
     - name: "Get Stats Periodically: VPN Stats Tasks"
       include_tasks: ./tasks/vpn-stats.yml
-      with_sequence: "end={{ count }} start=0"
+      with_sequence: "end={{ vpn_stats.count }} start=0"
 
     - name: "Get Client Connections: End"
       uri:
