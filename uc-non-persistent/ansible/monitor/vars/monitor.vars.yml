@@ -10,6 +10,11 @@ vpn_stats:
     count: 60
     # pause_between_calls_secs: 2
     # count: 5
+    # 
+    # ignore_message_loss
+    #   False:
+    #     aborts collecting the stats as soon as it sees messages (sent/received) being discarded
+    #   True: continues collecting stats regardless
     ignore_message_loss: True
 latency:
     # repeating latency rest run: duration of latency test period in seconds
