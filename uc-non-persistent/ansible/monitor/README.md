@@ -16,6 +16,9 @@ vi ./vars/monitor.vars.yml
 
 ````bash
 ./run.monitor.sh
+# starts vpn stats & latency scripts in the background
+# log files:
+ls *.log
 ````
 
 ### Results
