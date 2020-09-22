@@ -1,8 +1,11 @@
 ---
 sdkperf:
+  #TODO REPLACE WITH ENV VARIABLE
+  latency_repeat_logs_download_folder: "./latency-stats.{{now()}}.txt"
   publisher_log_filename: "publisher"
   consumer_log_filename: "consumer"
   latency_log_filename: "latency"
+  latency_repeat_filename: "latency-repeat.log"
 
   datetimeprefix: "{{ ansible_date_time.date }}-{{ ansible_date_time.hour}}-{{ ansible_date_time.minute}}-{{ ansible_date_time.second}}"
   broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
@@ -45,3 +48,8 @@ sdkperf:
   latency_msg_rate_per_second: 10 # 0=max
   latency_msg_number: 3000
   latency_msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+
+  # repeating latency rest run: duration of latency test period in seconds 
+  latency_repeat_single_test_run_duration_sec: 45 
+  # total amount of indiviual test runs 
+  latency_repeat_total_test_runs: 60 
