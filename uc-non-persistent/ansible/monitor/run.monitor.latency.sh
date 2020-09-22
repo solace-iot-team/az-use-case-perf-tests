@@ -4,36 +4,24 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-############################################################################################################################
-# Functions
-function assertFile() {
-  local file=$1
-  if [[ ! -f "$file" ]]; then
-    echo ">>> ERR: file='$file' does not exist. aborting." > /dev/tty
-    echo > /dev/tty
-    return 1;
-  fi
-  echo $file
-  return 0
-}
-# End Functions
-
 clear
 echo;
 echo "##############################################################################################################"
-echo "# Retrieving VPN Stats ..."
+echo "# Running Monitor Latency ..."
 echo
 
   ############################################################################################################################
   # SELECT
 
     scriptDir=$(cd $(dirname "$0") && pwd);
+    source ./.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%%/ansible/*}
-    resultDir="$projectHome/test-results/stats"
+    resultDirBase="$projectHome/test-results/stats"
+    resultDir="$resultDirBase/run.latest"
 
-    brokerNodesFile=$(assertFile "$scriptDir/../../shared-setup/broker-nodes.json") || exit
-    sdkPerfNodesFile=$(assertFile "$scriptDir/../../shared-setup/sdkperf-nodes.json") || exit
+    brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
+    sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
 
     # logging & debug: ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
@@ -50,26 +38,26 @@ echo
 ##############################################################################################################################
 # Prepare
 
-rm -f ./*.log
+rm -f $resultDir/latency.*.txt
 
 ##############################################################################################################################
-# Run SDKPerf VM bootstrap
+# Run SDKPerf Latency
 
   inventory="../inventory/inventory.json"
-  playbook="./broker.get-stats.playbook.yml"
+  playbook="./sdkperf.get-latency.playbook.yml"
+  privateKeyFile="$projectHome/keys/azure_key"
 
   ansible-playbook \
-                    -i $inventory \
-                    $playbook \
-                    --extra-vars "RESULT_DIR=$resultDir" \
-                    --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                    --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
-                    # -vvv
+                  -i $inventory \
+                  --private-key $privateKeyFile \
+                  $playbook \
+                  --extra-vars "RESULT_DIR=$resultDir" \
+                  # -vvv
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving stats."; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
-  echo "# Stats in: $resultDir/run.{last time stamp}"
+  echo "# Results in: $resultDir"
   echo;echo;
 
 ###
