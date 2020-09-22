@@ -34,10 +34,8 @@
     dest: "{{ result_dir }}/latency-stats.{{now(True)}}.log"
     # dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
     flat: yes
-  vars:
-    testrun_logfile_name: "latency-run.log"
 
-- name: delete log file
+- name: delete ping log file
   become: true
   file:
     path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
