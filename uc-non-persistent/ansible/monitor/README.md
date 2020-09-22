@@ -51,6 +51,7 @@ Results:
 * Within each directory:
   - latency-stats.{timestamp}.log
   - vpn-stats.{timestamp}.log
+  - ping-stats.{timestamp}.log
   - run.meta.json
 
 ---
