@@ -19,42 +19,45 @@ clear
   # END SELECT
 
 ##############################################################################################################################
-# Start SDKPerf Consumers
-echo; 
-echo "######################################"
-echo "#                                    #"
-echo "#    Stopping SDKPerf Consumers      #"
-echo "#                                    #"
-echo "######################################"
+# Stop SDKPerf Publishers
+  echo;
+  echo "######################################"
+  echo "#                                    #"
+  echo "#    Stopping SDKPerf Publishers     #"
+  echo "#                                    #"
+  echo "######################################"
+    inventory="./inventory/inventory.json"
+    playbook="./sdkperf.publisher.stop.playbook.yml"
+    privateKeyFile="../keys/azure_key"
 
-  inventory="./inventory/inventory.json"
-  playbook="./sdkperf.consumer.stop.playbook.yml"
-  privateKeyFile="../keys/azure_key"
+    ansible-playbook \
+                      -i $inventory \
+                      --private-key $privateKeyFile \
+                      $playbook \
+                      # -vvv
 
-  ansible-playbook \
-                    -i $inventory \
-                    --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
+    if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-  
-# Start SDKPerf Publishers
-echo; 
-echo "######################################"
-echo "#                                    #"
-echo "#    Stopping SDKPerf Publishers     #"
-echo "#                                    #"
-echo "######################################"
-  inventory="./inventory/inventory.json"
-  playbook="./sdkperf.publisher.stop.playbook.yml"
-  privateKeyFile="../keys/azure_key"
+##############################################################################################################################
+# Stop SDKPerf Consumers
+  echo;
+  echo "######################################"
+  echo "#                                    #"
+  echo "#    Stopping SDKPerf Consumers      #"
+  echo "#                                    #"
+  echo "######################################"
 
-  ansible-playbook \
-                    -i $inventory \
-                    --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
+    inventory="./inventory/inventory.json"
+    playbook="./sdkperf.consumer.stop.playbook.yml"
+    privateKeyFile="../keys/azure_key"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+    ansible-playbook \
+                      -i $inventory \
+                      --private-key $privateKeyFile \
+                      $playbook \
+                      # -vvv
 
+    if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+
+###
+# The End.
