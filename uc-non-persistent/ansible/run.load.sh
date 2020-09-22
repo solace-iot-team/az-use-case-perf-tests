@@ -17,6 +17,11 @@ clear
 
     export ANSIBLE_HOST_KEY_CHECKING=False
 
+    # test solace cloud to compare
+    inventory="./inventory/solace-cloud-inventory.json"
+    inventory="./inventory/inventory.json"
+    privateKeyFile="../keys/azure_key"
+
   # END SELECT
 
 ##############################################################################################################################
@@ -28,10 +33,7 @@ echo "#    Starting SDKPerf Consumers      #"
 echo "#                                    #"
 echo "######################################"
 
-  inventory="./inventory/inventory.json"
   playbook="./sdkperf.consumer.start.playbook.yml"
-  privateKeyFile="../keys/azure_key"
-
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
@@ -47,10 +49,8 @@ echo "#                                    #"
 echo "#    Starting SDKPerf Publishers     #"
 echo "#                                    #"
 echo "######################################"
-  inventory="./inventory/inventory.json"
-  playbook="./sdkperf.publisher.start.playbook.yml"
-  privateKeyFile="../keys/azure_key"
 
+  playbook="./sdkperf.publisher.start.playbook.yml"
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
