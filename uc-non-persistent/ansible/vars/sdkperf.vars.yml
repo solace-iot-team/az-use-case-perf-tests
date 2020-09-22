@@ -4,6 +4,7 @@ sdkperf:
   consumer_log_filename: "consumer"
   latency_log_filename: "latency"
   latency_repeat_filename: "latency-repeat.log"
+  ping_log_filename: "ping.log"
 
   datetimeprefix: "{{ ansible_date_time.date }}-{{ ansible_date_time.hour}}-{{ ansible_date_time.minute}}-{{ ansible_date_time.second}}"
   broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
@@ -40,5 +41,4 @@ sdkperf:
   topics_consumer_group_1: "market/exch1/tickerA,market/exch1/tickerB"
   topics_consumer_group_2: "market/exch2/tickerC,market/exch2/tickerD"
 
-  #topics_consumer_group_1: "market"
-  #topics_consumer_group_2: "market"
+  
