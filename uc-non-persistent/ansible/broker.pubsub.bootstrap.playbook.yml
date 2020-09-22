@@ -45,6 +45,10 @@
 
   tasks:
 
+    - set_fact:
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http' }}"
+        is_solace_cloud: "{{ True if sempv2_is_secure_connection else False }}"
+
     - name: "Check Imports / Version / Interpreter"
       solace_get_available:
 
@@ -57,7 +61,7 @@
 
     - name: "Set Broker Max Spool Usage"
       uri:
-       url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP"
+       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP"
        method: POST
        user: "{{ sempv2_username}}"
        password: "{{ sempv2_password }}"
@@ -71,6 +75,7 @@
       register: result
       retries: 3
       delay: 1
+      when: is_solace_cloud == False
 
     - name: "Create the VPN"
       solace_vpn:
@@ -80,6 +85,7 @@
           authenticationBasicType: "none" # none, internal
           maxMsgSpoolUsage: "{{bootstrap.broker.pubsub.max_spool_usage}}"
         state: present
+      when: is_solace_cloud == False
 
     - name: "Create the Client Profile"
       solace_client_profile:
@@ -118,7 +124,7 @@
         msg:
           - "Log in to Broker Console:"
           - "   browser incognito window"
-          - "   http://{{sempv2_host}}:{{sempv2_port}}"
+          - "   {{admin_protocol}}://{{sempv2_host}}:{{sempv2_port}}"
           - "   user: {{ sempv2_username }}"
           - "   pass: {{ sempv2_password }}"
           - "   vpn: {{bootstrap.broker.pubsub.vpn_name}}"
