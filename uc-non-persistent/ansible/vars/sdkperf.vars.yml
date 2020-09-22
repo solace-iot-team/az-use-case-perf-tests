@@ -32,13 +32,11 @@ sdkperf:
   # 0=max
   # msg_rate_per_second: 200000
   # msg_rate_per_second: 160000
-  # msg_rate_per_second: 100000
-  msg_rate_per_second: 75000
+  msg_rate_per_second: 100000
+  # msg_rate_per_second: 75000
 
 
   #consumer configuration
   # topics_consumer_market: "market/>"
   topics_consumer_group_1: "market/exch1/tickerA,market/exch1/tickerB"
   topics_consumer_group_2: "market/exch2/tickerC,market/exch2/tickerD"
-
-  

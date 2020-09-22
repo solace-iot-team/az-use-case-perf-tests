@@ -109,7 +109,7 @@
 
     - name: "Get Stats Periodically: VPN Stats Tasks"
       include_tasks: ./tasks/vpn-stats.yml
-      with_sequence: "end={{ vpn_stats.count }} start=0"
+      with_sequence: "end={{ general.count }} start=0"
 
     - name: "Get Client Connections: End"
       uri:
