@@ -4,14 +4,21 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- hosts: sdkperf_publishers
+- hosts: sdkperf_latency
   vars_files: 
     - "./vars/bootstrap.vars.yml"
     - "./vars/sdkperf.vars.yml"
   
   tasks:
-    - name: remove all sdkperf tasks
-      become: true
-      command: pkill --signal 2 -f sdkperf
-      ignore_errors: true
+     
+    - name: kicking of playbook
+      debug:
+        msg: "kicking of playbook"
 
+    - name: Invoking repeating tasks
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
+      with_sequence: "end={{sdkperf.latency_repeat_total_test_runs}} start=0"
+     
+
+
+ 

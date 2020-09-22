@@ -2,3 +2,5 @@
 uc-non-persistent/ansible/sdk-perf-image/pubSubTools_CCSMP_Linux26-x86_64_opt_7.14.0.8.tar.gz
 
 uc-non-persistent/ansible/.python-version
+
+uc-non-persistent/terraform/tf_log.log
