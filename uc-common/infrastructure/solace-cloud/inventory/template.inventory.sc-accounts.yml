@@ -4,14 +4,12 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-
 ---
 all:
   hosts:
     solace-cloud-account:
       ansible_connection: local
       api_token: "{API Token of Solace Cloud Account}"
-
 
 ###
 # The End.

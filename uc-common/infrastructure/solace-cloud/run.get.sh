@@ -41,7 +41,7 @@ rm -f ./tmp/* > /dev/null 2>&1
 ##############################################################################################################################
 # Run
   # select inventory
-  inventory=$(assertFile "./tmp/generated/inventory.sc-service.az-use-case-perf-tests.json") || exit
+  inventory=$(assertFile "./tmp/generated/inventory.sc-service.az_use_case_perf_tests.json") || exit
   # select account(s) inside inventory
   accounts="all"
   playbook="./playbook.get.yml"

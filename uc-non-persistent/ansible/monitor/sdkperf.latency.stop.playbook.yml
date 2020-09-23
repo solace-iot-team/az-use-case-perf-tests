@@ -5,13 +5,8 @@
 
 ---
 - hosts: sdkperf_latency
-  vars_files: 
-    - "./vars/bootstrap.vars.yml"
-    - "./vars/sdkperf.vars.yml"
-  
   tasks:
     - name: remove all sdkperf tasks
       become: true
       command: pkill --signal 2 -f sdkperf
       ignore_errors: true
-
