@@ -1,0 +1,27 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+-
+  name: "Delete Solace Cloud Service"
+  hosts: "{{ SOLACE_CLOUD_ACCOUNTS }}"
+  gather_facts: no
+  any_errors_fatal: true
+
+  tasks:
+
+    - include_vars:
+        file: "./vars/vars.sc-service.yml"
+        name: sc_service
+
+    - name: "Delete Solace Cloud Service"
+      solace_cloud_service:
+        api_token: "{{ api_token }}"
+        name: "{{ sc_service.name }}"
+        state: absent
+      register: result
+
+###
+# The End.

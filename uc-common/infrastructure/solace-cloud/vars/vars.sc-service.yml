@@ -1,0 +1,48 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+# Combinations:
+#  serviceTypeId: developer=single, enterprise=HA
+#  serviceTypeId = developer -> serviceClassId = developer
+#  serviceTypeId = enterprise -> serviceClassId = enterprise-250-nano, enterprise-kilo, enterprise-mega, enterprise-giga, enterprise-tera, enterprise-100k-tera
+# datacenterIds:
+#  "azure-westeurope","aws-eu-west-2a"
+
+---
+  name: az-use-case-perf-tests
+  msgVpnName: az-use-case-perf-tests
+  datacenterId: azure-westeurope
+  serviceTypeId: enterprise
+  serviceClassId: enterprise-tera
+  attributes:
+    # TODO: set the max spool size?
+    # planAttributes:
+    #   # "Message Storage Encryption": "Yes",
+    #   # "Configuration Encryption": "Yes",
+    #   vpnMaxConnectionCount: 5000
+    #   vpnMaxMsgSpoolUsage: 1000
+    #   "vpnMaxEndpointCount": "50",
+    #   "vpnMaxEgressFlowCount": "50",
+    #   "vpnMaxSubscriptionCount": "500",
+    #   vpnMaxIngressFlowCount": "50"
+    customizedMessagingPorts:
+      serviceSmfPlainTextListenPort: 55555
+      serviceSmfCompressedListenPort: 55003
+      serviceSmfTlsListenPort: 55443
+      serviceAmqpPlainTextListenPort: 0
+      serviceAmqpTlsListenPort: 0
+      serviceMqttPlainTextListenPort: 0
+      serviceMqttTlsListenPort: 0
+      serviceMqttTlsWebSocketListenPort: 0
+      serviceMqttWebSocketListenPort: 0
+      serviceRestIncomingPlainTextListenPort: 0
+      serviceRestIncomingTlsListenPort: 0
+      serviceWebPlainTextListenPort: 0
+      serviceWebTlsListenPort: 0
+
+
+###
+# The End.
