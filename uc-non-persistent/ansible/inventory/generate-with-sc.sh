@@ -48,7 +48,8 @@ echo "# "
       fi
     done
   fi
-  if [[ "$choice" -eq 1 ]]; then chosenBroker="standalone-broker"; fi
+  # default
+  chosenBroker="standalone-broker"
   if [[ "$choice" -eq 2 ]]; then chosenBroker="solace-cloud-broker"; fi
 
   if [[ "$chosenBroker" == "solace-cloud-broker" ]]; then
@@ -66,7 +67,6 @@ echo "# "
   brokerNodesJson=$( cat $brokerNodesFile | jq -r . )
   sdkPerfNodesJson=$( cat $sdkPerfNodesFile | jq -r . )
   inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . )
-
 
   # broker node info
     export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")
