@@ -8,7 +8,7 @@ Manage Solace Cloud service for use cases.
 cd inventory
 cp template.inventory.sc-accounts.yml inventory.sc-accounts.yml
 vi inventory.sc-accounts.yml
-  # adjust to your solace cloud account
+  # enter values / adjust to your solace cloud account
 cd ..
 ````
 
