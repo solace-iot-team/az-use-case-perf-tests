@@ -16,9 +16,6 @@ clear
 
     export ANSIBLE_HOST_KEY_CHECKING=False
 
-
-    # test solace cloud to compare
-    inventory="./inventory/solace-cloud-inventory.json"
     inventory="./inventory/inventory.json"
     privateKeyFile="../keys/azure_key"
 
