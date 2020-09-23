@@ -40,7 +40,7 @@
     # dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
     flat: yes
 
-- name: delete ping log file
+- name: delete latency log file
   become: true
   file:
     path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"

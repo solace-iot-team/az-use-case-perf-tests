@@ -96,7 +96,7 @@ Configure the VMs with their respective software.
 ./run.bootstrap.sh
 ````
 
-#### Login to the Broker Console
+#### Login to the Standalone Broker Console
 
 Get the public ip address of the broker node:
 ````bash
@@ -111,6 +111,12 @@ http://{broker-node-public-ip-address}:8080
 user: admin
 pass: admin
 ```
+
+#### Login to the Solace Cloud Broker Console
+
+Use your standard login credentails.
+
+Service: **az_use_case_perf_tests**
 
 ## Run Load
 
