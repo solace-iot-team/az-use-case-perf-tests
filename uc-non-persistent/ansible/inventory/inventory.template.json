@@ -16,7 +16,7 @@
       },
       "broker_pubsub": {
         "ansible_connection": "local",
-        "sempv2_host": "51.124.15.53",
+        "sempv2_host": "{public-ip-address}",
         "sempv2_port": 8080,
         "sempv2_is_secure_connection": false,
         "sempv2_username": "admin",

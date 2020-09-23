@@ -51,6 +51,15 @@ rm -f ./tmp/* > /dev/null 2>&1
   if [[ $? != 0 ]]; then echo ">>> ERROR ..."; echo; exit 1; fi
 
 
+  echo ">>> deleted files:"
+  for destDir in ${generatedDestDirs[@]}; do
+    [ ! -d $destDir ] && (echo ">>> ERROR: directory $destDir DOES NOT exists."; exit)
+    echo rm -f $destDir/inventory.sc-service.*.json
+    rm -f $destDir/inventory.sc-service.*.json
+    echo rm -f $destDir/*.client_connection_details.json
+    rm -f $destDir/*.client_connection_details.json
+  done
+  echo
 
 ###
 # The End.
