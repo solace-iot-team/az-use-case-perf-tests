@@ -4,6 +4,7 @@
   ${jsonencode(
     [
       for node in nodes: {
+        "type": "vm_node",
         "name": "${node.name}",
         "size": "${node.size}",
         "public_ip": "${node.public_ip_address}",

@@ -14,7 +14,17 @@
       "msg_rate_per_second": "{{sdkperf.msg_rate_per_second}}"
     },
     "nodes": {
+      {% if solace_cloud_service_id is defined %}
+      "broker_nodes": [
+        {
+          "type": "solace_cloud",
+          "solace_cloud_service_id": "{{ solace_cloud_service_id }}",
+          "meta": {{ meta | to_nice_json }}
+        }
+      ],
+      {% else %}
       "broker_nodes": {{ brokerNodes.broker_nodes | to_nice_json }},
+      {% endif %}
       "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
     },
     "result": {

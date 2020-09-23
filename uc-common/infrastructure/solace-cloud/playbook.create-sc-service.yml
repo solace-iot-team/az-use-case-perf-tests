@@ -64,6 +64,12 @@
         get_formattedHostInventory:
           host_entry: "{{ sc_service.name }}"
           api_token: "{{ api_token }}"
+          # TODO: enhance module
+          # meta:
+          #   service_name: "{{ sc_service.name }}"
+          #   datacenterId: "{{ sc_service.datacenterId }}"
+          #   serviceTypeId: "{{ sc_service.serviceTypeId}}"
+          #   serviceClassId: "{{ sc_service.serviceClassId }}"
       register: results
 
     - name: "Save Solace Cloud Service Inventory to File"

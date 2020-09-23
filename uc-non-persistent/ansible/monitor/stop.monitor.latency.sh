@@ -7,21 +7,15 @@
 clear
 echo;
 echo "##############################################################################################################"
-echo "# Running Monitor Latency ..."
+echo "# Stopping Monitor Latency ..."
 echo
 
-  ############################################################################################################################
-  # SELECT
+############################################################################################################################
+# Prepare
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source ./.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%%/ansible/*}
-    resultDirBase="$projectHome/test-results/stats"
-    resultDir="$resultDirBase/run.latest"
-
-    brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
-    sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
 
     # logging & debug: ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
@@ -30,21 +24,12 @@ echo
     # export ANSIBLE_SOLACE_LOG_PATH="./ansible-solace.log"
     # export ANSIBLE_SOLACE_ENABLE_LOGGING=True
     #
-    # export ANSIBLE_HOST_KEY_CHECKING=False
+    export ANSIBLE_HOST_KEY_CHECKING=False
 
-
-  # END SELECT
-
-##############################################################################################################################
-# Prepare
-
-rm -f $resultDir/latency-stats.*.log
 
 ##############################################################################################################################
 # Run SDKPerf Latency
 
-  # test solace cloud to compare
-  inventory="../inventory/solace-cloud-inventory.json"
   inventory="../inventory/inventory.json"
   playbook="./sdkperf.latency.stop.playbook.yml"
   privateKeyFile="$projectHome/keys/azure_key"
@@ -52,15 +37,10 @@ rm -f $resultDir/latency-stats.*.log
   ansible-playbook \
                   -i $inventory \
                   --private-key $privateKeyFile \
-                  $playbook \
-                  --extra-vars "RESULT_DIR=$resultDir" \
-                  # -vvv
+                  $playbook
 
   if [[ $? != 0 ]]; then echo ">>> ERROR stopping latency jobs: $scriptName"; echo; exit 1; fi
 
-  echo "##############################################################################################################"
-  echo "# Results in: $resultDir"
-  echo;echo;
 
 ###
 # The End.

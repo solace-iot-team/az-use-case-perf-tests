@@ -53,7 +53,7 @@ echo "# "
 
   if [[ "$chosenBroker" == "solace-cloud-broker" ]]; then
     solaceCloudInventoryFile=$(assertFile "$sharedSetupDir/inventory.sc-service.az_use_case_perf_tests.json") || exit
-    solaceCloudClientConnectionDetailsFile=$(assertFile "$sharedSetupDir/az-use-case-perf-tests.client_connection_details.json") || exit
+    solaceCloudClientConnectionDetailsFile=$(assertFile "$sharedSetupDir/az_use_case_perf_tests.client_connection_details.json") || exit
   fi
 
 ############################################################################################################################
@@ -86,6 +86,7 @@ echo "# "
       export serviceId=$( echo $solaceCloudInventoryJson | jq -r ".all.hosts.az_use_case_perf_tests.solace_cloud_service_id")
       export sempv2AdminUser=$( echo $solaceCloudInventoryJson | jq -r ".all.hosts.az_use_case_perf_tests.sempv2_username")
       export sempv2AdminPwd=$( echo $solaceCloudInventoryJson | jq -r ".all.hosts.az_use_case_perf_tests.sempv2_password")
+      export meta=$( echo $solaceCloudInventoryJson | jq ".all.hosts.az_use_case_perf_tests.meta")
 
       inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.broker_pubsub.public_ip_address=env.sempv2Host' )
       inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.broker_pubsub.private_ip_address=env.sempv2Host' )
@@ -97,6 +98,7 @@ echo "# "
       inventoryJson=$( echo $inventoryJson | jq -r '.all.hosts.broker_pubsub.sempv2_password=env.sempv2AdminPwd' )
       inventoryJson=$( echo $inventoryJson | jq -r '.all.hosts.broker_pubsub.solace_cloud_api_token=env.apiToken' )
       inventoryJson=$( echo $inventoryJson | jq -r '.all.hosts.broker_pubsub.solace_cloud_service_id=env.serviceId' )
+      inventoryJson=$( echo $inventoryJson | jq '.all.hosts.broker_pubsub.meta += (env.meta | fromjson )' )
 
     fi
 
