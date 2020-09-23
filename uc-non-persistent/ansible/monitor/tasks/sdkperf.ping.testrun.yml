@@ -15,7 +15,7 @@
     dest: "{{ result_dir }}/ping-stats.{{now(True)}}.log"
     flat: yes
 
-- name: delete log file
+- name: delete ping log file
   become: true
   file:
     path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"

@@ -7,20 +7,8 @@
 clear
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 scriptDir=$(cd $(dirname "$0") && pwd);
+source ./.lib/functions.sh
 
-############################################################################################################################
-# Functions
-function assertFile() {
-  local file=$1
-  if [[ ! -f "$file" ]]; then
-    echo ">>> ERR: file='$file' does not exist. aborting." > /dev/tty
-    echo > /dev/tty
-    return 1;
-  fi
-  echo $file
-  return 0
-}
-# End Functions
 ############################################################################################################################
 echo
 echo "##############################################################################################################"

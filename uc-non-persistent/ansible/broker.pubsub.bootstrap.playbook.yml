@@ -30,6 +30,8 @@
       username: "{{ sempv2_username }}"
       password: "{{ sempv2_password }}"
       timeout: "{{ sempv2_timeout }}"
+      solace_cloud_api_token: "{{ solace_cloud_api_token | default(omit) }}"
+      solace_cloud_service_id: "{{ solace_cloud_service_id | default(omit) }}"
     solace_client_username:
       host: "{{ sempv2_host }}"
       port: "{{ sempv2_port }}"
@@ -119,14 +121,16 @@
           enabled: true
         state: present
 
-    - name: "Display Broker Console URL"
+    - name: "Display Standalone Broker Console URL"
       debug:
         msg:
-          - "Log in to Broker Console:"
+          - "Log in to Standalone Broker Console:"
           - "   browser incognito window"
           - "   {{admin_protocol}}://{{sempv2_host}}:{{sempv2_port}}"
           - "   user: {{ sempv2_username }}"
           - "   pass: {{ sempv2_password }}"
           - "   vpn: {{bootstrap.broker.pubsub.vpn_name}}"
+      when: is_solace_cloud == False
+
 ###
 # The End.

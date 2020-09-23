@@ -28,7 +28,8 @@ rm -f ./*.log
 ##############################################################################################################################
 # Generate inventories
 
-  ./inventory/generate.sh
+  # ./inventory/generate.sh
+  ./inventory/generate-with-sc.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR generate inventories. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################

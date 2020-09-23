@@ -12,17 +12,29 @@
     - "./vars/monitor.vars.yml"
 
   tasks:
+
+    - include_vars:
+        file: "../inventory/inventory.json"
+        name: inventory
+
     - set_fact:
-        # run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
+        is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
 
     - name: kicking of playbook
       debug:
         msg: "kicking of playbook"
+      when: is_solace_cloud == False
 
     - name: Invoking repeating tasks
       include_tasks: ./tasks/sdkperf.ping.testrun.yml
       with_sequence: "end={{general.count}} start=0"
+      when: is_solace_cloud == False
+
+    - name: "Warning: Solace Cloud"
+      debug:
+        msg: "cannot ping a Solace Cloud Broker, aborting ..."
+      when: is_solace_cloud == True
 
 
 ###

@@ -12,8 +12,8 @@
 #  "azure-westeurope","aws-eu-west-2a"
 
 ---
-  name: az-use-case-perf-tests
-  msgVpnName: az-use-case-perf-tests
+  name: az_use_case_perf_tests
+  msgVpnName: sdkperf
   datacenterId: azure-westeurope
   serviceTypeId: enterprise
   serviceClassId: enterprise-tera
