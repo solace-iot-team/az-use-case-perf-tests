@@ -27,6 +27,7 @@ variable "tag_owner" {
 # the VM size for the solace broker node
 variable "solace_broker_node_vm_size" {
   default = "{vm-size}"
+  # default = "Standard_F32s_v2"     # (32 Cores, 64GB RAM, 64000 max IOPS)
   # default = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 max IOPS)
   # default = "Standard_D8s_v3"      # (8 Cores, 32GB RAM, 12800 max IOPS)
 }
