@@ -6,3 +6,5 @@ uc-non-persistent/ansible/.python-version
 uc-non-persistent/terraform/tf_log.log
 
 .DS_Store
+
+uc-non-persistent/ansible/monitor/tasks/sdkperf.latency.testrun.yml

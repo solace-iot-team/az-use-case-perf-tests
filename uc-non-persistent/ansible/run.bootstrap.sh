@@ -75,6 +75,35 @@ rm -f ./*.log
 
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
+##############################################################################################################################
+# Connect Consumer to Broker initially 
+
+  inventory="./inventory/inventory.json"
+  playbook="./sdkperf.consumer.init.playbook.yml"
+  privateKeyFile="../keys/azure_key"
+
+  ansible-playbook \
+                    -i $inventory \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    # -vvv
+
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+
+##############################################################################################################################
+# Connect Publisher once to Broker initially
+
+  inventory="./inventory/inventory.json"
+  playbook="./sdkperf.publisher.init.playbook.yml"
+  privateKeyFile="../keys/azure_key"
+
+  ansible-playbook \
+                    -i $inventory \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    # -vvv
+
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi  
 
 ###
 # The End.
