@@ -135,13 +135,12 @@ msg_rate_per_second: 200000
 # msg_rate_per_second: 100000
 ````
 
-
-### Run
+### Start Load
 ````bash
-./run.load.sh
+./start.load.sh
 ````
 
-### Stop
+### Stop Load
 ````bash
 ./stop.load.sh
 ````
