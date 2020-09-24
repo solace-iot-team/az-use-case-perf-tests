@@ -12,7 +12,8 @@
         "ansible_host": "{public-ip-address}",
         "ansible_user": "{admin-user-name}",
         "ansible_become": true,
-        "ansible_python_interpreter": "/usr/bin/python"
+        "ansible_python_interpreter": "/usr/bin/python",
+        "boxname":"broker-1"
       },
       "broker_pubsub": {
         "ansible_connection": "local",

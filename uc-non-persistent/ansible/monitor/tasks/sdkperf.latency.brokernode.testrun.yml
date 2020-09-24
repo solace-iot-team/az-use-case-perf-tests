@@ -1,0 +1,47 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: remove all sdkperf tasks
+  become: true
+  command: pkill --signal 2 -f sdkperf
+  ignore_errors: true
+
+- pause:
+    seconds: 3
+    prompt: "Waiting 3 seconds ...."
+
+# -lg=15
+- name: run sdkperf latency test
+  shell: nohup taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-1 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/latency-debug-0.log -cip="localhost":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -ptl="internal/latency/test" -stl="internal/latency/test" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=15 -l </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}} 2>&1 &
+
+# -lg=12 ==> not enough latency buckets
+# - name: run sdkperf latency test
+#   shell: nohup taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -ptl="{{ latency.topics }}" -stl="{{ latency.topics }}" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=12 -l </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}} 2>&1 &
+
+- name: waiting for sdkperf to collect latency stats
+  pause:
+    seconds: "{{latency.pause_between_calls_secs}}"
+
+- name: remove sdkperf tasks
+  become: true
+  # killing sdkperf with signal 2 triggers flusing stats to logfile before dying
+  command: pkill --signal 2 -f sdkperf
+  ignore_errors: true
+
+- name: download latency log file
+  become: true
+  fetch:
+    src: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
+    # dest: "{{sdkperf.latency_repeat_logs_download_folder}}"
+    dest: "{{ result_dir }}/latency-brokernode-stats.{{now(True)}}.log"
+    # dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
+    flat: yes
+
+- name: delete latency log file
+  become: true
+  file:
+    path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
+    state: absent
