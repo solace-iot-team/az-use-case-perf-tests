@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency
+- hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
   vars_files: 
     - "./vars/bootstrap.vars.yml"
 
