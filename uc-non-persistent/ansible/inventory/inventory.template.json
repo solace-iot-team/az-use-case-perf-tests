@@ -31,7 +31,8 @@
       "sdkperf_publisher_vm_0": {
         "ansible_host": "{public-ip-address}",
         "ansible_user": "{admin-user-name}",
-        "ansible_python_interpreter": "/usr/bin/python"
+        "ansible_python_interpreter": "/usr/bin/python",
+        "boxname":"publisher-1"
       }
     }
   },
@@ -40,12 +41,14 @@
       "sdkperf_consumer_vm_1": {
         "ansible_host": "{public-ip-address}",
         "ansible_user": "{admin-user-name}",
-        "ansible_python_interpreter": "/usr/bin/python"
+        "ansible_python_interpreter": "/usr/bin/python",
+        "boxname":"consumer-1"
       },
       "sdkperf_consumer_vm_2": {
         "ansible_host": "{public-ip-address}",
         "ansible_user": "{admin-user-name}",
-        "ansible_python_interpreter": "/usr/bin/python"
+        "ansible_python_interpreter": "/usr/bin/python",
+        "boxname":"consumer-2"
       }
     }
   },
@@ -54,7 +57,8 @@
       "sdkperf_latency_vm_3": {
         "ansible_host": "{public-ip-address}",
         "ansible_user": "{admin-user-name}",
-        "ansible_python_interpreter": "/usr/bin/python"
+        "ansible_python_interpreter": "/usr/bin/python",
+        "boxname":"latency-1"
       }
     }
   }

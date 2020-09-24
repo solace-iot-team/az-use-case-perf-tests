@@ -19,17 +19,30 @@
         seconds: 3
         prompt: "Waiting 3 seconds ...."
 
+     
     - name: run sdkperf consuming 1 - topics_consumer_group_1
-      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_1 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-0.log 2>&1 &
+      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-1 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-debug-0.log -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_1 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-0.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
 
     - name: run sdkperf consuming 2 - topics_consumer_group_1
-      shell: nohup taskset -c 1 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_1 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-1.log 2>&1 &
+      shell: nohup taskset -c 1 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-2 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-debug-1.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_1 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-1.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
 
     - name: run sdkperf consuming 3 - topics_consumer_group_2
-      shell: nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-2.log 2>&1 &
+      shell: nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-3 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-debug-2.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-2.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
 
     - name: run sdkperf consuming 4 - topics_consumer_group_2
-      shell: nohup taskset -c 3 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-3.log 2>&1 &
+      shell: nohup taskset -c 3 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-4 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-debug-3.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.datetimeprefix}}-{{sdkperf.consumer_log_filename}}-3.log 2>&1 &
 
     - pause:
         seconds: 10
