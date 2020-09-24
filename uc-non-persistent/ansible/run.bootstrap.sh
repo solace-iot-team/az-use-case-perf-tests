@@ -9,14 +9,14 @@ echo
 
   ############################################################################################################################
   # SELECT
-    # logging & debug: ansible
+    # ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
     export ANSIBLE_DEBUG=False
+    # export ANSIBLE_VERBOSITY=3
+    export ANSIBLE_HOST_KEY_CHECKING=False
     # logging: ansible-solace
     export ANSIBLE_SOLACE_LOG_PATH="./ansible-solace.log"
     export ANSIBLE_SOLACE_ENABLE_LOGGING=True
-
-    export ANSIBLE_HOST_KEY_CHECKING=False
 
   # END SELECT
 
