@@ -55,8 +55,6 @@ sdkperf_nodes:
   sdkperf_user: centos
   sdkperf_root: "/opt/sdkperf"
   sdkperf_log_root: "/opt/sdkperf/logs"
-
-
   sdkperf_image_src_dir: "./sdk-perf-image/sdkperf-c-x64"
 
 
