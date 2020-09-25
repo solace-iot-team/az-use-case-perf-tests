@@ -1,0 +1,15 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- hosts: broker_centos
+  tasks:
+    - name: "Remove Broker Node SDKPerf Processes"
+      become: true
+      command: pkill --signal 2 -f sdkperf
+      ignore_errors: true
+
+###
+# The End.
