@@ -16,7 +16,8 @@ sdkperf:
   client_consumer_password: "solace123"
 
   #Parameters to control connect and reconnect behaviour of the clients
-  epl: "SOLCLIENT_SESSION_PROP_CONNECT_TIMEOUT_MS,500, SOLCLIENT_SESSION_PROP_CONNECT_RETRIES,-1, SOLCLIENT_SESSION_PROP_RECONNECT_RETRIES,-1, SOLCLIENT_SESSION_PROP_RECONNECT_RETRY_WAIT_MS,200, SOLCLIENT_SESSION_PROP_CONNECT_RETRIES_PER_HOST,1"
+  # ACHTUNG: epl MUST NOT have space in it
+  epl: "SOLCLIENT_SESSION_PROP_CONNECT_TIMEOUT_MS,500,SOLCLIENT_SESSION_PROP_CONNECT_RETRIES,-1,SOLCLIENT_SESSION_PROP_RECONNECT_RETRIES,-1,SOLCLIENT_SESSION_PROP_RECONNECT_RETRY_WAIT_MS,200,SOLCLIENT_SESSION_PROP_CONNECT_RETRIES_PER_HOST,1"
   # Retry Count.  Number of times API will try to re-establish a failed connection. (Default 3)
   rc:  100
   ack_window: 255 #ack window size, only for durable (ignored for direct)

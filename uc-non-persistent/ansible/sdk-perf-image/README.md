@@ -1,10 +1,21 @@
 # SDK Perf Image
 
-Copy or create a link to the SDK Perf image directory.
+By default, it uses this modified [SDK Perf](./sdkperf-c-x64).
 
-Version: C for Linux {version} x64
+In order to use a different one, change the link `sdkperf-c-x64` and create a script
+in the directory that calls it.
 
-name: `sdkperf-c-x64`
+Example:
+````bash
+#!/bin/bash
+
+basedir=`dirname $0`
+
+cd $basedir
+
+./sdkperf_c $*
+
+````
 
 ---
 The End.
