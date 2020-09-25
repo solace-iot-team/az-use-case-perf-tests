@@ -23,6 +23,9 @@ echo
 ##############################################################################################################################
 # Prepare
 
+inventory="./inventory/inventory.json"
+privateKeyFile="../keys/azure_key"
+
 rm -f ./*.log
 
 ##############################################################################################################################
@@ -35,75 +38,61 @@ rm -f ./*.log
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap
 
-  inventory="./inventory/inventory.json"
   playbook="./sdkperf.centos.bootstrap.playbook.yml"
-  privateKeyFile="../keys/azure_key"
-
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
-
+                    $playbook
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
 # Run Broker VM bootstrap
 
-  inventory="./inventory/inventory.json"
   playbook="./broker.centos.bootstrap.playbook.yml"
-  privateKeyFile="../keys/azure_key"
-
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
-
+                    $playbook
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
 # Run Broker PubSub bootstrap
 
-  inventory="./inventory/inventory.json"
   playbook="./broker.pubsub.bootstrap.playbook.yml"
-
   ansible-playbook \
                     -i $inventory \
-                    $playbook \
-                    # -vvv
-
+                    $playbook
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
-# Connect Consumer to Broker initially 
+# Connect Consumer to Broker initially
 
-  inventory="./inventory/inventory.json"
   playbook="./sdkperf.consumer.init.playbook.yml"
-  privateKeyFile="../keys/azure_key"
-
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
-
+                    $playbook
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
 # Connect Publisher once to Broker initially
 
-  inventory="./inventory/inventory.json"
   playbook="./sdkperf.publisher.init.playbook.yml"
-  privateKeyFile="../keys/azure_key"
-
   ansible-playbook \
                     -i $inventory \
                     --private-key $privateKeyFile \
-                    $playbook \
-                    # -vvv
+                    $playbook
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi  
+##############################################################################################################################
+# Connect Latency once to Broker initially
+
+  playbook="./sdkperf.latency.init.playbook.yml"
+  ansible-playbook \
+                    -i $inventory \
+                    --private-key $privateKeyFile \
+                    $playbook
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ###
 # The End.
