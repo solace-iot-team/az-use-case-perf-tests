@@ -4,10 +4,14 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- hosts: sdkperf_latency
+- name: "Initializing Latency SDKPerf ..."
+  hosts:
+    - sdkperf_latency
+    - broker_centos
   vars_files:
     - "./vars/bootstrap.vars.yml"
     - "./vars/sdkperf.vars.yml"
+    - "./monitor/vars/monitor.vars.yml"
 
   tasks:
     - name: remove all sdkperf tasks
@@ -18,7 +22,7 @@
     - pause:
         seconds: 3
         prompt: "Waiting 3 seconds ...."
-   
+
     - name: run sdkperf latency test
       shell: nohup taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -cn={{hostvars[inventory_hostname].boxname}}-1 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/bootstrap-debug-0.log -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -ptl="{{ latency.topics }}" -stl="{{ latency.topics }}" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=15 -l </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/bootstrap-latency-1.log 2>&1 &
 
@@ -31,7 +35,7 @@
 
     - pause:
         seconds: 10
-        prompt: "Waiting 10 seconds before stopping consumer"
+        prompt: "Waiting 10 seconds before stopping sdkperf"
 
     - name: remove all sdkperf tasks
       become: true
