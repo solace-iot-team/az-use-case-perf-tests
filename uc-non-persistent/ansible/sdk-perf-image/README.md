@@ -17,5 +17,7 @@ cd $basedir
 
 ````
 
+The test framework will call: `sdkperf-c-x64/sdkperf_c.sh`.
+
 ---
 The End.
