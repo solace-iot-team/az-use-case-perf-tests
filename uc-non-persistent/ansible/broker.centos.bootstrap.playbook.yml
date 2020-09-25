@@ -81,5 +81,11 @@
     - name: "Start Solace Broker Docker Container"
       command: /usr/local/bin/docker-compose -f {{ bootstrap.broker.docker_image.docker_compose_file_dest }} up -d
 
+    - name: "Save docker-compose template locally"
+      local_action:
+        module: template
+        src: "{{ bootstrap.broker.docker_image.docker_compose_file_src }}"
+        dest: "{{ bootstrap.broker.docker_image.docker_compose_file_dest_local }}"
+
 ###
 # The End.

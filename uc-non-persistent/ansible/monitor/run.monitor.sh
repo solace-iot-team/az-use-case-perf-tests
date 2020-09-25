@@ -59,6 +59,12 @@ done
 echo
 
 ##############################################################################################################################
+# Post Processing of Results
+
+# copy docker compose deployed template to result dir
+cp $projectHome/ansible/docker-image/*.deployed.yml $resultDir
+
+##############################################################################################################################
 # Move ResultDir to Timestamp
 finalResultDir="$resultDirBase/run.$timestamp"
 mv $resultDir $finalResultDir
