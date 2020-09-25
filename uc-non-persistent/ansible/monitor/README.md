@@ -44,6 +44,21 @@ Results:
 ./run.monitor.ping.sh
 ````
 
+### Run Broker Node Latency
+Running SDKPerf on the same VM as the Broker Docker container is running.
+Eliminates any network.
+
+Run with/without load and latency monitor.
+
+````bash
+./run.monitor.brokernode.latency.sh
+````
+
+To stop it again:
+````bash
+./stop.monitor.brokernode.latency.sh
+````
+
 ### Results
 
 * Directory: **{root}/test-results/stats**
