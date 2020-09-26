@@ -46,7 +46,7 @@ echo "# Waiting for Processes to finish ..."
 echo
 echo ">>> Processes:"
 for p in $pids; do
-  ps -ef $p
+  ps $p
 done
 echo;echo;
 for p in $pids; do
