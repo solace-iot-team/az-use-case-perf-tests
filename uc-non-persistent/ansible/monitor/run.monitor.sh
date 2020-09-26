@@ -11,7 +11,7 @@ clear
 
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%%/ansible/*}
+projectHome=${scriptDir%/ansible/*}
 resultDirBase="$projectHome/test-results/stats"
 resultDir="$resultDirBase/run.latest"
 
@@ -46,7 +46,7 @@ echo "# Waiting for Processes to finish ..."
 echo
 echo ">>> Processes:"
 for p in $pids; do
-  ps -ef $p
+  ps $p
 done
 echo;echo;
 for p in $pids; do
@@ -57,6 +57,12 @@ for p in $pids; do
   fi
 done
 echo
+
+##############################################################################################################################
+# Post Processing of Results
+
+# copy docker compose deployed template to result dir
+cp $projectHome/ansible/docker-image/*.deployed.yml $resultDir
 
 ##############################################################################################################################
 # Move ResultDir to Timestamp

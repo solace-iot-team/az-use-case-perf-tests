@@ -21,14 +21,14 @@
         prompt: "Waiting 3 seconds ...."
       
     - name: run sdkperf publishing job 1
-      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/bootstrap-debug-0.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/bootstrap-{{sdkperf.publisher_log_filename}}-1.log 2>&1 &
+      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/bootstrap-debug-0.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/bootstrap-{{sdkperf.publisher_log_filename}}-1.log 2>&1 &
 
     - pause:
         seconds: 5
         prompt: "Waiting 5 seconds "
 
     - name: run sdkperf publishing job 2
-      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/bootstrap-debug-1.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/bootstrap-{{sdkperf.publisher_log_filename}}-2.log 2>&1 &
+      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/bootstrap-debug-1.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/bootstrap-{{sdkperf.publisher_log_filename}}-2.log 2>&1 &
 
     - pause:
         seconds: 10

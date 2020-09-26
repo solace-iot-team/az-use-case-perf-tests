@@ -43,6 +43,7 @@ broker:
     file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
     file_mode: "0666"
     system_scaling_maxconnectioncount: 1000
+    docker_compose_file_dest_local: "./docker-image/PubSub.docker-compose.deployed.yml"
   pubsub:
     max_spool_usage: 100000
     vpn_name: "sdkperf"
@@ -54,8 +55,6 @@ sdkperf_nodes:
   sdkperf_user: centos
   sdkperf_root: "/opt/sdkperf"
   sdkperf_log_root: "/opt/sdkperf/logs"
-
-
   sdkperf_image_src_dir: "./sdk-perf-image/sdkperf-c-x64"
 
 

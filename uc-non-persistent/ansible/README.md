@@ -34,15 +34,10 @@ cd {root}/uc-non-persistent/ansible
   ````
 
 #### Solace SDKPerf executables
-- download: https://products.solace.com/download/SDKPERF_C_LINUX64
-- unzip the tar.gz
-````bash
-cp {path}/pubSubTools ./sdk-perf-image/sdkperf-c-x64
-# or create a link
-cd sdk-perf-image
-ln -s {path}/pubSubTools sdkperf-c-x64
-cd ..
-````
+
+The project includes an SDKPerf distribution.
+
+[See here for more information](./sdk-perf-image).
 
 #### Ansible
 
