@@ -15,7 +15,7 @@ echo
 
     scriptDir=$(cd $(dirname "$0") && pwd);
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-    projectHome=${scriptDir%%/ansible/*}
+    projectHome=${scriptDir%/ansible/*}
 
     # logging & debug: ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
