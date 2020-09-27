@@ -54,7 +54,7 @@ rm -f $resultDir/ping-stats.*.log
                   --extra-vars "RESULT_DIR=$resultDir" \
                   # -vvv
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving ping stats: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"
