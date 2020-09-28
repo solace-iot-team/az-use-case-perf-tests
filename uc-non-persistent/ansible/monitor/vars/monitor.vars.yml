@@ -28,7 +28,7 @@ latency:
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
 ping:
     # aiming for 1 measurement per minute
-    msg_number: 56
+    msg_number: 50
     # msg_number: 2 # devel setting
 
 ###
