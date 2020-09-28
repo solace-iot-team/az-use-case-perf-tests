@@ -52,7 +52,7 @@ rm -f $resultDir/latency-stats.*.log
                   --private-key $privateKeyFile \
                   $playbook \
                   --extra-vars "RESULT_DIR=$resultDir" \
-                  # -vvv
+                  -vvv
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
 

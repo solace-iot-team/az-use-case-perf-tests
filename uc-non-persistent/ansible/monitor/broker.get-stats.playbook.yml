@@ -60,6 +60,12 @@
         is_message_loss: False
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
 
+    - name: "Ensure ./tmp/vpn-stats exists"
+      local_action:
+        module: file
+        path: "./tmp/vpn-stats"
+        state: directory
+
     - name: "Ensure {{RESULT_DIR}} exists"
       file:
         path: "{{ result_dir }}"

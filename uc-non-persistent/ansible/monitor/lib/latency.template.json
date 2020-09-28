@@ -1,0 +1,9 @@
+{
+  "timestamp": "{timestamp}",
+  "meta": {
+    "description": "Latency from latency node to broker node",
+    "sdkperf_command": "{sdkperf_command}",
+    "log_file": []
+  },
+  "metrics": {}
+}
