@@ -10,6 +10,10 @@
   register: ping_result
   ignore_errors: true
 
+- name: "Wait for PING to collect results"
+  pause:
+    seconds: "{{ping.pause_between_calls_secs}}"
+
 - name: "Download PING log file to local tmp"
   become: true
   fetch:
