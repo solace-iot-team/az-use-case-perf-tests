@@ -20,7 +20,7 @@ vpn_stats:
     ignore_message_loss: True
 latency:
     # aiming for 1 measurement per minute
-    pause_between_calls_secs: 52
+    pause_between_calls_secs: 53
     # latency producer and consumer settings
     topics: "private/direct/latency"
     msg_rate_per_second: 1000 # 0=max
