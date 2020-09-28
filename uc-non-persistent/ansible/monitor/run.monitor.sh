@@ -8,12 +8,13 @@ clear
 
 ##############################################################################################################################
 # Prepare
-
+source ./.lib/functions.sh
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
 resultDirBase="$projectHome/test-results/stats"
 resultDir="$resultDirBase/run.latest"
+monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit
 
 rm -f ./*.log
 rm -f $resultDir/*
@@ -21,6 +22,15 @@ export TZ=UTC0
 timestamp=$(date +%Y-%m-%d-%H-%M-%S)
 pids=""
 
+echo;
+echo "##############################################################################################################"
+echo "# Starting Monitors"
+echo
+count=$(cat $monitorVarsFile | yq '.general.count')
+echo ">>> running approx. $count minutes"
+echo "    (change 'general.count' in '$monitorVarsFile')"
+echo
+x=$(wait4Key)
 
 echo;
 echo "##############################################################################################################"
