@@ -24,7 +24,7 @@ latency:
     # latency producer and consumer settings
     topics: "private/direct/latency"
     msg_rate_per_second: 1000 # 0=max
-    msg_number: 30000000
+    msg_number: 60000
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
 ping:
     # aiming for 1 measurement per minute
