@@ -7,10 +7,8 @@
 
 - name: "Ping broker node..."
   shell: "ping -c {{ping.msg_number}} -q {{broker_pubsub.private_ip_address}} > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
-
-# download to local tmp
-# post process
-# upload to result_dir
+  register: ping_result
+  ignore_errors: true
 
 - name: "Download PING log file to local tmp"
   become: true
@@ -23,7 +21,7 @@
 - name: "Post-process ping log file"
   local_action:
     module: shell
-    cmd: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json"
+    cmd: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json '{{now(True)}}'"
   register: result
   failed_when: result.stderr != ''
 

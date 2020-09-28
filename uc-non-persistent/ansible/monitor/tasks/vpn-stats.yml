@@ -19,12 +19,32 @@
     register: result
     when: vpn_stats.ignore_message_loss == True or (vpn_stats.ignore_message_loss == False and is_message_loss == False)
 
-  - name: "Write Stats to File"
+  - name: "Write Stats to local tmp"
     local_action:
       module: copy
       content: "{{ result.json.data | to_nice_json }}"
+      dest: "./tmp/vpn-stats/vpn-stats.current.json"
+    register: copy_result
+
+  - name: "Post-process vpn-stats file"
+    local_action:
+      module: shell
+      cmd: "./lib/post-process.vpn-stats.sh {{copy_result.dest}} './lib/vpn-stats.template.json' '{{now(True)}}'"
+    register: pp_result
+    failed_when: pp_result.stderr != '' or pp_result.rc > 0
+
+  # DEBUG
+  - name: "Display for faster debugging"
+    debug:
+      msg:
+        - "vpn-stats json file:"
+        - "{{pp_result.stdout}}"
+
+  - name: "Copy VPN stats Json to {{ result_dir }}"
+    local_action:
+      module: copy
+      content: "{{pp_result.stdout | from_json | to_nice_json }}"
       dest: "{{ result_dir }}/vpn-stats.{{now(True)}}.json"
-    when: vpn_stats.ignore_message_loss == True or (vpn_stats.ignore_message_loss == False and is_message_loss == False)
 
   - name: "Check Discarded Received Msgs"
     set_fact:

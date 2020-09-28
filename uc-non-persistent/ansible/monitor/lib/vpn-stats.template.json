@@ -1,0 +1,7 @@
+{
+  "timestamp": "{timestamp}",
+  "meta": {
+    "description": "Broker VPN stats"
+  },
+  "metrics": {}
+}

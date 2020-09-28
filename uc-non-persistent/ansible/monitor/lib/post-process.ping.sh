@@ -5,24 +5,22 @@
 # ---------------------------------------------------------------------------------------------
 
 # usage:
-# cat ping.log | prost-process.ping.sh ping-template.json
+# cat ping.log | prost-process.ping.sh ping-template.json {timestamp-string}
 # stdout: the json
 # stderr: any errors
 
 if [ ! -p /dev/stdin ]; then echo "no ping log input received" >>/dev/stderr; exit 1; fi
 if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; exit 1; fi
+if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
 
-export TZ=UTC0
-export timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+export timestamp=$2
+
 pingJson=$(cat $1 | jq -r .)
 pingJson=$( echo $pingJson | jq -r '.timestamp=env.timestamp' )
 
 # If we want to read the input line by line
 lineCount=0
 while IFS= read line; do
-  # https://tldp.org/LDP/abs/html/string-manipulation.html
-  # https://stackoverflow.com/questions/9597751/using-match-to-find-substrings-in-strings-with-only-bash
-  # echo `expr match "$stringZ" '\(.[b-c]*[A-Z]..[0-9]\)'`
   export lineCount
   export line
   pingJson=$( echo $pingJson | jq -r '.meta.log_file[env.lineCount|tonumber]=env.line' )

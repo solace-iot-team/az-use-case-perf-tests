@@ -4,8 +4,8 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-
-- hosts: sdkperf_latency
+- name: "SDKPerf Latency to broker node"
+  hosts: sdkperf_latency
   vars_files:
     - "../vars/bootstrap.vars.yml"
     - "../vars/sdkperf.vars.yml"
@@ -16,6 +16,18 @@
     - set_fact:
         # run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
+
+    - name: "Ensure ./tmp/latency exists"
+      local_action:
+        module: file
+        path: "./tmp/latency"
+        state: directory
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
 
     - name: kicking of playbook
       debug:

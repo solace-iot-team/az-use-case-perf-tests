@@ -53,7 +53,7 @@ rm -f $resultDir/vpn-stats.*.json
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
                   --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
-                  # -vvv
+                  -vvv
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving VPN stats: $scriptName"; echo; exit 1; fi
 

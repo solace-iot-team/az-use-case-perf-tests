@@ -4,5 +4,22 @@
     "description": "Ping from latency node to broker node",
     "log_file": []
   },
-  "metrics": {}
+  "metrics": {
+    "rtt_avg": {
+        "unit": "{unit}",
+        "value": 0
+    },
+    "rtt_max": {
+        "unit": "{unit}",
+        "value": 0
+    },
+    "rtt_mdev": {
+        "unit": "{unit}",
+        "value": 0
+    },
+    "rtt_min": {
+        "unit": "{unit}",
+        "value": 0
+    }
+  }
 }
