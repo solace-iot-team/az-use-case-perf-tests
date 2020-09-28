@@ -57,6 +57,7 @@ export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
 #### Misc Tools
 - bash
 - [jq](https://stedolan.github.io/jq/download/)
+- [yq](https://github.com/mikefarah/yq): `pip3 install yq`
 
 ## Configure
 
