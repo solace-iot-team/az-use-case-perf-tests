@@ -1,0 +1,8 @@
+{
+  "timestamp": "{timestamp}",
+  "meta": {
+    "description": "Ping from latency node to broker node",
+    "log_file": []
+  },
+  "metrics": {}
+}
