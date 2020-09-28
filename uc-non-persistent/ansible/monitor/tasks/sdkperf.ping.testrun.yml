@@ -5,18 +5,49 @@
 
 ---
 
-- name: "Ping broker node ..."
+- name: "Ping broker node..."
   shell: "ping -c {{ping.msg_number}} -q {{broker_pubsub.private_ip_address}} > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
 
-- name: download ping log file
+# download to local tmp
+# post process
+# upload to result_dir
+
+- name: "Download PING log file to local tmp"
   become: true
   fetch:
     src: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
-    dest: "{{ result_dir }}/ping-stats.{{now(True)}}.log"
+    dest: "./tmp/ping/ping-stats.current.log"
     flat: yes
+  register: result
 
-- name: delete ping log file
+- name: "Post-process ping log file"
+  local_action:
+    module: shell
+    cmd: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json"
+  register: result
+  failed_when: result.stderr != ''
+
+# DEBUG
+- name: "Display for faster debugging"
+  debug:
+    msg:
+      - "ping json file:"
+      - "{{result.stdout}}"
+
+# DEBUG
+# - meta: end_play
+
+- name: "Copy Ping Json to {{ result_dir }}"
+  local_action:
+    module: copy
+    content: "{{result.stdout | from_json | to_nice_json }}"
+    dest: "{{ result_dir }}/ping-stats.{{now(True)}}.json"
+
+- name: "Delete ping log file on server"
   become: true
   file:
     path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
     state: absent
+
+###
+# The End.
