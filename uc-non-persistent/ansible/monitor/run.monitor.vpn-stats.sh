@@ -18,7 +18,7 @@ echo
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
-    resultDir="$resultDirBase/run.latest"
+    resultDir="$resultDirBase/run.current"
 
     brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
     sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
@@ -52,8 +52,7 @@ rm -f $resultDir/vpn-stats.*.json
                   $playbook \
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
-                  -vvv
+                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving VPN stats: $scriptName"; echo; exit 1; fi
 

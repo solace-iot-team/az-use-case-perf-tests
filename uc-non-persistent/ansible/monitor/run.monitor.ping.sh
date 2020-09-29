@@ -18,7 +18,7 @@ echo
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
-    resultDir="$resultDirBase/run.latest"
+    resultDir="$resultDirBase/run.current"
 
     brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
     sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
@@ -51,8 +51,7 @@ rm -f $resultDir/ping-stats.*.log
                   -i $inventory \
                   --private-key $privateKeyFile \
                   $playbook \
-                  --extra-vars "RESULT_DIR=$resultDir" \
-                  -vvv
+                  --extra-vars "RESULT_DIR=$resultDir"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving ping stats: $scriptName"; echo; exit 1; fi
 
