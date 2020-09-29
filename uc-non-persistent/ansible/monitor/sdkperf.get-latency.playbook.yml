@@ -14,8 +14,8 @@
   tasks:
 
     - set_fact:
-        # run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
 
     - name: "Ensure ./tmp/latency exists"
       local_action:

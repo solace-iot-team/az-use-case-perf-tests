@@ -19,6 +19,7 @@
 
     - set_fact:
         result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
         is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
 
     - name: "Ensure ./tmp/ping exists"

@@ -1,5 +1,6 @@
 {
   "timestamp": "{timestamp}",
+  "run_id": "{run_id}",
   "meta": {
     "description": "Broker VPN stats"
   },
