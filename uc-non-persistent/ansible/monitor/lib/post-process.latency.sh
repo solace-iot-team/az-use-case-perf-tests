@@ -13,11 +13,14 @@ if [ ! -p /dev/stdin ]; then echo "no latency log input received" >>/dev/stderr;
 if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; exit 1; fi
 if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
 if [ -z "$3" ]; then echo "no sdkperf_command received" >>/dev/stderr; exit 1; fi
+if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
+
 export timestamp=$2
 export sdkperf_command=$3
 
 latencyJson=$(cat $1 | jq -r .)
 latencyJson=$( echo $latencyJson | jq -r '.timestamp=env.timestamp' )
+latencyJson=$( echo $latencyJson | jq -r '.run_id=env.RUN_ID')
 latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf_command=env.sdkperf_command' )
 
 # read input line by line

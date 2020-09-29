@@ -12,12 +12,13 @@
 if [ ! -p /dev/stdin ]; then echo "no ping log input received" >>/dev/stderr; exit 1; fi
 if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; exit 1; fi
 if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
+if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
 
 export timestamp=$2
 
 pingJson=$(cat $1 | jq -r .)
 pingJson=$( echo $pingJson | jq -r '.timestamp=env.timestamp' )
-
+pingJson=$( echo $pingJson | jq -r '.run_id=env.RUN_ID')
 # If we want to read the input line by line
 lineCount=0
 while IFS= read line; do

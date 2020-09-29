@@ -27,9 +27,10 @@
     register: copy_result
 
   - name: "Post-process vpn-stats file"
-    local_action:
-      module: shell
-      cmd: "./lib/post-process.vpn-stats.sh {{copy_result.dest}} './lib/vpn-stats.template.json' '{{now(True)}}'"
+    shell: "./lib/post-process.vpn-stats.sh {{copy_result.dest}} './lib/vpn-stats.template.json' '{{now(True)}}'"
+    environment:
+      RUN_ID: "{{run_id}}"
+    delegate_to: localhost
     register: pp_result
     failed_when: pp_result.stderr != '' or pp_result.rc > 0
 

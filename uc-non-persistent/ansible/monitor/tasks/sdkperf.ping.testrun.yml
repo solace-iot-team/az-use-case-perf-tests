@@ -23,18 +23,19 @@
   register: result
 
 - name: "Post-process ping log file"
-  local_action:
-    module: shell
-    cmd: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json '{{now(True)}}'"
-  register: result
-  failed_when: result.stderr != ''
+  shell: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json '{{now(True)}}'"
+  environment:
+    RUN_ID: "{{run_id}}"
+  delegate_to: localhost
+  register: pp_result
+  failed_when: pp_result.stderr != '' or pp_result.rc > 0
 
 # DEBUG
 - name: "Display for faster debugging"
   debug:
     msg:
       - "ping json file:"
-      - "{{result.stdout}}"
+      - "{{pp_result.stdout}}"
 
 # DEBUG
 # - meta: end_play
@@ -42,7 +43,7 @@
 - name: "Copy Ping Json to {{ result_dir }}"
   local_action:
     module: copy
-    content: "{{result.stdout | from_json | to_nice_json }}"
+    content: "{{pp_result.stdout | from_json | to_nice_json }}"
     dest: "{{ result_dir }}/ping-stats.{{now(True)}}.json"
 
 - name: "Delete ping log file on server"

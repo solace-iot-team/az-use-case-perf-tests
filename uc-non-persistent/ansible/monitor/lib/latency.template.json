@@ -1,5 +1,6 @@
 {
   "timestamp": "{timestamp}",
+  "run_id": "{run_id}",
   "meta": {
     "description": "Latency from latency node to broker node",
     "sdkperf_command": "{sdkperf_command}",

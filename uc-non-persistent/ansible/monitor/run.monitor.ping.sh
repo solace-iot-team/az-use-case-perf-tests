@@ -32,6 +32,10 @@ echo
     #
     # export ANSIBLE_HOST_KEY_CHECKING=False
 
+    if [ -z "$runId" ]; then
+      export TZ=UTC0
+      export runId=$(date +%Y-%m-%d-%H-%M-%S)
+    fi
 
   # END SELECT
 
@@ -51,7 +55,8 @@ rm -f $resultDir/ping-stats.*.log
                   -i $inventory \
                   --private-key $privateKeyFile \
                   $playbook \
-                  --extra-vars "RESULT_DIR=$resultDir"
+                  --extra-vars "RESULT_DIR=$resultDir" \
+                  --extra-vars "RUN_ID=$runId"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving ping stats: $scriptName"; echo; exit 1; fi
 

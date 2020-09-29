@@ -49,23 +49,24 @@
   register: result
 
 - name: "Post-process latency log file"
-  local_action:
-    module: shell
-    cmd: "cat {{ result.dest }} | ./lib/post-process.latency.sh ./lib/latency.template.json '{{now(True)}}' '{{sdkperf_command}}'"
-  register: result
-  failed_when: result.stderr != '' or result.rc > 0
+  shell: "cat {{ result.dest }} | ./lib/post-process.latency.sh ./lib/latency.template.json '{{now(True)}}' '{{sdkperf_command}}'"
+  environment:
+    RUN_ID: "{{run_id}}"
+  delegate_to: localhost
+  register: pp_result
+  failed_when: pp_result.stderr != '' or pp_result.rc > 0
 
 # DEBUG
 - name: "Display for faster debugging"
   debug:
     msg:
       - "latency json file:"
-      - "{{result.stdout}}"
+      - "{{pp_result.stdout}}"
 
 - name: "Copy Latency Json to {{ result_dir }}"
   local_action:
     module: copy
-    content: "{{result.stdout | from_json | to_nice_json }}"
+    content: "{{pp_result.stdout | from_json | to_nice_json }}"
     dest: "{{ result_dir }}/latency-stats.{{now(True)}}.json"
 
 - name: delete latency log file
