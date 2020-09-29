@@ -7,19 +7,19 @@
   "metrics": {
     "rtt_avg": {
         "unit": "{unit}",
-        "value": 0
+        "value": -1
     },
     "rtt_max": {
         "unit": "{unit}",
-        "value": 0
+        "value": -1
     },
     "rtt_mdev": {
         "unit": "{unit}",
-        "value": 0
+        "value": -1
     },
     "rtt_min": {
         "unit": "{unit}",
-        "value": 0
+        "value": -1
     }
   }
 }
