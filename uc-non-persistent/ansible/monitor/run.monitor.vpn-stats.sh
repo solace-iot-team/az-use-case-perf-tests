@@ -23,6 +23,11 @@ echo
     brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
     sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
 
+    if [ -z "$runId" ]; then
+      export TZ=UTC0
+      export runId=$(date +%Y-%m-%d-%H-%M-%S)
+    fi
+
     # logging & debug: ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
     export ANSIBLE_DEBUG=False
@@ -52,7 +57,8 @@ rm -f $resultDir/vpn-stats.*.json
                   $playbook \
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile"
+                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
+                  --extra-vars "RUN_ID=$runId"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving VPN stats: $scriptName"; echo; exit 1; fi
 

@@ -4,6 +4,9 @@
   "meta": {
     "testStartTimestamp": "{{ run_timestamp }}",
     "testEndTimestamp": "{{ now(True) }}",
+    "run_id": "{{ run_id }}",
+    "use_case": "{{use_case}}",
+    "cloud_provider": "{{cloud_provider}}",
     "load_setup": {
       "topics_publisher": "{{sdkperf.topics_publisher}}",
       "topics_consumer_group_1": "{{sdkperf.topics_consumer_group_1}}",

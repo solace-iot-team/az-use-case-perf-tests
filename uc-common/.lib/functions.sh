@@ -20,7 +20,11 @@ function assertFile() {
   return 0
 }
 
-
+function wait4Key() {
+  read -n 1 -p "press space to continue, CTRL-C to exit ..." x
+  echo "$x" > /dev/tty
+  return 0
+}
 
 ###
 # The End.
