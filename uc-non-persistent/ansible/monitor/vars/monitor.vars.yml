@@ -8,7 +8,8 @@
 general:
     # number of tests to run for all tests
     count: 60 # should run roughly 1 hour
-    # count: 20 # devel setting
+    # count: 1 # devel setting
+    use_case: uc_non_persistent
 vpn_stats:
     # aiming for 1 measurement per minute
     pause_between_calls_secs: 57
