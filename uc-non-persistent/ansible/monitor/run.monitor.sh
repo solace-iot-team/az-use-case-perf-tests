@@ -18,7 +18,7 @@ resultDirLatest="$resultDirBase/run.latest"
 monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit
 
 export TZ=UTC0
-timestamp=$(date +%Y-%m-%d-%H-%M-%S)
+export runId=$(date +%Y-%m-%d-%H-%M-%S)
 pids=""
 
 echo;
@@ -26,7 +26,7 @@ echo "##########################################################################
 echo "# Starting Monitors"
 echo
 countStr=$(cat $monitorVarsFile | yq '.general.count')
-count=$((countStr + 1))
+count=$((countStr + 2))
 echo ">>> running approx. $count minutes"
 echo "    (change 'general.count' in '$monitorVarsFile')"
 echo
@@ -79,7 +79,7 @@ cp $projectHome/ansible/docker-image/*.deployed.yml $resultDir
 
 ##############################################################################################################################
 # Move ResultDir to Timestamp
-finalResultDir="$resultDirBase/run.$timestamp"
+finalResultDir="$resultDirBase/run.$runId"
 mv $resultDir $finalResultDir
 if [[ $? != 0 ]]; then echo ">>> ERROR moving resultDir=$resultDir."; echo; exit 1; fi
 cd $resultDirBase

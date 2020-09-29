@@ -1,0 +1,10 @@
+{
+  "vars": {},
+  "state": {
+    "storage": {
+      "connectionString": "{connection-string}",
+      "sasToken": "{sas-token}",
+      "microsoftBlobEndpoint": "{endpoint}"
+    }
+  }
+}

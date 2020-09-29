@@ -57,6 +57,9 @@
     - set_fact:
         run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        use_case: "{{general.use_case}}"
+        cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
         is_message_loss: False
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
 
