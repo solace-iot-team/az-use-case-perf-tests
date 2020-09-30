@@ -4,8 +4,8 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-
-- hosts: sdkperf_latency
+- name: "PING broker node"
+  hosts: sdkperf_latency
   vars_files:
     - "../vars/bootstrap.vars.yml"
     - "../vars/sdkperf.vars.yml"
@@ -19,7 +19,20 @@
 
     - set_fact:
         result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
         is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
+
+    - name: "Ensure ./tmp/ping exists"
+      local_action:
+        module: file
+        path: "./tmp/ping"
+        state: directory
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
 
     - name: kicking of playbook
       debug:
