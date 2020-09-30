@@ -42,14 +42,16 @@ Follow the instructions at the end of the upload script.
 
 #### Ping
 ````bash
-let min_t = toscalar(ping | summarize min(timestamp));
+// let min_t = toscalar(ping | summarize min(timestamp));
+let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
 let max_t = toscalar(ping | summarize max(timestamp));
 ping
 | make-series
     rtt_min=avg(metrics_rtt_min_value),
     rtt_avg=avg(metrics_rtt_avg_value),
     rtt_max=avg(metrics_rtt_max_value)
-    on timestamp in range (min_t, max_t, 2m) by run_id
+    on timestamp in range (min_t, max_t, 2m)
+    // by run_id
 | render timechart
 ````
 
@@ -57,7 +59,8 @@ ping
 
 
 ````bash
-let min_t = toscalar(latency | summarize min(timestamp));
+// let min_t = toscalar(latency | summarize min(timestamp));
+let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
 let max_t = toscalar(latency | summarize max(timestamp));
 latency
 | make-series
@@ -66,19 +69,22 @@ latency
      rtt_95=avg(metrics_latency_latency_stats_95th_percentile_latency_usec) default=0,
      rtt_99=avg(metrics_latency_latency_stats_99th_percentile_latency_usec) default=0,
      rtt_99_9=avg(metrics_latency_latency_stats_99_9th_percentile_latency_usec) default=0
-     on timestamp in range (min_t, max_t, 2m) by run_id
+     on timestamp in range (min_t, max_t, 2m)
+     // by run_id
 | render timechart
 ````
 
 #### VPN
 ````bash
-let min_t = toscalar(vpn | summarize min(timestamp));
+// let min_t = toscalar(vpn | summarize min(timestamp));
+let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
 let max_t = toscalar(vpn | summarize max(timestamp));
 vpn
 | make-series
      avg_rx_msg_rate_per_sec=avg(metrics_averageRxMsgRate) default=0,
      avg_tx_msg_rate_per_sec=avg(metrics_averageTxMsgRate) default=0
-     on timestamp in range (min_t, max_t, 2m) by run_id
+     on timestamp in range (min_t, max_t, 2m)
+     by run_id
 | render timechart
 ````
 ---
