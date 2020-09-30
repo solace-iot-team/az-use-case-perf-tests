@@ -84,7 +84,7 @@ fi
 # Post Processing of Results
 
 # copy docker compose deployed template to result dir
-cp $projectHome/ansible/docker-image/*.deployed.yml $resultDir
+cp $projectHome/ansible/docker-image/*.deployed.yml "$resultDir/PubSub.docker-compose.$runId.yml"
 
 ##############################################################################################################################
 # Move ResultDir to Timestamp
