@@ -40,18 +40,21 @@ echo "##########################################################################
 echo "# Start VPN Stats Monitor ..."
 echo
   ./run.monitor.vpn-stats.sh 2>&1 > ./run.monitor.vpn-stats.log &
+  vpn_stats_pid=" $!"
   pids+=" $!"
 
 echo "##############################################################################################################"
 echo "# Start Latency Stats Monitor ..."
 echo
   ./run.monitor.latency.sh 2>&1 > ./run.monitor.latency.log &
+  latency_pid=" $!"
   pids+=" $!"
 
 echo "##############################################################################################################"
 echo "# Start Ping Latency Stats Monitor ..."
 echo
   ./run.monitor.ping.sh 2>&1 > ./run.monitor.ping.log &
+  ping_pid=" $!"
   pids+=" $!"
 
 echo "##############################################################################################################"
@@ -62,11 +65,12 @@ for p in $pids; do
   ps $p
 done
 echo;echo;
-for p in $pids; do
-  if wait $p; then
-          echo; echo ">>> SUCCESS: Process $p"
+
+for pid in $pids; do
+  if wait $pid; then
+    echo; echo ">>> SUCCESS: Process $p"
   else
-          echo; echo ">>> FAILED: Process $p"
+    echo; echo ">>> FAILED: Process $p"
   fi
 done
 echo
