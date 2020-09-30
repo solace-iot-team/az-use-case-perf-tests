@@ -32,7 +32,7 @@ testCloudProvider=$(echo $metaJson | jq -r '.meta.cloud_provider')
 testUseCase=$(echo $metaJson | jq -r '.meta.use_case')
 testRunId=$(echo $metaJson | jq -r '.meta.run_id')
 # path vars
-prefixPath="$testCloudProvider/$testUseCase/$testRunId"
+prefixPath="$testCloudProvider/$testUseCase"
 statsPaths=(
   "ping"
   "latency"
