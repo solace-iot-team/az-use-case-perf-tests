@@ -6,8 +6,8 @@
 
 ##############################################################################################################################
 # Prepare
-source ./.lib/functions.sh
 scriptDir=$(cd $(dirname "$0") && pwd);
+source $scriptDir/.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
 resultDirBase="$projectHome/test-results/stats"
@@ -19,6 +19,9 @@ export TZ=UTC0
 export runId=$(date +%Y-%m-%d-%H-%M-%S)
 pids=""
 
+auto=$1
+
+
 echo;
 echo "##############################################################################################################"
 echo "# Starting Monitors"
@@ -28,7 +31,7 @@ count=$((countStr + 2))
 echo ">>> running approx. $count minutes"
 echo "    (change 'general.count' in '$monitorVarsFile')"
 echo
-x=$(wait4Key)
+if [ -z "$auto" ]; then x=$(wait4Key); fi
 
 rm -f ./*.log
 rm -f $resultDir/*
