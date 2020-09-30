@@ -43,9 +43,7 @@ while IFS= read line; do
   ((lineCount++))
 done
 
-# test that it is correct JSON
-export statsJson=$(echo $statsString | jq -r)
-  if [ -z "$statsJson" ]; then echo "jq parse error of stats=$statsString" >>/dev/stderr; exit 1; fi
+export statsJson=$(echo $statsString | jq -r .)
 latencyJson=$( echo $latencyJson | jq -r '.metrics=(env.statsJson | fromjson)')
 
 echo $latencyJson
