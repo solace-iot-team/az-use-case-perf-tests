@@ -1,5 +1,19 @@
 # Azure Data Explorer
 
+> :warning: **experimental**
+#### TODOs
+
+- setup Event Hubs for continuous ingestion
+  - probably need to get rid of run-id in blob path
+- create ARM template to replace az calls
+  - also: kusto calls deprecated
+- ping results:
+  - omit data point entirely, don't use "-1"
+- create a single graph with
+  - latency + ping together
+- annotate the graphs with title, axis, etc.
+
+
 ## Setup
 
 ````bash
@@ -31,28 +45,24 @@ Follow the instructions at the end of the upload script.
 let min_t = toscalar(ping | summarize min(timestamp));
 let max_t = toscalar(ping | summarize max(timestamp));
 ping
-| make-series rtt_min=sum(metrics_rtt_min_value) default=0, rtt_avg=sum(metrics_rtt_avg_value) default=0, rtt_max=sum(metrics_rtt_max_value) on timestamp in range (min_t, max_t, 1m)
+| make-series rtt_min=sum(metrics_rtt_min_value) default=0, rtt_avg=sum(metrics_rtt_avg_value) default=0, rtt_max=sum(metrics_rtt_max_value) on timestamp in range (min_t, max_t, 2m)
 | render timechart
 ````
 
 #### Latency
 
-how to select the run_id once it is in there?
-
-where run_id=="xxx"
-try this one: on timestamp in range (min_t, max_t, 1m) by run_id
 
 ````bash
 let min_t = toscalar(latency | summarize min(timestamp));
 let max_t = toscalar(latency | summarize max(timestamp));
 latency
 | make-series
-     rtt_avg=sum(metrics_latency_latency_stats_95th_percentile_latency_usec) default=0,
+     rtt_avg=sum(metrics_latency_latency_stats_average_latency_for_subs_usec) default=0,
      rtt_50=sum(metrics_latency_latency_stats_50th_percentile_latency_usec) default=0,
      rtt_95=sum(metrics_latency_latency_stats_95th_percentile_latency_usec) default=0,
-     rtt_99=sum(metrics_latency_latency_stats_95th_percentile_latency_usec) default=0,
+     rtt_99=sum(metrics_latency_latency_stats_99th_percentile_latency_usec) default=0,
      rtt_99_9=sum(metrics_latency_latency_stats_99_9th_percentile_latency_usec) default=0
-     on timestamp in range (min_t, max_t, 1m)
+     on timestamp in range (min_t, max_t, 2m)
 | render timechart
 ````
 
@@ -64,7 +74,7 @@ vpn
 | make-series
      avg_rx_msg_rate_per_sec=sum(metrics_averageRxMsgRate) default=0,
      avg_tx_msg_rate_per_sec=sum(metrics_averageTxMsgRate) default=0
-     on timestamp in range (min_t, max_t, 1m)
+     on timestamp in range (min_t, max_t, 2m)
 | render timechart
 ````
 ---
