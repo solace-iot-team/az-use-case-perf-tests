@@ -4,7 +4,6 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor Ping ..."
@@ -14,7 +13,7 @@ echo
   # SELECT
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source ./.lib/functions.sh
+    source $scriptDir/.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
@@ -47,8 +46,8 @@ rm -f $resultDir/ping-stats.*.log
 ##############################################################################################################################
 # Run SDKPerf Latency
 
-  inventory="../inventory/inventory.json"
-  playbook="./sdkperf.ping.playbook.yml"
+  inventory="$scriptDir/../inventory/inventory.json"
+  playbook="$scriptDir/sdkperf.ping.playbook.yml"
   privateKeyFile="$projectHome/keys/azure_key"
 
   ansible-playbook \

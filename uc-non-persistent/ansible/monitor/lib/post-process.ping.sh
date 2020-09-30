@@ -16,7 +16,7 @@ if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 
 
 export timestamp=$2
 
-pingJson=$(cat $1 | jq -r .)
+pingJson=$(cat $1 | jq -r .) || exit
 pingJson=$( echo $pingJson | jq -r '.timestamp=env.timestamp' )
 pingJson=$( echo $pingJson | jq -r '.run_id=env.RUN_ID')
 # If we want to read the input line by line

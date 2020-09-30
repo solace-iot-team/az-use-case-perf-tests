@@ -14,7 +14,7 @@ echo
   # SELECT
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source ./.lib/functions.sh
+    source $scriptDir/.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
@@ -47,8 +47,8 @@ rm -f $resultDir/latency-brokernode-stats.*.log
 ##############################################################################################################################
 # Run SDKPerf Latency
 
-  inventory="../inventory/inventory.json"
-  playbook="./sdkperf.get-latency.brokernode.playbook.yml"
+  inventory="$scriptDir/../inventory/inventory.json"
+  playbook="$scriptDir/sdkperf.get-latency.brokernode.playbook.yml"
   privateKeyFile="$projectHome/keys/azure_key"
 
   ansible-playbook \

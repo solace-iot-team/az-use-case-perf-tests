@@ -18,7 +18,7 @@ echo "# Script: $scriptName"
 echo
 ##############################################################################################################################
 # Create vars
-varsJson=$(cat $varsFile | jq -r . )
+varsJson=$(cat $varsFile | jq -r . ) || exit
 prefix=$(echo $varsJson | jq -r '.prefix')
 resourceGroupName=$prefix$(echo $varsJson | jq -r '.resourceGroupName')
 
@@ -36,16 +36,10 @@ fi
 echo " >>> Success."
 
 echo " >>> Delete Resource Group '$resourceGroupName' ..."
-
-az group delete \
-  --name $resourceGroupName \
-  --verbose
-
-# resp=$(az group delete \
-#   --name $resourceGroupName \
-#   --verbose)
-if [[ $? != 0 ]]; then echo " >>> ERR: deleting resource group"; exit 1; fi
-echo $resp | jq
+  az group delete \
+    --name $resourceGroupName \
+    --verbose
+  if [[ $? != 0 ]]; then echo " >>> ERR: deleting resource group"; exit 1; fi
 echo " >>> Success."
 
 ##############################################################################################################################

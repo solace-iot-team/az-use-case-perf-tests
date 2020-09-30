@@ -4,7 +4,6 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor VPN Stats ..."
@@ -14,7 +13,7 @@ echo
   # SELECT
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source ./.lib/functions.sh
+    source $scriptDir/.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
@@ -48,8 +47,8 @@ rm -f $resultDir/vpn-stats.*.json
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap
 
-  inventory="../inventory/inventory.json"
-  playbook="./broker.get-stats.playbook.yml"
+  inventory="$scriptDir/../inventory/inventory.json"
+  playbook="$scriptDir/broker.get-stats.playbook.yml"
 
 # nohup ansible-playbook main.yml &
   ansible-playbook \
