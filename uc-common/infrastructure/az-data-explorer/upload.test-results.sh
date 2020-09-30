@@ -41,7 +41,7 @@ statsPaths=(
 metaPath="meta"
 metaFilePattern="run.meta.json"
 dockerComposePath="docker"
-dockerComposeFilePattern="PubSub.docker-compose.deployed.yml"
+dockerComposeFilePattern="PubSub.docker-compose.*.yml"
 
 ##############################################################################################################################
 # Upload stats
