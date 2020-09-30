@@ -13,10 +13,17 @@ Release Purpose: JSON Output for Monitoring Results
   - added post processing of sdkperf output to json format
 * VPN stats results:
   - added post processing of vpn stats to include timestamp
-* test runs:
+* test results:
   - current run in `run.current`
   - completed run in `run.{end-timestamp}`
     - and link `run.latest` points to completed run
+* run all tests
+  - script: `ansible/run.tests.sh`
+    - starts load, runs monitors, stops load
+* added initial Azure Data Explorer integration
+  - uc-common/infrastructure/az-data-explorer
+  - upload results to blob, import to Kusto, create timeseries graphs
+
 
 ---
 The End.

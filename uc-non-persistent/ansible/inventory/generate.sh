@@ -26,9 +26,9 @@ echo "# "
 ############################################################################################################################
 # Generate
 
-  brokerNodesJson=$( cat $brokerNodesFile | jq -r . )
-  sdkPerfNodesJson=$( cat $sdkPerfNodesFile | jq -r . )
-  inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . )
+  brokerNodesJson=$( cat $brokerNodesFile | jq -r . ) || exit
+  sdkPerfNodesJson=$( cat $sdkPerfNodesFile | jq -r . ) || exit
+  inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . ) || exit
 
   # broker node info
   export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")

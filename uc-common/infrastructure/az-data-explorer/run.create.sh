@@ -19,7 +19,7 @@ echo "# Script: $scriptName"
 
 ##############################################################################################################################
 # Create vars
-varsJson=$(cat $varsFile | jq)
+varsJson=$(cat $varsFile | jq -r . ) || exit
 prefix=$(echo $varsJson | jq -r '.prefix')
 resourceGroupName=$prefix$(echo $varsJson | jq -r '.resourceGroupName')
 location=$(echo $varsJson | jq -r '.location')
@@ -31,7 +31,7 @@ kustoSku=$(echo $varsJson | jq -r '.adx.sku')
 kustoCapacity=$(echo $varsJson | jq -r '.adx.capacity')
 kustoDBName=$(echo $varsJson | jq -r '.adx.dBName')
 # copy vars to state
-stateJson=$(cat $stateTemplateFile | jq)
+stateJson=$(cat $stateTemplateFile | jq -r .) || exit
 export varsJson
 stateJson=$(echo $stateJson | jq -r '.vars=(env.varsJson | fromjson)')
 ##############################################################################################################################
@@ -104,7 +104,8 @@ resp=$(az storage account generate-sas \
   --verbose)
 echo " >>> Success."
 # add token to state
-export sasToken=$(echo $resp | jq -r)
+sasToken=$(echo $resp | jq -r . ) || exit
+export sasToken
 stateJson=$(echo $stateJson | jq -r '.state.storage.sasToken=env.sasToken')
 
 echo " >>> Get storage account details ..."
@@ -153,8 +154,8 @@ echo " >>> Success."
 
 ##############################################################################################################################
 # Save state
-echo $stateJson | jq  > $stateFile
-echo $stateJson | jq
+echo $stateJson | jq -r . > $stateFile || exit
+echo $stateJson | jq || exit
 
 
 ###

@@ -18,7 +18,7 @@ if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 
 export timestamp=$2
 export sdkperf_command=$3
 
-latencyJson=$(cat $1 | jq -r .)
+latencyJson=$(cat $1 | jq -r .) || exit
 latencyJson=$( echo $latencyJson | jq -r '.timestamp=env.timestamp' )
 latencyJson=$( echo $latencyJson | jq -r '.run_id=env.RUN_ID')
 latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf_command=env.sdkperf_command' )

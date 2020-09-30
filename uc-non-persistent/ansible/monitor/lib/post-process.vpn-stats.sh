@@ -17,8 +17,8 @@ if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 
 vpnInputStatsFile=$1
 vpnTemplateStatsFile=$2
 export timestamp=$3
-export vpnInputStatsJson=$(cat $vpnInputStatsFile | jq -r .)
-vpnStatsJson=$(cat $vpnTemplateStatsFile | jq -r .)
+export vpnInputStatsJson=$(cat $vpnInputStatsFile | jq -r .) || exit
+vpnStatsJson=$(cat $vpnTemplateStatsFile | jq -r .) || exit
 vpnStatsJson=$( echo $vpnStatsJson | jq -r '.timestamp=env.timestamp' )
 vpnStatsJson=$( echo $vpnStatsJson | jq -r '.run_id=env.RUN_ID')
 vpnStatsJson=$(echo $vpnStatsJson | jq -r '.metrics=(env.vpnInputStatsJson | fromjson)')
