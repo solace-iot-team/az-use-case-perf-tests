@@ -26,7 +26,7 @@ echo " >>> Starting Load ..."
   if [[ $? != 0 ]]; then echo ">>> ERROR starting load"; echo; exit 1; fi
 
 echo " >>> Running Monitors ..."
-  $scriptDir/monitor/run.monitor.sh
+  $scriptDir/monitor/run.monitor.sh auto
   if [[ $? != 0 ]]; then echo ">>> ERROR running monitors"; echo; exit 1; fi
 
 echo " >>> Stop Load ..."
