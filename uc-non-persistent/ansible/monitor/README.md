@@ -28,8 +28,9 @@ ls *.log
 
 ````
 Results:
-- interim: run.latest
+- interim: run.current
 - moved to run.{timestamp} after completion
+- link: run.latest points to latest run
 
 #### Run VPN Stats only
 ````bash

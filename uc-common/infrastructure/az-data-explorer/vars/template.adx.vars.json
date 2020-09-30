@@ -1,0 +1,17 @@
+
+{
+  "prefix": "{prefix}",
+  "resourceGroupName": "adx-res_grp",
+  "location": "{location}",
+  "storage": {
+    "accountName": "adxstorage",
+    "sku": "Standard_LRS",
+    "containerName": "usecaseperftests"
+  },
+  "adx": {
+    "clusterName": "adxcluster",
+    "sku": "Standard_D11_v2",
+    "capacity": 2,
+    "dBName": "adxdb"
+  }
+}

@@ -4,7 +4,6 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor VPN Stats ..."
@@ -14,14 +13,19 @@ echo
   # SELECT
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source ./.lib/functions.sh
+    source $scriptDir/.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/test-results/stats"
-    resultDir="$resultDirBase/run.latest"
+    resultDir="$resultDirBase/run.current"
 
     brokerNodesFile=$(assertFile "$projectHome/shared-setup/broker-nodes.json") || exit
     sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/sdkperf-nodes.json") || exit
+
+    if [ -z "$runId" ]; then
+      export TZ=UTC0
+      export runId=$(date +%Y-%m-%d-%H-%M-%S)
+    fi
 
     # logging & debug: ansible
     export ANSIBLE_LOG_PATH="./ansible.log"
@@ -43,8 +47,8 @@ rm -f $resultDir/vpn-stats.*.json
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap
 
-  inventory="../inventory/inventory.json"
-  playbook="./broker.get-stats.playbook.yml"
+  inventory="$scriptDir/../inventory/inventory.json"
+  playbook="$scriptDir/broker.get-stats.playbook.yml"
 
 # nohup ansible-playbook main.yml &
   ansible-playbook \
@@ -53,7 +57,7 @@ rm -f $resultDir/vpn-stats.*.json
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
                   --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
-                  # -vvv
+                  --extra-vars "RUN_ID=$runId"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving VPN stats: $scriptName"; echo; exit 1; fi
 

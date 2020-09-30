@@ -8,10 +8,11 @@
 general:
     # number of tests to run for all tests
     count: 60 # should run roughly 1 hour
-    # count: 2 # devel setting
+    # count: 1 # devel setting
+    use_case: uc_non_persistent
 vpn_stats:
     # aiming for 1 measurement per minute
-    pause_between_calls_secs: 59
+    pause_between_calls_secs: 57
     #
     # ignore_message_loss
     #   False:
@@ -24,11 +25,13 @@ latency:
     # latency producer and consumer settings
     topics: "private/direct/latency"
     msg_rate_per_second: 1000 # 0=max
-    msg_number: 30000000
+    msg_number: 60000
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
 ping:
     # aiming for 1 measurement per minute
-    msg_number: 55
+    msg_number: 45
+    pause_between_calls_secs: 12
+    # msg_number: 2 # devel setting
 
 ###
 # The End.

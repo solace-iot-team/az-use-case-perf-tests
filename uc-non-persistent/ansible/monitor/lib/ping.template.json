@@ -1,0 +1,26 @@
+{
+  "timestamp": "{timestamp}",
+  "run_id": "{run_id}",
+  "meta": {
+    "description": "Ping from latency node to broker node",
+    "log_file": []
+  },
+  "metrics": {
+    "rtt_avg": {
+        "unit": "{unit}",
+        "value": -1
+    },
+    "rtt_max": {
+        "unit": "{unit}",
+        "value": -1
+    },
+    "rtt_mdev": {
+        "unit": "{unit}",
+        "value": -1
+    },
+    "rtt_min": {
+        "unit": "{unit}",
+        "value": -1
+    }
+  }
+}
