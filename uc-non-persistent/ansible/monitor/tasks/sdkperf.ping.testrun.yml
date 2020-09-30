@@ -30,21 +30,19 @@
   register: pp_result
   failed_when: pp_result.stderr != '' or pp_result.rc > 0
 
-# DEBUG
-- name: "Display for faster debugging"
-  debug:
-    msg:
-      - "ping json file:"
-      - "{{pp_result.stdout}}"
+- set_fact:
+    pp_ping_json: "{{pp_result.stdout | from_json}}"
 
-# DEBUG
-# - meta: end_play
+- name: "Display Post-Processed Ping Result"
+  debug:
+    msg: "{{pp_ping_json}}"
 
 - name: "Copy Ping Json to {{ result_dir }}"
   local_action:
     module: copy
-    content: "{{pp_result.stdout | from_json | to_nice_json }}"
+    content: "{{pp_ping_json | to_nice_json }}"
     dest: "{{ result_dir }}/ping-stats.{{now(True)}}.json"
+  when: pp_ping_json.metrics.rtt_avg.value != -1
 
 - name: "Delete ping log file on server"
   become: true
