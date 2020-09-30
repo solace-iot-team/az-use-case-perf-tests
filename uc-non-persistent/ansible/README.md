@@ -114,9 +114,25 @@ Use your standard login credentails.
 
 Service: **az_use_case_perf_tests**
 
-## Run Load
+## Run Tests
+- starts load
+- monitors:
+  - latency
+  - vpn message rates
+  - ping latency to broker
+- stops load
+- test results in: `test-results/stats/run.{run-id}`
+````bash
+./run.tests.sh
+````
 
-### Configure
+### Run Single Legs of the Tests
+
+To run parts of the test:
+
+### Run Load
+
+#### Configure
 ````bash
 cd vars
 vi sdkperf.vars.yml
@@ -131,12 +147,12 @@ msg_rate_per_second: 200000
 # msg_rate_per_second: 100000
 ````
 
-### Start Load
+#### Start Load
 ````bash
 ./start.load.sh
 ````
 
-### Stop Load
+#### Stop Load
 ````bash
 ./stop.load.sh
 ````
