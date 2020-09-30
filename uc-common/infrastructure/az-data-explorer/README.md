@@ -7,8 +7,6 @@
   - probably need to get rid of run-id in blob path
 - create ARM template to replace az calls
   - also: kusto calls deprecated
-- ping results:
-  - omit data point entirely, don't use "-1"
 - create a single graph with
   - latency + ping together
 - annotate the graphs with title, axis, etc.
