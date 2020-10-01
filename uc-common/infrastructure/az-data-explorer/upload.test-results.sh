@@ -111,9 +111,8 @@ echo;
 echo "##############################################################################################################"
 echo "# Manual step: Ingest Run From Blob to Kusto"
 echo "# Instructions in: $ingestOutputFile"
-echo; echo "Press key to see the instructions"; echo
-x=$(wait4Key)
-less $ingestOutputFile
+echo; 
+cat $ingestOutputFile
 
 
 ###
