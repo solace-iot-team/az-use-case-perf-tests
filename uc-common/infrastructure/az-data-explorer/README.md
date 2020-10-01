@@ -41,14 +41,14 @@ Follow the instructions at the end of the upload script.
 #### Ping
 ````bash
 // let min_t = toscalar(ping | summarize min(timestamp));
-let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
-let max_t = toscalar(ping | summarize max(timestamp));
+let min_t = toscalar(todatetime("2020-10-01T08:50:00Z"));
+let max_t = toscalar(ping | summarize max(sample_start_timestamp));
 ping
 | make-series
-    rtt_min=avg(metrics_rtt_min_value),
-    rtt_avg=avg(metrics_rtt_avg_value),
-    rtt_max=avg(metrics_rtt_max_value)
-    on timestamp in range (min_t, max_t, 2m)
+    ping_rtt_min=avg(metrics_ping_rtt_min_value),
+    ping_rtt_avg=avg(metrics_ping_rtt_avg_value),
+    ping_rtt_max=avg(metrics_ping_rtt_max_value)
+    on sample_start_timestamp in range (min_t, max_t, 1m)
     // by run_id
 | render timechart
 ````
@@ -57,32 +57,32 @@ ping
 
 
 ````bash
-// let min_t = toscalar(latency | summarize min(timestamp));
-let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
-let max_t = toscalar(latency | summarize max(timestamp));
+let min_t = toscalar(latency | summarize min(sample_start_timestamp));
+// let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
+let max_t = toscalar(latency | summarize max(sample_start_timestamp));
 latency
 | make-series
-     rtt_avg=avg(metrics_latency_latency_stats_average_latency_for_subs_usec) default=0,
-     rtt_50=avg(metrics_latency_latency_stats_50th_percentile_latency_usec) default=0,
-     rtt_95=avg(metrics_latency_latency_stats_95th_percentile_latency_usec) default=0,
-     rtt_99=avg(metrics_latency_latency_stats_99th_percentile_latency_usec) default=0,
-     rtt_99_9=avg(metrics_latency_latency_stats_99_9th_percentile_latency_usec) default=0
-     on timestamp in range (min_t, max_t, 2m)
+     lat_rtt_avg=avg(metrics_latency_node_latency_latency_stats_average_latency_for_subs_usec),
+     lat_rtt_50=avg(metrics_latency_node_latency_latency_stats_50th_percentile_latency_usec),
+     lat_rtt_95=avg(metrics_latency_node_latency_latency_stats_95th_percentile_latency_usec),
+     lat_rtt_99=avg(metrics_latency_node_latency_latency_stats_99th_percentile_latency_usec),
+     lat_rtt_99_9=avg(metrics_latency_node_latency_latency_stats_99_9th_percentile_latency_usec)
+     on sample_start_timestamp in range (min_t, max_t, 1m)
      // by run_id
 | render timechart
 ````
 
 #### VPN
 ````bash
-// let min_t = toscalar(vpn | summarize min(timestamp));
-let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
-let max_t = toscalar(vpn | summarize max(timestamp));
+let min_t = toscalar(vpn | summarize min(sample_start_timestamp));
+// let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
+let max_t = toscalar(vpn | summarize max(sample_start_timestamp));
 vpn
 | make-series
-     avg_rx_msg_rate_per_sec=avg(metrics_averageRxMsgRate) default=0,
-     avg_tx_msg_rate_per_sec=avg(metrics_averageTxMsgRate) default=0
-     on timestamp in range (min_t, max_t, 2m)
-     by run_id
+     vpn_avg_rx_msg_rate_per_sec=avg(metrics_averageRxMsgRate),
+     vpn_avg_tx_msg_rate_per_sec=avg(metrics_averageTxMsgRate)
+     on sample_start_timestamp in range (min_t, max_t, 1m)
+     // by run_id
 | render timechart
 ````
 ---
