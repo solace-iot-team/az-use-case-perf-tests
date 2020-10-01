@@ -1,26 +1,30 @@
 {
-  "timestamp": "{timestamp}",
+  "sample_start_timestamp": "{timestamp}",
   "run_id": "{run_id}",
+  "sample_num": "{sample-number}",
+  "sample_corr_id": "{run_id.sample_num}",
   "meta": {
     "description": "Ping from latency node to broker node",
     "log_file": []
   },
   "metrics": {
-    "rtt_avg": {
+    "ping": {
+      "rtt_avg": {
         "unit": "{unit}",
         "value": -1
-    },
-    "rtt_max": {
+      },
+      "rtt_max": {
         "unit": "{unit}",
         "value": -1
-    },
-    "rtt_mdev": {
+      },
+      "rtt_mdev": {
         "unit": "{unit}",
         "value": -1
-    },
-    "rtt_min": {
+      },
+      "rtt_min": {
         "unit": "{unit}",
         "value": -1
+      }
     }
   }
 }
