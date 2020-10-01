@@ -12,6 +12,8 @@ source $projectHome/uc-common/.lib/functions.sh
 stateTemplateFile=$(assertFile "$scriptDir/lib/template.adx.state.json") || exit
 stateDir="$scriptDir/state"
 stateFile=$(assertFile "$stateDir/az.adx.state.json") || exit
+ingestOutputFile="$scriptDir/ingest.instructions.txt"
+
 echo;
 echo "##############################################################################################################"
 echo "# Script: $scriptName $*"
@@ -88,21 +90,31 @@ microsoftBlobEndpoint=$(echo $stateJson | jq -r '.state.storage.microsoftBlobEnd
 sasToken=$(echo $stateJson | jq -r '.state.storage.sasToken')
 link2StorageBase="$microsoftBlobEndpoint$storageContainerName/$prefixPath"
 
+echo "" > $ingestOutputFile
+echo "##############################################################################################################" >> $ingestOutputFile
+echo "# Manual step: Ingest Run From Blob to Kusto" >> $ingestOutputFile
+echo "# Login to Azure Portal" >> $ingestOutputFile
+echo "#   - go to: $dataIngestionUri" >> $ingestOutputFile
+echo "#   - Ping: table: ping, source type: From container" >> $ingestOutputFile
+echo "#   - Latency: table: latency, source type: From container" >> $ingestOutputFile
+echo "#   - Vpn: table: vpn, source type: From container" >> $ingestOutputFile
+echo "#   - Meta: table: meta, source type: From container" >> $ingestOutputFile
+echo "#   - Links to storage: " >> $ingestOutputFile
+for statsPath in ${statsPaths[@]}; do
+  echo "    $statsPath: $link2StorageBase/$statsPath?$sasToken" >> $ingestOutputFile
+done
+echo "    $metaPath: $link2StorageBase/$metaPath?$sasToken" >> $ingestOutputFile
+echo "##############################################################################################################" >> $ingestOutputFile
+echo "" >> $ingestOutputFile
+
 echo;
 echo "##############################################################################################################"
-echo "# Manual step: Ingest new run"
-echo "# Login to Azure Portal"
-echo "#   - go to: $dataIngestionUri"
-echo "#   - Ping: table: ping, source type: From container"
-echo "#   - Latency: table: latency, source type: From container"
-echo "#   - Vpn: table: vpn, source type: From container"
-echo "#   - Meta: table: meta, source type: From container"
-echo "#   - Links to storage: "
-for statsPath in ${statsPaths[@]}; do
-  echo "    $statsPath: $link2StorageBase/$statsPath?$sasToken"
-done
-  echo "    $metaPath: $link2StorageBase/$metaPath?$sasToken"
-echo
+echo "# Manual step: Ingest Run From Blob to Kusto"
+echo "# Instructions in: $ingestOutputFile"
+echo; echo "Press key to see the instructions"; echo
+x=$(wait4Key)
+less $ingestOutputFile
+
 
 ###
 # The End.
