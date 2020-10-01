@@ -1,5 +1,16 @@
 # Release Notes
 
+## Version: 0.3.0
+Release Purpose: Correlation of Results
+
+* Result JSON files:
+  - changed 'timestamp' to 'sample_start_timestamp'
+  - added 'sample_num': the sample number in the test
+  - ping
+    - results have 'ping' in JSON path. allows for better distinguishing of joined tables in Kusto
+  - latency
+    - results have 'latency_node' in the metrics path - to distinguish from 'broker_node' latency
+
 ## Version: 0.2.0
 Release Purpose: JSON Output for Monitoring Results
 
