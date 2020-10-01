@@ -1,6 +1,7 @@
 {
-  "timestamp": "{timestamp}",
+  "sample_start_timestamp": "{timestamp}",
   "run_id": "{run_id}",
+  "sample_num": "{sample-number}",
   "meta": {
     "description": "Broker VPN stats"
   },

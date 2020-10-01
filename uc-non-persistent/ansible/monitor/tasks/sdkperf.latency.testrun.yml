@@ -4,6 +4,11 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
+
+- set_fact:
+    sample_start_timestamp: "{{now(True)}}"
+    sample_num: "{{item}}"
+
 - name: remove all sdkperf tasks
   become: true
   command: pkill --signal 9 -f sdkperf
@@ -49,25 +54,26 @@
   register: result
 
 - name: "Post-process latency log file"
-  shell: "cat {{ result.dest }} | ./lib/post-process.latency.sh ./lib/latency.template.json '{{now(True)}}' '{{sdkperf_command}}'"
+  shell: "cat {{ result.dest }} | ./lib/post-process.latency.sh ./lib/latency.template.json '{{sample_start_timestamp}}' '{{sdkperf_command}}'"
   environment:
     RUN_ID: "{{run_id}}"
+    SAMPLE_NUM: "{{sample_num}}"
   delegate_to: localhost
   register: pp_result
   failed_when: pp_result.stderr != '' or pp_result.rc > 0
 
 # DEBUG
-- name: "Display for faster debugging"
-  debug:
-    msg:
-      - "latency json file:"
-      - "{{pp_result.stdout}}"
+# - name: "Display for faster debugging"
+#   debug:
+#     msg:
+#       - "latency json file:"
+#       - "{{pp_result.stdout}}"
 
 - name: "Copy Latency Json to {{ result_dir }}"
   local_action:
     module: copy
     content: "{{pp_result.stdout | from_json | to_nice_json }}"
-    dest: "{{ result_dir }}/latency-stats.{{now(True)}}.json"
+    dest: "{{ result_dir }}/latency-stats.{{sample_start_timestamp}}.json"
 
 - name: delete latency log file
   become: true
