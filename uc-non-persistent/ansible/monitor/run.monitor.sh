@@ -15,12 +15,11 @@ resultDir="$resultDirBase/run.current"
 resultDirLatest="$resultDirBase/run.latest"
 monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit
 
-export TZ=UTC0
-export runId=$(date +%Y-%m-%d-%H-%M-%S)
+export runId=$(date -u +"%Y-%m-%d-%H-%M-%S")
+start_time=$(date +"%Y-%m-%dT%H:%M:%SZ")
+
 pids=""
-
 auto=$1
-
 
 echo;
 echo "##############################################################################################################"
@@ -30,6 +29,7 @@ countStr=$(cat $monitorVarsFile | yq '.general.count') || exit
 count=$((countStr + 2))
 echo ">>> running approx. $count minutes"
 echo "    (change 'general.count' in '$monitorVarsFile')"
+echo ">>> local start time: $start_time"
 echo
 if [ -z "$auto" ]; then x=$(wait4Key); fi
 
