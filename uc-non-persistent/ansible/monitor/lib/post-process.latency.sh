@@ -14,13 +14,16 @@ if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; ex
 if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
 if [ -z "$3" ]; then echo "no sdkperf_command received" >>/dev/stderr; exit 1; fi
 if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
+if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var received" >>/dev/stderr; exit 1; fi
 
 export timestamp=$2
 export sdkperf_command=$3
 
 latencyJson=$(cat $1 | jq -r .) || exit
-latencyJson=$( echo $latencyJson | jq -r '.timestamp=env.timestamp' )
+latencyJson=$( echo $latencyJson | jq -r '.sample_start_timestamp=env.timestamp' )
 latencyJson=$( echo $latencyJson | jq -r '.run_id=env.RUN_ID')
+latencyJson=$( echo $latencyJson | jq -r '.sample_num=env.SAMPLE_NUM')
+latencyJson=$( echo $latencyJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
 latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf_command=env.sdkperf_command' )
 
 # read input line by line
@@ -44,7 +47,7 @@ while IFS= read line; do
 done
 
 export statsJson=$(echo $statsString | jq -r .)
-latencyJson=$( echo $latencyJson | jq -r '.metrics=(env.statsJson | fromjson)')
+latencyJson=$( echo $latencyJson | jq -r '.metrics.latency_node=(env.statsJson | fromjson)')
 
 echo $latencyJson
 
