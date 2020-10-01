@@ -6,6 +6,7 @@ Release Purpose: Correlation of Results
 * Result JSON files:
   - changed 'timestamp' to 'sample_start_timestamp'
   - added 'sample_num': the sample number in the test
+  - added 'sample_corr_id': composed of 'run_id'+'sample_num' - to correlate results
   - ping
     - results have 'ping' in JSON path. allows for better distinguishing of joined tables in Kusto
   - latency

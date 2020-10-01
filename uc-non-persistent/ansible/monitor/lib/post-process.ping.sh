@@ -21,6 +21,8 @@ pingJson=$(cat $1 | jq -r .) || exit
 pingJson=$( echo $pingJson | jq -r '.sample_start_timestamp=env.timestamp' )
 pingJson=$( echo $pingJson | jq -r '.run_id=env.RUN_ID')
 pingJson=$( echo $pingJson | jq -r '.sample_num=env.SAMPLE_NUM')
+pingJson=$( echo $pingJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
+
 # If we want to read the input line by line
 lineCount=0
 while IFS= read line; do

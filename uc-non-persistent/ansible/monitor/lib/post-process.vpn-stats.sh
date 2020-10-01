@@ -24,6 +24,7 @@ vpnStatsJson=$(cat $vpnTemplateStatsFile | jq -r .) || exit
 vpnStatsJson=$( echo $vpnStatsJson | jq -r '.sample_start_timestamp=env.timestamp' )
 vpnStatsJson=$( echo $vpnStatsJson | jq -r '.run_id=env.RUN_ID')
 vpnStatsJson=$( echo $vpnStatsJson | jq -r '.sample_num=env.SAMPLE_NUM')
+vpnStatsJson=$( echo $vpnStatsJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
 vpnStatsJson=$(echo $vpnStatsJson | jq -r '.metrics=(env.vpnInputStatsJson | fromjson)')
 
 echo $vpnStatsJson

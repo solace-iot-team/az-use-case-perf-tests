@@ -23,6 +23,7 @@ latencyJson=$(cat $1 | jq -r .) || exit
 latencyJson=$( echo $latencyJson | jq -r '.sample_start_timestamp=env.timestamp' )
 latencyJson=$( echo $latencyJson | jq -r '.run_id=env.RUN_ID')
 latencyJson=$( echo $latencyJson | jq -r '.sample_num=env.SAMPLE_NUM')
+latencyJson=$( echo $latencyJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
 latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf_command=env.sdkperf_command' )
 
 # read input line by line
