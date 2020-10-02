@@ -58,6 +58,7 @@
   environment:
     RUN_ID: "{{run_id}}"
     SAMPLE_NUM: "{{sample_num}}"
+    NODE: "latency_node"
   delegate_to: localhost
   register: pp_result
   failed_when: pp_result.stderr != '' or pp_result.rc > 0
