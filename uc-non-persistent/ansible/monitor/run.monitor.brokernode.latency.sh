@@ -58,7 +58,7 @@ rm -f $resultDir/latency-brokernode-stats.*.log
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "RUN_ID=$runId"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving broker node latency stats: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"

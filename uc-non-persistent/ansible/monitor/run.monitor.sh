@@ -37,45 +37,45 @@ rm -f ./*.log
 rm -f $resultDir/*
 
 echo;
-echo "##############################################################################################################"
-echo "# Start VPN Stats Monitor ..."
-echo
+
+# echo "##############################################################################################################"
+echo ">>> Start VPN Stats Monitor ..."
   $scriptDir/run.monitor.vpn-stats.sh 2>&1 > $scriptDir/run.monitor.vpn-stats.log &
   vpn_stats_pid=" $!"
   pids+=" $!"
 
-echo "##############################################################################################################"
-echo "# Start Latency Stats Monitor ..."
-echo
+# echo "##############################################################################################################"
+echo ">>> Start Latency Stats Monitor ..."
   $scriptDir/run.monitor.latency.sh 2>&1 > $scriptDir/run.monitor.latency.log &
   latency_pid=" $!"
   pids+=" $!"
 
-echo "##############################################################################################################"
-echo "# Start Ping Latency Stats Monitor ..."
-echo
+# echo "##############################################################################################################"
+echo ">>> Start Latency Broker Node Stats Monitor ..."
+  $scriptDir/run.monitor.brokernode.latency.sh 2>&1 > $scriptDir/run.monitor.brokernode.latency.log &
+  brokernode_latency_pid=" $!"
+  pids+=" $!"
+
+# echo "##############################################################################################################"
+echo ">>> Start Ping Latency Stats Monitor ..."
   $scriptDir/run.monitor.ping.sh 2>&1 > $scriptDir/run.monitor.ping.log &
   ping_pid=" $!"
   pids+=" $!"
 
-echo "##############################################################################################################"
-echo "# Waiting for Processes to finish ..."
-echo
-echo ">>> Processes:"
+# echo "##############################################################################################################"
+echo ">>> Waiting for Processes to finish:"
 for p in $pids; do
   ps $p
 done
-echo;echo;
 
 FAILED=0
 for pid in $pids; do
   if wait $pid; then
-    echo; echo ">>> SUCCESS: Process $p"
+    echo ">>> SUCCESS: Process $p"
   else
-    echo; echo ">>> FAILED: Process $p"; FAILED=1
+    echo ">>> FAILED: Process $p"; FAILED=1
   fi
 done
-echo
 
 if [ "$FAILED" -gt 0 ]; then
   echo ">>> ERROR: at least one monitor failed"; exit 1
@@ -96,8 +96,9 @@ rm -f $resultDirLatest
 ln -s $finalResultDir $resultDirLatest
 cd $scriptDir
 
-echo "##############################################################################################################"
-echo "# Monitor Results in: $finalResultDir"
+# echo "##############################################################################################################"
+echo
+echo ">>> Monitor Results in: $finalResultDir"
 echo;echo;
 
 ###
