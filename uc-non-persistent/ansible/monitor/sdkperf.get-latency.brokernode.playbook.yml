@@ -5,7 +5,8 @@
 
 ---
 
-- hosts: broker_centos
+- name: "SDKPerf Latency: broker node to broker node"
+  hosts: broker_centos
   vars_files:
     - "../vars/bootstrap.vars.yml"
     - "../vars/sdkperf.vars.yml"
@@ -16,6 +17,19 @@
     - set_fact:
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
+        log_tmp_dir: "./tmp/broker_node_latency"
+
+    - name: "Ensure {{log_tmp_dir}} exists"
+      local_action:
+        module: file
+        path: "{{log_tmp_dir}}"
+        state: directory
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
 
     - name: kicking of playbook
       debug:

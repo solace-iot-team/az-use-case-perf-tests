@@ -39,7 +39,7 @@ Follow the instructions at the end of the upload script.
 ### Kusto Timeseries Graphs
 
 #### Ping
-````bash
+````js
 // let min_t = toscalar(ping | summarize min(timestamp));
 let min_t = toscalar(todatetime("2020-10-01T08:50:00Z"));
 let max_t = toscalar(ping | summarize max(sample_start_timestamp));
@@ -55,8 +55,7 @@ ping
 
 #### Latency
 
-
-````bash
+````js
 let min_t = toscalar(latency | summarize min(sample_start_timestamp));
 // let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
 let max_t = toscalar(latency | summarize max(sample_start_timestamp));
@@ -71,9 +70,24 @@ latency
      // by run_id
 | render timechart
 ````
-
+#### Latency Broker Node
+````js
+let min_t = toscalar(latencybrokernode | summarize min(sample_start_timestamp));
+// let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
+let max_t = toscalar(latencybrokernode | summarize max(sample_start_timestamp));
+latencybrokernode
+| make-series
+     lat_bn_rtt_avg=max(metrics_broker_node_latency_latency_stats_average_latency_for_subs_usec) default=real(null),
+     lat_bn_rtt_50=max(metrics_broker_node_latency_latency_stats_50th_percentile_latency_usec) default=real(null),
+     lat_bn_rtt_95=max(metrics_broker_node_latency_latency_stats_95th_percentile_latency_usec) default=real(null),
+     lat_bn_rtt_99=max(metrics_broker_node_latency_latency_stats_99th_percentile_latency_usec) default=real(null),
+     lat_bn_rtt_99_9=max(metrics_broker_node_latency_latency_stats_99_9th_percentile_latency_usec) default=real(null)
+     on sample_start_timestamp in range (min_t, max_t, 1m)
+     // by run_id
+| render timechart
+````
 #### VPN
-````bash
+````js
 let min_t = toscalar(vpn | summarize min(sample_start_timestamp));
 // let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
 let max_t = toscalar(vpn | summarize max(sample_start_timestamp));

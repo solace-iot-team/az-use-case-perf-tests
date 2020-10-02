@@ -39,6 +39,7 @@ statsPaths=(
   "ping"
   "latency"
   "vpn"
+  "latency-brokernode"
 )
 metaPath="meta"
 metaFilePattern="run.meta.json"
@@ -97,6 +98,7 @@ echo "# Login to Azure Portal" >> $ingestOutputFile
 echo "#   - go to: $dataIngestionUri" >> $ingestOutputFile
 echo "#   - Ping: table: ping, source type: From container" >> $ingestOutputFile
 echo "#   - Latency: table: latency, source type: From container" >> $ingestOutputFile
+echo "#   - Latency BrokerNode: table: latencybrokernode, source type: From container" >> $ingestOutputFile
 echo "#   - Vpn: table: vpn, source type: From container" >> $ingestOutputFile
 echo "#   - Meta: table: meta, source type: From container" >> $ingestOutputFile
 echo "#   - Links to storage: " >> $ingestOutputFile
@@ -111,7 +113,7 @@ echo;
 echo "##############################################################################################################"
 echo "# Manual step: Ingest Run From Blob to Kusto"
 echo "# Instructions in: $ingestOutputFile"
-echo; 
+echo;
 cat $ingestOutputFile
 
 
