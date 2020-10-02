@@ -15,6 +15,7 @@ if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; 
 if [ -z "$3" ]; then echo "no sdkperf_command received" >>/dev/stderr; exit 1; fi
 if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
 if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var received" >>/dev/stderr; exit 1; fi
+if [ -z "$NODE" ]; then echo "no NODE env var received" >>/dev/stderr; exit 1; fi
 
 export timestamp=$2
 export sdkperf_command=$3
@@ -47,7 +48,7 @@ while IFS= read line; do
 done
 
 export statsJson=$(echo $statsString | jq -r .)
-latencyJson=$( echo $latencyJson | jq -r '.metrics.latency_node=(env.statsJson | fromjson)')
+latencyJson=$( echo $latencyJson | jq -r '.metrics[env.NODE]=(env.statsJson | fromjson)')
 
 echo $latencyJson
 
