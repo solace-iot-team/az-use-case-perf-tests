@@ -1,5 +1,14 @@
 # Release Notes
 
+## Version: 0.3.1
+Release Purpose: Optimization of Azure Resources
+
+* terraform
+  - added azurerm_proximity_placement_group so all nodes are co-located
+  - added enable_accelerated_networking to network interface
+* misc
+  - updated ansible & ansible-solace install instructions
+
 ## Version: 0.3.0
 Release Purpose: Correlation of Results
 

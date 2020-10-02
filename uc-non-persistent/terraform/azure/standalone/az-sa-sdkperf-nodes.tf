@@ -15,6 +15,9 @@ resource "azurerm_linux_virtual_machine" "sdkperf-nodes" {
   #If a Resource Group was specified we'll query its Location use it, otherwise use the location of the Res Group that was just created
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
+
+  proximity_placement_group_id = azurerm_proximity_placement_group.sdkperf_az_ppgrp.id
+  
   size                   = var.sdk_perf_nodes_vm_size
   admin_username         = var.az_admin_username
   network_interface_ids  = [azurerm_network_interface.sdkperf-nodes-nic[count.index].id]
@@ -69,6 +72,9 @@ resource "azurerm_network_interface" "sdkperf-nodes-nic" {
   name                = "${var.tag_name_prefix}-sdkperf-nic-${count.index}"
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
+  
+  #accelerated networking not available for all VMs
+  enable_accelerated_networking = true
 
   ip_configuration {
     name                          = "internal"
