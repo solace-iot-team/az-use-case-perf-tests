@@ -39,20 +39,23 @@ The project includes an SDKPerf distribution.
 
 [See here for more information](./sdk-perf-image).
 
-#### Ansible
+#### Ansible & Ansible-Solace
 
-Install Ansible.
+[For more Details see Ansible-Solace instructions on GitHub](https://github.com/solace-iot-team/ansible-solace).
 
-#### Ansible-Solace Modules
-
-[See Ansible-Solace instructions on GitHub](https://github.com/solace-iot-team/ansible-solace).
-
-- python
-- ansible-solace
-
+In short:
+* **requires: python >= 3.6**
 ````bash
+# ansible: install version 2.9.11 using pip3
+sudo pip3 install ansible==2.9.11
+# ansible-solace
+sudo pip3 install ansible-solace
+# ensure python interpreter is pointing to python3
 export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+# check installation
+ansible-doc -l | grep solace
 ````
+
 
 #### Misc Tools
 - bash
