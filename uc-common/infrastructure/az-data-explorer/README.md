@@ -36,7 +36,34 @@ After running tests, upload results into the blob storage:
 
 Follow the instructions at the end of the upload script.
 
+### Kusto Misc Queries
+
+#### Delete all rows in a table
+````js
+// scope: the db
+.drop extents from {table-name}
+````
+
 ### Kusto Timeseries Graphs
+
+#### Union of Latency, Latency BrokerNode, Ping
+````js
+let the_run_id = "2020-10-01-13-26-51";
+let min_t = toscalar(latency | where run_id == the_run_id | summarize min(sample_start_timestamp));
+let max_t = toscalar(latency | where run_id == the_run_id | summarize max(sample_start_timestamp));
+latency
+| union ping, latencybrokernode
+| make-series
+    // lat_rtt_95=avg(metrics_latency_node_latency_latency_stats_95th_percentile_latency_usec),
+    // lat_rtt_99=avg(metrics_latency_node_latency_latency_stats_99th_percentile_latency_usec) default=real(null),
+    lat_rtt_99_9=max(metrics_latency_node_latency_latency_stats_99_9th_percentile_latency_usec) default=real(null),
+    lat_bn_rtt_99_9=max(metrics_broker_node_latency_latency_stats_99_9th_percentile_latency_usec) default=real(null),
+    // ping_rtt_min=avg(metrics_ping_rtt_min_value*1000) default = -1,
+    // ping_rtt_avg=avg(metrics_ping_rtt_avg_value*1000) default = -1,
+    ping_rtt_max=max(metrics_ping_rtt_max_value*1000) default = real(null)
+    on todatetime(sample_start_timestamp) in range(min_t, max_t, 1m)
+| render timechart
+````
 
 #### Ping
 ````js
