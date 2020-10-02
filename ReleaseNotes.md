@@ -1,5 +1,13 @@
 # Release Notes
 
+## Version: 0.3.2
+Release Purpose: New monitor: SDKPerf running on broker node.
+
+* monitors
+  - run.monitor.latency-broker-node.sh
+    - integrated into overall test scripts
+    - generates new result file
+
 ## Version: 0.3.1
 Release Purpose: Optimization of Azure Resources
 
