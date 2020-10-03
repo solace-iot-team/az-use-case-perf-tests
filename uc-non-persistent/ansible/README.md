@@ -97,9 +97,16 @@ Configure the VMs with their respective software.
 
 #### Login to the Standalone Broker Console
 
+##### AWS
 Get the public ip address of the broker node:
 ````bash
-less {root}/shared-setup/broker-nodes.json
+less {root}/shared-setup/aws.broker-nodes.json
+
+````
+##### Azure
+Get the public ip address of the broker node:
+````bash
+less {root}/shared-setup/az.broker-nodes.json
 
 ````
 
