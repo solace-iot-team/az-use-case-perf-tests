@@ -12,9 +12,12 @@
 # {{ bootstrap.broker.centos.xxx }}
 # {{ bootstrap.broker.ext_storage.xxx }}
 ---
+
 broker:
   centos:
     swap_file_size: 2048
+    swap_file_path: /swapfile  #aws
+    swappiness: "1" #aws
   centos_docker:
     docker_centos_users: ["centos"]
     docker_centos_version: 19.03.5
@@ -30,9 +33,21 @@ broker:
   ext_storage:
     solace_os_user: solace
     solace_os_user_id: 4000
-    solace_mount_dev: /dev/sdc
-    solace_storage_part: /dev/sdc1
+
     solace_mount_path: /var/opt/vmr
+
+    #Azure mounts
+    az_solace_mount_dev: /dev/sdc
+    az_solace_storage_part: /dev/sdc1
+
+    # AWS Nitro systems device names 
+    # Change in case non Nitro systems are used
+    aws_solace_mount_dev: /dev/nvme1n1
+    aws_solace_storage_part: /dev/nvme1n1p1
+
+    # Non AWS Nitro systems 
+    #aws_solace_mount_dev: /dev/sdc
+    #aws_solace_storage_part: /dev/sdc1
   docker_image:
     solace_image_file_src: "./docker-image/solace-pubsub-docker.tar.gz"
     solace_image_file_dest: "./solace-pubsub-evaluation-docker.tar.gz"

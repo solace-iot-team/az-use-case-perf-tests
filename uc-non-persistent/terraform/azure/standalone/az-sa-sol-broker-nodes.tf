@@ -178,7 +178,7 @@ resource "azurerm_network_interface_security_group_association" "solacebroker-no
 }
 
 resource "local_file" "broker_nodes_file" {
-  content = templatefile("../../templates/shared-setup/broker-nodes.tpl",
+  content = templatefile("../../templates/shared-setup/az.broker-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
       # node-names = azurerm_linux_virtual_machine.solace-broker-nodes.*.name
@@ -186,7 +186,7 @@ resource "local_file" "broker_nodes_file" {
       # node-private-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
     }
   )
-  filename = "../../../shared-setup/broker-nodes.json"
+  filename = "../../../shared-setup/az.broker-nodes.json"
 }
 
 

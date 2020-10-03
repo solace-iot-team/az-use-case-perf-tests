@@ -12,15 +12,15 @@ source ./.lib/functions.sh
 ############################################################################################################################
 echo
 echo "##############################################################################################################"
-echo "# Generate inventory"
+echo "# Generate inventory for $PERF_CLOUDPROVIDER"
 echo "# "
 
 ############################################################################################################################
 # Settings
 
-  brokerNodesFile=$(assertFile "$scriptDir/../../shared-setup/broker-nodes.json") || exit
-  sdkPerfNodesFile=$(assertFile "$scriptDir/../../shared-setup/sdkperf-nodes.json") || exit
-  targetInventoryFile="$scriptDir/inventory.json"
+  brokerNodesFile=$(assertFile "$scriptDir/../../$PERF_CLOUDPROVIDER.shared-setup/broker-nodes.json") || exit
+  sdkPerfNodesFile=$(assertFile "$scriptDir/../../$PERF_CLOUDPROVIDER.shared-setup/sdkperf-nodes.json") || exit
+  targetInventoryFile="$scriptDir/$PERF_CLOUDPROVIDER.inventory.json"
   srcInventoryTemplateFile="$scriptDir/inventory.template.json"
 
 ############################################################################################################################
@@ -29,6 +29,10 @@ echo "# "
   brokerNodesJson=$( cat $brokerNodesFile | jq -r . ) || exit
   sdkPerfNodesJson=$( cat $sdkPerfNodesFile | jq -r . ) || exit
   inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . ) || exit
+
+  #cloudprovider aws | az
+  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.cloudprovider=env.PERF_CLOUDPROVIDER' )
+
 
   # broker node info
   export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")
