@@ -17,7 +17,7 @@ echo
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
     resultDirBase="$projectHome/az/test-results/stats"
-    resultDir="$resultDirBase/az/run.current"
+    resultDir="$resultDirBase/run.current"
 
     brokerNodesFile=$(assertFile "$projectHome/shared-setup/az.broker-nodes.json") || exit
     sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/az.sdkperf-nodes.json") || exit

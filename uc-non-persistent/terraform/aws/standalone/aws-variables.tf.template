@@ -4,44 +4,52 @@
 # (2) Make sure the account you're running terraform with has proper permissions in your AWS env
 ####################################################################################################
 
+# General Variables
+variable "tag_owner" {
+  default = "sdkperf-test-owner"
+}
+
+variable "tag_name_prefix" {
+  default = "sdkperf-test"
+}
 # aws config
 variable "aws_region" {
   default = "eu-central-1"
-}
-
-# sdkperf nodes count
-variable "sdkperf_nodes_count" {
-    default = "4"
-    type        = string
-    description = "The number of sdkperf nodes to be created."
 }
 variable "sdkperf_vm_type" {
   default = "m5a.xlarge"    # (2 CPUs  8G RAM - General Purpose)
 }
 
-# Solace Brokers
-# nodes count
-variable "solace_broker_count" {
-    default = "1"
-    type        = string
-    description = "The number of Solace Broker nodes to be created."
-}
 variable "sol_messaging_vm_type" {
 #  default = "t2.medium"   # (2 CPUs  4G RAM - General Purpose Burstable )
   default = "m5a.4xlarge"    # (16 CPUs  64G RAM - AMD Powered General Purpose)
 #  default = "m5.xlarge"    # (4 CPUs 16G RAM - General Purpose)
 }
 
-# General Variables
-variable "tag_owner" {
-  default = "solace-iot-team" #TODO 
+# sdkperf nodes count
+# Don't change nodes count without adjusting Ansible provisioning and test scripts
+variable "sdkperf_nodes_count" {
+    default = "4"
+    type        = string
+    description = "The number of sdkperf nodes to be created."
 }
+
+
+# Solace Brokers
+# nodes count
+# Don't change nodes count without adjusting Ansible provisioning and test scripts
+variable "solace_broker_count" {
+    default = "1"
+    type        = string
+    description = "The number of Solace Broker nodes to be created."
+}
+
+
+
 variable "tag_days" {
   default = "1"
 }
-variable "tag_name_prefix" {
-  default = "iot-team"
-}
+
 variable "subnet_id" {
   default = ""
   #default = "subnet-0db7d4f1da1d01bd8"
@@ -63,7 +71,7 @@ variable "solacebroker_secgroup_ids" {
 # ssh config
 # If the Key Pair is already created on AWS leave an empty public_key_path, otherwise terraform will try to create it and upload the public key
 variable "aws_ssh_key_name" {
-  default = "iotteam_sdkperf_tfsa_key"
+  default = "sdkperf_test_tfsa_key"
   description = "The Key pair Name to be created on AWS."
 }
 # If no  Private and Public Keys exist, they can be created with the "ssh-keygen -f ../aws_key" command

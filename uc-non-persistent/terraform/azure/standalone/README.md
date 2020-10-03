@@ -24,6 +24,16 @@ export ARM_SUBSCRIPTION_ID={subscription-id}
 export ARM_TENANT_ID={tenant-id}
 ````
 
+### AWS credentials
+
+````bash
+export AWS_ACCESS_KEY_ID={aws-access-key}
+export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
+export AWS_DEFAULT_REGION={aws-default-region} 
+````
+
+
+
 ## Settings
 
 Customizing the deployment to Azure:
@@ -83,23 +93,43 @@ terraform apply
 
 #### Check Output of Run
 
+##### Azure
 Login into the Azure Portal and check the new resource group: _**{prefix}-sdkperf_resgrp**_.
 
 Check the generated output:
 ````bash
 cd {root}/shared-setup
-  less broker-nodes.json
-  less sdkperf-nodes.json
+  less az.broker-nodes.json
+  less az.sdkperf-nodes.json
 ````
+
+##### AWS
+Login into the AWS Console and check the new resource group: _**{prefix}-sdkperf_resgrp**_.
+
+Check the generated output:
+````bash
+cd {root}/shared-setup
+  less aws.broker-nodes.json
+  less
 
 #### Login to the VMs
 
+##### Azure
 ````bash
-# find the public ip address of the vms:
-less {root}/shared-setup/broker-nodes.json
-less {root}/shared-setup/sdkperf-nodes.json
+# find the public ip address of the Azure vms:
+less {root}/shared-setup/az.broker-nodes.json
+less {root}/shared-setup/az.sdkperf-nodes.json
 # ssh ...
-ssh -i ../../../keys/azure_key centos@{public-ip-address}
+ssh -i ../../../keys/az_key centos@{public-ip-address}
+````
+
+##### AWS
+````bash
+# find the public ip address of the Azure vms:
+less {root}/shared-setup/aws.broker-nodes.json
+less {root}/shared-setup/aws.sdkperf-nodes.json
+# ssh ...
+ssh -i ../../../keys/aws_key centos@{public-ip-address}
 ````
 
 ### Destroy Resources
