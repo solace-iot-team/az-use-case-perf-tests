@@ -118,7 +118,7 @@ resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-s
 
 
 resource "local_file" "sdkperf_nodes_file" {
-  content = templatefile("../../templates/shared-setup/sdkperf-nodes.tpl",
+  content = templatefile("../../templates/shared-setup/az.sdkperf-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.sdkperf-nodes.*
       #
@@ -127,7 +127,7 @@ resource "local_file" "sdkperf_nodes_file" {
       # node-private-ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.private_ip_address
     }
   )
-  filename = "../../../shared-setup/sdkperf-nodes.json"
+  filename = "../../../shared-setup/az.sdkperf-nodes.json"
 }
 
 ###

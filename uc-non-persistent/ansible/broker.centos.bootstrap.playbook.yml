@@ -39,8 +39,13 @@
           - "bootstrap.vars.yml={{configured}}"
       when: manifest[0].RepoTags[0] != configured
 
-    - name: "Centos Bootstrap: Setup Swap Tasks"
-      include_tasks: ./tasks/centos.bootstrap.yml
+    - name: "Centos Bootstrap: AWS Setup Swap Tasks"
+      include_tasks: ./tasks/aws.centos.bootstrap.yml
+      when: cloudprovider == "aws"
+
+    - name: "Centos Bootstrap: Azure Setup Swap Tasks"
+      include_tasks: ./tasks/az.centos.bootstrap.yml
+      when: cloudprovider == "azure"
 
     - name: "Broker Bootstrap: Setup External Storage Tasks"
       include_tasks: ./tasks/centos.bootstrap.ext-storage.yml

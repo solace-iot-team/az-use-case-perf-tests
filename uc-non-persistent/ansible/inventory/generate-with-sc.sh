@@ -9,7 +9,7 @@ clear
 ############################################################################################################################
 echo
 echo "##############################################################################################################"
-echo "# Generate inventory"
+echo "# Generate inventory for $PERF_CLOUDPROVIDER"
 echo "# "
 
 ############################################################################################################################
@@ -24,11 +24,11 @@ echo "# "
 
   sharedSetupDir="$projectHome/shared-setup"
     [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
-  brokerNodesFile=$(assertFile "$sharedSetupDir/broker-nodes.json") || exit
-  sdkPerfNodesFile=$(assertFile "$sharedSetupDir/sdkperf-nodes.json") || exit
-  targetInventoryFile="$scriptDir/inventory.json"
+  brokerNodesFile=$(assertFile "$sharedSetupDir/$PERF_CLOUDPROVIDER.broker-nodes.json") || exit
+  sdkPerfNodesFile=$(assertFile "$sharedSetupDir/$PERF_CLOUDPROVIDER.sdkperf-nodes.json") || exit
+  targetInventoryFile="$scriptDir/$PERF_CLOUDPROVIDER.inventory.json"
   srcInventoryTemplateFile="$scriptDir/inventory.template.json"
-  solaceCloudInventoryFile="$sharedSetupDir/inventory.sc-service.az_use_case_perf_tests.json"
+  solaceCloudInventoryFile="$sharedSetupDir/$PERF_CLOUDPROVIDER.inventory.sc-service.az_use_case_perf_tests.json"
 
 ############################################################################################################################
 # User select which broker
@@ -67,6 +67,9 @@ echo "# "
   brokerNodesJson=$( cat $brokerNodesFile | jq -r . ) || exit
   sdkPerfNodesJson=$( cat $sdkPerfNodesFile | jq -r . ) || exit
   inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . ) || exit
+
+  #cloudprovider aws | az
+  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.cloudprovider=env.PERF_CLOUDPROVIDER' )
 
   # broker node info
     export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")

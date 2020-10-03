@@ -1,0 +1,92 @@
+{
+    "meta": {
+        "description": "Latency from latency node to broker node",
+        "log_file": [
+            "Logging initialized to info (6)",
+            "",
+            "CPU mask currently set to: 0x0006. To modify use linux cmd: taskset",
+            "CPU Speed calculated (Hz): 2693633176",
+            "Client naming used:",
+            "\tlogging ID = latency-1-1000001",
+            "\tusername = testUsr",
+            "\tvpn = sdkperf",
+            "\tclient names = latency-1-1000001",
+            "",
+            "Waiting for publishing to complete. Ctrl-c to exit. ",
+            "",
+            "{",
+            "\"publisher_stats\": {",
+            "\"total_clients\": 1,",
+            "\"total_messages_transmitted\" : 52947,",
+            "\"computed_publish_rate\" : 999.98",
+            "},",
+            "\"subscriber_stats\": {",
+            "\"total_clients\": 1,",
+            "",
+            "\"total_messages_received_across_all_clients\" : 52947,",
+            "\"computed_receive_rate_aggregate\" : 1000.04",
+            "},",
+            "\"messages_received_with_discard_indication\": 0,",
+            "",
+            "\"latency\": {",
+            "\"latency_info\": {",
+            "\"individual_latency_bucket_size_usec\" : 12.16 ,",
+            "\"latency_warmup_sec\" : 10.00,",
+            "\"latency_messages_received\" : 42946 , ",
+            "\"latency_msg_rate\" : 1000.02",
+            "},",
+            "\"latency_stats\": {",
+            "\"average_latency_for_subs_usec\" : 312 , ",
+            "\"50th_percentile_latency_usec\" : 243 , ",
+            "\"95th_percentile_latency_usec\" : 462 , ",
+            "\"99th_percentile_latency_usec\" : 2117 , ",
+            "\"99.9th_percentile_latency_usec\" : 7834 , ",
+            "\"standard_deviation_usec\" : 479.77 ",
+            "}",
+            "},",
+            "",
+            "\"cpu_usage_pct\" : 102.47",
+            "}",
+            "",
+            ""
+        ],
+        "node": "latency_node",
+        "sdkperf_command": "taskset -c 1,2 /opt/sdkperf/sdkperf-c-x64/sdkperf_c.sh -cn=latency-1-1 -log=info -logf=/opt/sdkperf/logs/latency-debug-0.log -cip=\"tcp://10.0.1.4\":\"55555\" -cu=\"testUsr\"@\"sdkperf\" -cp=\"***removed****\" -ptl=\"private/direct/latency\" -stl=\"private/direct/latency\" -mn=\"60000\" -msa=\"100\" -mr=\"1000\" -psm -lat -lwu=10 -lb=4096 -lg=15 -l > /opt/sdkperf/logs/latency-repeat.log"
+    },
+    "metrics": {
+        "latency_node": {
+            "cpu_usage_pct": 102.47,
+            "latency": {
+                "latency_info": {
+                    "individual_latency_bucket_size_usec": 12.16,
+                    "latency_messages_received": 42946,
+                    "latency_msg_rate": 1000.02,
+                    "latency_warmup_sec": 10
+                },
+                "latency_stats": {
+                    "50th_percentile_latency_usec": 243,
+                    "95th_percentile_latency_usec": 462,
+                    "99.9th_percentile_latency_usec": 7834,
+                    "99th_percentile_latency_usec": 2117,
+                    "average_latency_for_subs_usec": 312,
+                    "standard_deviation_usec": 479.77
+                }
+            },
+            "messages_received_with_discard_indication": 0,
+            "publisher_stats": {
+                "computed_publish_rate": 999.98,
+                "total_clients": 1,
+                "total_messages_transmitted": 52947
+            },
+            "subscriber_stats": {
+                "computed_receive_rate_aggregate": 1000.04,
+                "total_clients": 1,
+                "total_messages_received_across_all_clients": 52947
+            }
+        }
+    },
+    "run_id": "2020-10-03-12-16-00",
+    "sample_corr_id": "2020-10-03-12-16-00.0",
+    "sample_num": "0",
+    "sample_start_timestamp": "2020-10-03 12:16:04.806784"
+}
