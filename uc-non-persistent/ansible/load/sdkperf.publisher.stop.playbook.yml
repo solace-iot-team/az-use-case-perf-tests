@@ -1,0 +1,14 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "SDKPerf Stop Publishers"
+  hosts: sdkperf_publishers
+
+  tasks:
+    - name: remove all sdkperf tasks
+      become: true
+      command: pkill --signal 2 -f sdkperf
+      ignore_errors: true

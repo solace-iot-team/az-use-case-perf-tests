@@ -7,9 +7,11 @@
 ---
 - name: "Broker Centos Bootstrap"
   hosts: broker_centos
+  vars:
+    project_root_dir: "../"
   pre_tasks:
     - include_vars:
-        file: "./vars/bootstrap.vars.yml"
+        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
         name: bootstrap
 
   tasks:

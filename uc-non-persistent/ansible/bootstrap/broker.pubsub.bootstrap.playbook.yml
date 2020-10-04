@@ -8,6 +8,8 @@
 - name: "Broker PubSub Bootstrap"
   hosts: broker_pubsub
   gather_facts: no
+  vars:
+    project_root_dir: "../"
 
   module_defaults:
     solace_get_available:
@@ -43,7 +45,7 @@
 
   pre_tasks:
     - include_vars:
-        file: "./vars/bootstrap.vars.yml"
+        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
         name: bootstrap
 
   tasks:
