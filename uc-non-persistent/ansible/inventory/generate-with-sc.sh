@@ -69,7 +69,9 @@ echo "# "
   inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . ) || exit
 
   #cloudprovider aws | az
-  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.infrastrucure=env.UC_NON_PERSISTENT_INFRASTRUCTURE' )
+  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.infrastructure=env.UC_NON_PERSISTENT_INFRASTRUCTURE' )
+  export cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
+  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.cloud_provider=env.cloudProvider' )
 
   # broker node info
     export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")

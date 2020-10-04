@@ -1,10 +1,10 @@
 # Inventory
 
-script: `generate.sh`:
-  - generates `inventory.json` from
-    - `inventory.template.json`
-    - `{root}/shared-setup/broker-nodes.json`
-    - `{root}/shared-setup/sdkperf-nodes.json`
+script: `generate.sh`
+
+generates inventory file
+
+`{cloud-provider}.{infrastructure}.inventory.json`
 
 ---
 The End.
