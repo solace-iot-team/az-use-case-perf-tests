@@ -29,7 +29,7 @@ export ARM_TENANT_ID={tenant-id}
 ````bash
 export AWS_ACCESS_KEY_ID={aws-access-key}
 export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
-export AWS_DEFAULT_REGION={aws-default-region} 
+export AWS_DEFAULT_REGION={aws-default-region}
 ````
 
 
@@ -120,7 +120,7 @@ cd {root}/shared-setup
 less {root}/shared-setup/az.broker-nodes.json
 less {root}/shared-setup/az.sdkperf-nodes.json
 # ssh ...
-ssh -i ../../../keys/az_key centos@{public-ip-address}
+ssh -i ../../../keys/azure_key centos@{public-ip-address}
 ````
 
 ##### AWS
