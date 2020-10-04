@@ -1,0 +1,137 @@
+#!/bin/bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Broker PubSub Bootstrap"
+  hosts: broker_pubsub
+  gather_facts: no
+
+  module_defaults:
+    solace_get_available:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+    solace_vpn:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+    solace_client_profile:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+      solace_cloud_api_token: "{{ solace_cloud_api_token | default(omit) }}"
+      solace_cloud_service_id: "{{ solace_cloud_service_id | default(omit) }}"
+    solace_client_username:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+
+  pre_tasks:
+    - include_vars:
+        file: "./vars/bootstrap.vars.yml"
+        name: bootstrap
+
+  tasks:
+
+    - set_fact:
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http' }}"
+        is_solace_cloud: "{{ True if sempv2_is_secure_connection else False }}"
+
+    - name: "Check Imports / Version / Interpreter"
+      solace_get_available:
+
+    - name: "Pause Until Broker available"
+      solace_get_available:
+      register: result
+      until: "result.rc == 0 and result.is_available"
+      retries: 25 # 25 * 5 seconds
+      delay: 5 # Every 5 seconds
+
+    - name: "Set Broker Max Spool Usage"
+      uri:
+       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP"
+       method: POST
+       user: "{{ sempv2_username}}"
+       password: "{{ sempv2_password }}"
+       headers:
+         Content-Type: "text/xml"
+       body: "<rpc><hardware><message-spool><max-spool-usage><size>{{bootstrap.broker.pubsub.max_spool_usage}}</size></max-spool-usage></message-spool></hardware></rpc>"
+       body_format: raw
+       force_basic_auth: yes
+       status_code: "200"
+       return_content: yes
+      register: result
+      retries: 3
+      delay: 1
+      when: is_solace_cloud == False
+
+    - name: "Create the VPN"
+      solace_vpn:
+        name: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        settings:
+          enabled: true
+          authenticationBasicType: "none" # none, internal
+          maxMsgSpoolUsage: "{{bootstrap.broker.pubsub.max_spool_usage}}"
+        state: present
+      when: is_solace_cloud == False
+
+    - name: "Create the Client Profile"
+      solace_client_profile:
+        name: "{{ bootstrap.broker.pubsub.client_profile_name }}"
+        msg_vpn: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        settings:
+          allowBridgeConnectionsEnabled: false
+          allowGuaranteedMsgSendEnabled: false
+          allowGuaranteedMsgReceiveEnabled: false
+          allowGuaranteedEndpointCreateEnabled: false
+          allowTransactedSessionsEnabled: false
+          maxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
+          serviceSmfMaxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
+          serviceWebMaxConnectionCountPerClientUsername: 0
+          maxEndpointCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
+          maxEgressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
+          maxIngressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
+          maxSubscriptionCount: 1000000
+          maxTransactedSessionCount: 0
+          maxTransactionCount: 0
+        state: present
+
+    - name: "Create Client Username"
+      solace_client_username:
+        name: "{{ bootstrap.broker.pubsub.client_user_name }}"
+        msg_vpn: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        settings:
+          clientProfileName: "{{ bootstrap.broker.pubsub.client_profile_name }}"
+          aclProfileName: "default"
+          password: "{{ bootstrap.broker.pubsub.client_user_name_pwd }}"
+          enabled: true
+        state: present
+
+    - name: "Display Standalone Broker Console URL"
+      debug:
+        msg:
+          - "Log in to Standalone Broker Console:"
+          - "   browser incognito window"
+          - "   {{admin_protocol}}://{{sempv2_host}}:{{sempv2_port}}"
+          - "   user: {{ sempv2_username }}"
+          - "   pass: {{ sempv2_password }}"
+          - "   vpn: {{bootstrap.broker.pubsub.vpn_name}}"
+      when: is_solace_cloud == False
+
+###
+# The End.
