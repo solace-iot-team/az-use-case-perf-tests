@@ -9,14 +9,14 @@ clear
 ############################################################################################################################
 echo
 echo "##############################################################################################################"
-echo "# Generate inventory for $PERF_CLOUDPROVIDER"
+echo "# Generate inventory for $UC_NON_PERSISTENT_INFRASTRUCTURE"
 echo "# "
 
 ############################################################################################################################
 # prepare
   scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
   scriptDir=$(cd $(dirname "$0") && pwd);
-  source ./.lib/functions.sh
+  source $scriptDir/.lib/functions.sh
   projectHome=${scriptDir%/ansible/*}
 
 ############################################################################################################################
@@ -24,11 +24,11 @@ echo "# "
 
   sharedSetupDir="$projectHome/shared-setup"
     [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
-  brokerNodesFile=$(assertFile "$sharedSetupDir/$PERF_CLOUDPROVIDER.broker-nodes.json") || exit
-  sdkPerfNodesFile=$(assertFile "$sharedSetupDir/$PERF_CLOUDPROVIDER.sdkperf-nodes.json") || exit
-  targetInventoryFile="$scriptDir/$PERF_CLOUDPROVIDER.inventory.json"
+  brokerNodesFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.broker-nodes.json") || exit
+  sdkPerfNodesFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.sdkperf-nodes.json") || exit
+  targetInventoryFile="$scriptDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json"
   srcInventoryTemplateFile="$scriptDir/inventory.template.json"
-  solaceCloudInventoryFile="$sharedSetupDir/$PERF_CLOUDPROVIDER.inventory.sc-service.az_use_case_perf_tests.json"
+  solaceCloudInventoryFile="$sharedSetupDir/inventory.sc-service.az_use_case_perf_tests.json"
 
 ############################################################################################################################
 # User select which broker
@@ -69,7 +69,7 @@ echo "# "
   inventoryJson=$( cat $srcInventoryTemplateFile | jq -r . ) || exit
 
   #cloudprovider aws | az
-  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.cloudprovider=env.PERF_CLOUDPROVIDER' )
+  inventoryJson=$( echo $inventoryJson | jq -r '.all.vars.infrastrucure=env.UC_NON_PERSISTENT_INFRASTRUCTURE' )
 
   # broker node info
     export adminUser=$( echo $brokerNodesJson | jq -r ".broker_nodes[0].admin_username")
