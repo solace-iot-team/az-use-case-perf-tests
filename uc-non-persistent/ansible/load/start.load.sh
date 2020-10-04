@@ -24,7 +24,7 @@
   if [ -z "$1" ]; then
     if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
         echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
-        echo "    for example: ./run.bootstrap.sh azure.standalone"
+        echo "    for example: $scriptName azure.standalone"
         echo; exit 1
     fi
   else
