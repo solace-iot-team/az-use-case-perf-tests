@@ -7,8 +7,10 @@
 ---
 - name: "SDKPerf Centos Bootstrap"
   hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  vars:
+    project_root_dir: "../"
   vars_files:
-    - "./vars/bootstrap.vars.yml"
+    - "{{project_root_dir}}/vars/bootstrap.vars.yml"
 
   tasks:
 

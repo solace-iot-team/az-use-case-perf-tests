@@ -79,6 +79,16 @@ privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
                     $playbook
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
+##############################################################################################################################
+# Initializing load
+
+$scriptDir/../load/start.load.sh
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+
+$scriptDir/../load/stop.load.sh
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+
+
 # TODO:
 echo "!!!!!!!!!!!!!!"
 echo " !!!! check if the inits are still required here after changes in calling sdkperf method.."
