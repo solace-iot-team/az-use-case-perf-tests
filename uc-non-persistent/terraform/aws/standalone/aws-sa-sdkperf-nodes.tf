@@ -1,6 +1,6 @@
 ####################################################################################################
 # INSTRUCTIONS:
-# (1) Customize these instance values to your preference.  
+# (1) Customize these instance values to your preference.
 #       * instance_type
 #       * availability_zone
 #       * tags
@@ -10,12 +10,12 @@
 resource "aws_instance" "sdkperf-nodes" {
 
   count = var.sdkperf_nodes_count
-  
+
   ami                    = var.centOS_ami[var.aws_region]
   key_name               = var.aws_ssh_key_name
   subnet_id              = var.subnet_id == "" ? aws_subnet.sdkperf_subnet[0].id : var.subnet_id
-  vpc_security_group_ids = var.sdkperf_secgroup_ids == [""] ? ["${aws_security_group.sdkperf_secgroup[0].id}"] : var.sdkperf_secgroup_ids 
-  
+  vpc_security_group_ids = var.sdkperf_secgroup_ids == [""] ? ["${aws_security_group.sdkperf_secgroup[0].id}"] : var.sdkperf_secgroup_ids
+
   instance_type          = var.sdkperf_vm_type
   availability_zone      = "${var.aws_region}a"
 
@@ -31,7 +31,7 @@ resource "aws_instance" "sdkperf-nodes" {
     Days    = var.tag_days
   }
 
-# Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail  
+# Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
     inline = ["echo 'SSH ready to rock'"]
 
@@ -51,6 +51,5 @@ resource "aws_instance" "sdkperf-nodes" {
       #nodes = aws_instance.sdkperf-nodes.*.public_ip
     }
   )
-  filename = "../../../shared-setup/aws.sdkperf-nodes.json"
+  filename = "../../../shared-setup/aws.standalone.sdkperf-nodes.json"
  }
-
