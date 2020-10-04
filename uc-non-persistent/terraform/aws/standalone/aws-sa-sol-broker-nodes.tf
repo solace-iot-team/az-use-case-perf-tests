@@ -1,11 +1,11 @@
 ####################################################################################################
 # INSTRUCTIONS:
-# (1) Customize these instance values to your preference.  
+# (1) Customize these instance values to your preference.
 #       * instance_type
 #       * availability_zone
 #       * tags
 # (2) On the Ansible Playbooks & Var files - Adjust the PubSub+ SW Broker:
-#         - Scaling tier 
+#         - Scaling tier
 #         - external storage device name - ex: /dev/sdc or /dev/xvdc
 #         - Docker Version
 #         - Solace Image Type, Standard, Enterprise or Enterprise Eval
@@ -19,7 +19,7 @@ resource "aws_instance" "solace-broker-nodes" {
   ami                    = var.centOS_ami[var.aws_region]
   key_name               = var.aws_ssh_key_name
   subnet_id              = var.subnet_id == "" ? aws_subnet.sdkperf_subnet[0].id : var.subnet_id
-  vpc_security_group_ids = var.solacebroker_secgroup_ids == [""] ? ["${aws_security_group.solacebroker_secgroup[0].id}"] : var.solacebroker_secgroup_ids 
+  vpc_security_group_ids = var.solacebroker_secgroup_ids == [""] ? ["${aws_security_group.solacebroker_secgroup[0].id}"] : var.solacebroker_secgroup_ids
 
   instance_type          = var.sol_messaging_vm_type
   availability_zone      = "${var.aws_region}a"
@@ -29,7 +29,7 @@ resource "aws_instance" "solace-broker-nodes" {
     volume_size           = 8
     delete_on_termination = true
   }
-  
+
   ebs_block_device {
     device_name = var.solacebroker_storage_device_name
     volume_size = var.solacebroker_storage_size
@@ -46,7 +46,7 @@ resource "aws_instance" "solace-broker-nodes" {
     Purpose = "sdkperf benchmarking - Broker node"
     Days    = var.tag_days
   }
-  
+
  # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
     inline = ["echo 'SSH ready to rock'"]
@@ -66,7 +66,7 @@ resource "aws_instance" "solace-broker-nodes" {
       nodes = aws_instance.solace-broker-nodes.*
     }
   )
-  filename = "../../../shared-setup/aws.broker-nodes.json"
+  filename = "../../../shared-setup/aws.standalone.broker-nodes.json"
   }
 
 # Trigger Ansible Tasks for the Brokers - Only after all the VM resources and Ansible Inventories & Playbooks have been created
@@ -79,7 +79,6 @@ resource "aws_instance" "solace-broker-nodes" {
 
 #  depends_on = [
 #    local_file.solacebroker_inv_file,
-#    local_file.solace_vars_loop_queues # Dependency to create Queues on the broker(s) based on the number of SDKPerf nodes created 
+#    local_file.solace_vars_loop_queues # Dependency to create Queues on the broker(s) based on the number of SDKPerf nodes created
 #  ]
 #}
-
