@@ -1,17 +1,20 @@
-# shared-setup
+# Shared Setup
 
-Generated information is stored here.
+Generated infrastructure information that was created.
 
-````bash
-# FROM:
-cd terraform/azure/standalone
-terraform apply
-# SHARED SETUP:
-ls:
-  - broker-nodes.json
-  - sdkperf-nodes.json
+Patterns:
+- `{cloud-provider}.{scope}.broker-nodes.json`
+- `{cloud-provider}.{scope}.sdkperf-nodes.json`
 
-````
+For example:
+- `azure.standalone.broker-nodes.json`
+- `azure.standalone.sdkperf-nodes.json`
+
+or:
+
+- `aws.standalone.broker-nodes.json`
+- `aws.standalone.sdkperf-nodes.json`
+
 
 ---
 The End.

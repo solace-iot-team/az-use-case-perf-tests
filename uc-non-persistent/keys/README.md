@@ -6,18 +6,26 @@ _**Note: The keys must NOT be passphrase protected, i.e. they must have an empty
 
 If there are no preexisting SSH Keys, they can be created by running the following command:
 
-### Azure 
+### Azure
+
+**_Note: `azure_key` is the default key name used in the scripts for Azure._**
+
+**_Note: scripts are configured to look for {root}/keys/azure_key._**
+
 ````bash
 cd {root}/uc-non-persistent/keys
 
-ssh-keygen -t rsa -b 4096 -f az_key
+ssh-keygen -t rsa -b 4096 -f azure_key
 
   > EMPTY PASSPHRASE! # otherwise terraform scripts will fail
 
 # ensure the private key has the correct permissions
-chmod 600 az_key
+chmod 600 azure_key
 ````
-### AWS 
+### AWS
+**_Note: `aws_key` is the default key name used in the scripts for AWS._**
+
+**_Note: scripts are configured to look for {root}/keys/aws_key._**
 ````bash
 cd {root}/uc-non-persistent/keys
 
@@ -28,13 +36,6 @@ ssh-keygen -t rsa -b 4096 -f aws_key
 # ensure the private key has the correct permissions
 chmod 600 aws_key
 ````
-## Notes
-
-**_Note: `az_key` is the default key name used in the scripts for Azure._**
-**_Note: `aws_key` is the default key name used in the scripts for AWS._**
-
-**_Note: scripts are configured to look for {root}/keys/az_key._**
-**_Note: scripts are configured to look for {root}/keys/aws_key._**
 
 ---
 The End.
