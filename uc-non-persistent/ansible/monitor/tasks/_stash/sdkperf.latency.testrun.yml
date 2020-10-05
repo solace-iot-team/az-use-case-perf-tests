@@ -1,0 +1,86 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+- set_fact:
+    sample_start_timestamp: "{{now(True)}}"
+    sample_num: "{{item}}"
+
+- name: remove all sdkperf tasks
+  become: true
+  command: pkill --signal 9 -f sdkperf
+  ignore_errors: true
+
+- pause:
+    seconds: 3
+    prompt: "Waiting 3 seconds ...."
+
+- name: delete latency log file
+  become: true
+  file:
+    path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
+    state: absent
+
+- set_fact:
+    sdkperf_command: taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn={{hostvars[inventory_hostname].boxname}}-1 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/latency-debug-0.log -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="***removed****" -ptl="{{ latency.topics }}" -stl="{{ latency.topics }}" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=15 -l > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}
+
+# -lg=15
+- name: run sdkperf latency test
+  shell: nohup taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn={{hostvars[inventory_hostname].boxname}}-1 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/latency-debug-0.log -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -ptl="{{ latency.topics }}" -stl="{{ latency.topics }}" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=15 -l </dev/null >> {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}} 2>&1 &
+
+# -lg=12 ==> not enough latency buckets
+# - name: run sdkperf latency test
+#   shell: nohup taskset -c 1,2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -ptl="{{ latency.topics }}" -stl="{{ latency.topics }}" -mn="{{ latency.msg_number }}" -msa="{{ latency.msg_payload_size_bytes }}" -mr="{{ latency.msg_rate_per_second }}" -psm -lat -lwu=10 -lb=4096 -lg=12 -l </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}} 2>&1 &
+
+- name: waiting for sdkperf to collect latency stats
+  pause:
+    seconds: "{{latency.pause_between_calls_secs}}"
+
+- name: remove sdkperf tasks
+  become: true
+  # killing sdkperf with signal 2 triggers flushes stats to logfile before dying
+  command: pkill --signal 2 -f sdkperf
+  ignore_errors: true
+
+- name: "Download latency log to local tmp"
+  become: true
+  fetch:
+    src: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
+    dest: "./tmp/latency/latency-stats.current.log"
+    flat: yes
+  register: result
+
+- name: "Post-process latency log file"
+  shell: "cat {{ result.dest }} | ./lib/post-process.latency.sh ./lib/latency.template.json '{{sample_start_timestamp}}' '{{sdkperf_command}}'"
+  environment:
+    RUN_ID: "{{run_id}}"
+    SAMPLE_NUM: "{{sample_num}}"
+    NODE: "latency_node"
+  delegate_to: localhost
+  register: pp_result
+  failed_when: pp_result.stderr != '' or pp_result.rc > 0
+
+# DEBUG
+# - name: "Display for faster debugging"
+#   debug:
+#     msg:
+#       - "latency json file:"
+#       - "{{pp_result.stdout}}"
+
+- name: "Copy Latency Json to {{ result_dir }}"
+  local_action:
+    module: copy
+    content: "{{pp_result.stdout | from_json | to_nice_json }}"
+    dest: "{{ result_dir }}/latency-stats.{{sample_start_timestamp}}.json"
+
+- name: delete latency log file
+  become: true
+  file:
+    path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.latency_repeat_filename}}"
+    state: absent
+
+###
+# The End.

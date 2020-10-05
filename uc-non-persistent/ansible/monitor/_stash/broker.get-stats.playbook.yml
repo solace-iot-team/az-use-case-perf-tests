@@ -5,76 +5,80 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "Broker VPN Statistics"
-  hosts: broker_pubsub
-  gather_facts: no
+- hosts: broker_pubsub
+  vars_files:
+    - "./vars/monitor.vars.yml"
+    - "../vars/sdkperf.vars.yml"
+
   vars:
-    project_root_dir: "../"
+    select_vpn_stats: >-
+      dataRxByteCount,
+      dataTxByteCount,
+      dataRxMsgCount,
+      dataTxMsgCount,
+      discardedRxMsgCount,
+      discardedTxMsgCount,
+      averageRxByteRate,
+      averageRxMsgRate,
+      averageTxByteRate,
+      averageTxMsgRate
+    # rate
+
+    select_client_connection_stats: >-
+      rxDiscardedMsgCount,
+      rxMsgCount,
+      rxMsgRate,
+      rxByteRate,
+      rxByteCount,
+      txDiscardedMsgCount,
+      txMsgCount,
+      txMsgRate,
+      txByteRate,
+      txByteCount,
+      clientAddress,
+      clientName,
+      uptime
+
 
   pre_tasks:
     - include_vars:
-        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+        file: "../vars/bootstrap.vars.yml"
         name: bootstrap
-    - include_vars: "{{project_root_dir}}/vars/_sdkperf.vars.yml"
     - include_vars:
         file: "{{ BROKER_NODES_FILE }}"
         name: brokerNodes
     - include_vars:
         file: "{{ SDKPERF_NODES_FILE }}"
         name: sdkPerfNodes
-    - include_vars:
-        file: "./vars/_monitor.vars.yml"
-        name: monitor
+
 
   tasks:
 
-    - name: "Read & Check Environment vars"
-      set_fact:
+    - set_fact:
+        run_timestamp: "{{now(True)}}"
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
-        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
-        use_case: "{{monitor.general.use_case}}"
+        use_case: "{{general.use_case}}"
         cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
-
-    - name: "Settings"
-      set_fact:
-        sampling_overhead_secs: 10
-        min_collection_period_secs: 15
-        sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
-        vpn_post_process_exe: "./lib/_post-process.vpn-stats.sh"
-        vpn_post_process_template_file: "./lib/_vpn-stats.template.json"
+        is_message_loss: False
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
-        meta_result_file: "{{ result_dir }}/run.meta.json"
-        meta_j2_template_file: "./lib/_run.meta.j2"
-        meta_test_start_ts_str: "{{ now(True) }}"
 
-
-    - name: "Check Local Files Exist"
-      stat:
-        path: "{{item}}"
-      register: stat_result
-      failed_when: not stat_result.stat.exists
-      delegate_to: localhost
-      with_items:
-        - "{{vpn_post_process_exe}}"
-        - "{{vpn_post_process_template_file}}"
-
-    - name: "Ensure {{ result_dir }} exists"
+    - name: "Ensure ./tmp/vpn-stats exists"
       local_action:
         module: file
-        path: "{{result_dir}}"
+        path: "./tmp/vpn-stats"
         state: directory
 
-    # # TEST & DEBUG
-    # - name: "TEST: Simulate delay in startup"
-    #   pause:
-    #     seconds: 15
+    - name: "Ensure {{RESULT_DIR}} exists"
+      file:
+        path: "{{ result_dir }}"
+        state: directory
 
     - name: "Get Client Connections: Start"
       uri:
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
         # GET /msgVpns/{msgVpnName}/clients
-        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
+        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{select_client_connection_stats|trim|replace(' ','')}}"
         # url: "http://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}"
         method: GET
         user: "{{ sempv2_username }}"
@@ -88,10 +92,15 @@
         number_connected_clients_start: "{{ result.json.data | length }}"
         connected_client_list_start: "{{ result.json.data }}"
 
-    # # TEST & DEBUG
-    # - name: "Number SDKPerf clients connected"
-    #   debug:
-    #     msg: "Number of Connected SDKPerf Clients={{number_connected_clients_start}}"
+    - name: "Number SDKPerf clients connected"
+      debug:
+        msg: "Number of Connected SDKPerf Clients={{number_connected_clients_start}}"
+
+    - name: "Check that 12 SDKPerf clients are connected"
+      fail:
+        msg: "Expecting 12 SDKPerf clients connected, instead got: {{number_connected_clients_start}}"
+      when: number_connected_clients_start != '12'
+      ignore_errors: yes
 
     - name: "Clear VPN Stats"
       uri:
@@ -108,21 +117,15 @@
        return_content: yes
       register: result
 
-    - name: "Warmup Sample Runs"
-      include_tasks: ./tasks/_broker.vpn-stats.testrun.yml
-      vars:
-        warm_up_run: true
-      with_sequence: "end=0 start=0"
-
-    - name: "Starting Sample Runs"
-      include_tasks: ./tasks/_broker.vpn-stats.testrun.yml
-      with_sequence: "end={{monitor.general.total_num_samples-1}} start=0"
+    - name: "Get Stats Periodically: VPN Stats Tasks"
+      include_tasks: ./tasks/vpn-stats.yml
+      with_sequence: "end={{ general.count }} start=0"
 
     - name: "Get Client Connections: End"
       uri:
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
         # GET /msgVpns/{msgVpnName}/clients
-        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
+        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ bootstrap.broker.pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{bootstrap.broker.pubsub.client_user_name}}&select={{select_client_connection_stats|trim|replace(' ','')}}"
         method: GET
         user: "{{ sempv2_username }}"
         password: "{{ sempv2_password }}"
@@ -135,10 +138,24 @@
         number_connected_clients_end: "{{ result.json.data | length }}"
         connected_client_list_end: "{{ result.json.data }}"
 
+    - set_fact:
+        result_file: "{{ result_dir }}/run.meta.json"
+
     - name: "Write Test Meta Data to Results"
       template:
-        src: "{{ meta_j2_template_file }}"
-        dest: "{{ meta_result_file }}"
+        src: "./lib/run.meta.j2"
+        dest: "{{ result_file }}"
+
+    - include_vars:
+        file: "{{ result_file }}"
+        name: test_result
+
+    - name: "Test Results"
+      debug:
+        msg:
+          - "{{ result_dir }}/run.meta.json"
+          - "{{ test_result }}"
+
 
 ###
 # The End.

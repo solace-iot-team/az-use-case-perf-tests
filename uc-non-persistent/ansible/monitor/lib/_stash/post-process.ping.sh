@@ -4,20 +4,26 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-# check inputs
-if [ -z "$PING_OUTPUT" ]; then echo "no PING_OUTPUT env var found" >>/dev/stderr; exit 1; fi
-if [ -z "$TEMPLATE_FILE" ]; then echo "no TEMPLATE_FILE env var found" >>/dev/stderr; exit 1; fi
-  if [[ ! -f "$TEMPLATE_FILE" ]]; then echo "template file: '$TEMPLATE_FILE' not found." >>/dev/stderr; exit 1; fi
-if [ -z "$START_TIMESTAMP_STR" ]; then echo "no START_TIMESTAMP_STR env var found" >>/dev/stderr; exit 1; fi
-if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var found" >>/dev/stderr; exit 1; fi
-if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var found" >>/dev/stderr; exit 1; fi
+# usage:
+# cat ping.log | prost-process.ping.sh ping-template.json {timestamp-string}
+# stdout: the json
+# stderr: any errors
 
-pingJson=$( cat $TEMPLATE_FILE | jq -r .) || exit
-pingJson=$( echo $pingJson | jq -r '.sample_start_timestamp=env.START_TIMESTAMP_STR' )
+if [ ! -p /dev/stdin ]; then echo "no ping log input received" >>/dev/stderr; exit 1; fi
+if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; exit 1; fi
+if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
+if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
+if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var received" >>/dev/stderr; exit 1; fi
+
+export timestamp=$2
+
+pingJson=$(cat $1 | jq -r .) || exit
+pingJson=$( echo $pingJson | jq -r '.sample_start_timestamp=env.timestamp' )
 pingJson=$( echo $pingJson | jq -r '.run_id=env.RUN_ID')
 pingJson=$( echo $pingJson | jq -r '.sample_num=env.SAMPLE_NUM')
 pingJson=$( echo $pingJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
 
+# If we want to read the input line by line
 lineCount=0
 while IFS= read line; do
   export lineCount
@@ -58,7 +64,7 @@ while IFS= read line; do
         # export rtt_values=${rtt_values#$val/}
   fi
   ((lineCount++))
-done < <(printf '%s\n' "$PING_OUTPUT")
+done
 
 echo $pingJson
 

@@ -5,23 +5,55 @@
 
 ---
 - name: "SDKPerf Latency to broker node"
-  hosts: sdkperf_latency
-  vars_files:
-    - "../vars/bootstrap.vars.yml"
-    - "../vars/sdkperf.vars.yml"
-    - "./vars/monitor.vars.yml"
+  hosts: "{{HOSTS}}"
+  gather_facts: no
+  vars:
+    project_root_dir: "../"
+  pre_tasks:
+    - include_vars: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+    - include_vars: "{{project_root_dir}}/vars/_sdkperf.vars.yml"
+    - include_vars:
+        file: "./vars/_monitor.vars.yml"
+        name: monitor
 
   tasks:
-
-    - set_fact:
+    - name: "Read & Check Environment vars"
+      set_fact:
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
 
-    - name: "Ensure ./tmp/latency exists"
-      local_action:
-        module: file
-        path: "./tmp/latency"
-        state: directory
+    - name: "Settings"
+      set_fact:
+        sampling_overhead_secs: 10
+        min_collection_period_secs: 15
+        sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
+        latency_post_process_exe: "./lib/_post-process.latency.sh"
+        latency_post_process_template_file: "./lib/_latency.template.json"
+
+    - name: "Calculate Parameters"
+      set_fact:
+        sdkperf_msg_number: "{{((sample_run_time_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs ) * monitor.latency.msg_rate_per_second}}"
+
+    - name: "Check Local Files Exist"
+      stat:
+        path: "{{item}}"
+      register: stat_result
+      failed_when: not stat_result.stat.exists
+      delegate_to: localhost
+      with_items:
+        - "{{latency_post_process_exe}}"
+        - "{{latency_post_process_template_file}}"
+
+    - name: "Check input"
+      fail:
+        msg:
+          - "latency collection period too short, must be at least {{min_collection_period_secs}} seconds"
+          - "monitor.general.sample_run_time_secs={{monitor.general.sample_run_time_secs}}"
+          - "monitor.latency.warmup_secs={{monitor.latency.warmup_secs}}"
+          - "sampling_overhead_secs={{sampling_overhead_secs}}"
+          - "collection period = {{monitor.general.sample_run_time_secs - sampling_overhead_secs - monitor.latency.warmup_secs}}"
+      when: (monitor.general.sample_run_time_secs - sampling_overhead_secs - monitor.latency.warmup_secs) < min_collection_period_secs
 
     - name: "Ensure {{ result_dir }} exists"
       local_action:
@@ -29,13 +61,20 @@
         path: "{{result_dir}}"
         state: directory
 
-    - name: kicking of playbook
-      debug:
-        msg: "kicking of playbook"
+    # # TEST & DEBUG
+    # - name: "TEST: Simulate delay in startup"
+    #   pause:
+    #     seconds: 15
 
-    - name: Invoking repeating tasks
-      include_tasks: ./tasks/sdkperf.latency.testrun.yml
-      with_sequence: "end={{general.count}} start=0"
+    - name: "Warmup Sample Runs"
+      include_tasks: ./tasks/_sdkperf.latency.testrun.yml
+      vars:
+        warm_up_run: true
+      with_sequence: "end=0 start=0"
+
+    - name: "Starting Sample Runs"
+      include_tasks: ./tasks/_sdkperf.latency.testrun.yml
+      with_sequence: "end={{monitor.general.total_num_samples-1}} start=0"
 
 
 ###

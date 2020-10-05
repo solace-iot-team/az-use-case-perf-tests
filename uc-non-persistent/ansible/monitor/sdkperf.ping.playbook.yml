@@ -4,29 +4,69 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "PING broker node"
+- name: "PING broker node from latency node"
   hosts: sdkperf_latency
-  vars_files:
-    - "../vars/bootstrap.vars.yml"
-    - "../vars/sdkperf.vars.yml"
-    - "./vars/monitor.vars.yml"
+  gather_facts: no
+  vars:
+    project_root_dir: "../"
+  pre_tasks:
+    - include_vars:
+        file: "{{INVENTORY_FILE}}"
+        name: inventory
+    - include_vars: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+    - include_vars: "{{project_root_dir}}/vars/_sdkperf.vars.yml"
+    - include_vars:
+        file: "./vars/_monitor.vars.yml"
+        name: monitor
 
   tasks:
 
-    - include_vars:
-        file: "../inventory/inventory.json"
-        name: inventory
-
-    - set_fact:
+    - name: "Read & Check Environment vars"
+      set_fact:
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
-        is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
 
-    - name: "Ensure ./tmp/ping exists"
-      local_action:
-        module: file
-        path: "./tmp/ping"
-        state: directory
+    - name: "Settings"
+      set_fact:
+        min_collection_period_secs: 15
+        sampling_overhead_secs: 15
+        is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
+        sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
+        ping_post_process_exe: "./lib/_post-process.ping.sh"
+        ping_post_process_template_file: "./lib/ping.template.json"
+
+    - name: "ERROR: Solace Cloud"
+      debug:
+        msg: "cannot ping a Solace Cloud Broker, ending play for host ..."
+      when: is_solace_cloud == True
+
+    - name: "Abort if broker is Solace Cloud"
+      meta: end_host
+      when: is_solace_cloud == True
+
+    - name: "Calculate Parameters"
+      set_fact:
+        ping_msg_number: "{{(sample_run_time_secs | int) - sampling_overhead_secs }}"
+
+    - name: "Check Local Files Exist"
+      stat:
+        path: "{{item}}"
+      register: stat_result
+      failed_when: not stat_result.stat.exists
+      delegate_to: localhost
+      with_items:
+        - "{{ping_post_process_exe}}"
+        - "{{ping_post_process_template_file}}"
+
+    - name: "Check input"
+      fail:
+        msg:
+          - "ping collection period too short, must be at least {{min_collection_period_secs}} seconds"
+          - "monitor.general.sample_run_time_secs={{monitor.general.sample_run_time_secs}}"
+          - "sampling_overhead_secs={{sampling_overhead_secs}}"
+          - "collection period = {{monitor.general.sample_run_time_secs - sampling_overhead_secs}}"
+      when: (monitor.general.sample_run_time_secs - sampling_overhead_secs) < min_collection_period_secs
 
     - name: "Ensure {{ result_dir }} exists"
       local_action:
@@ -34,21 +74,20 @@
         path: "{{result_dir}}"
         state: directory
 
-    - name: kicking of playbook
-      debug:
-        msg: "kicking of playbook"
-      when: is_solace_cloud == False
+    # # TEST & DEBUG
+    # - name: "TEST: Simulate delay in startup"
+    #   pause:
+    #     seconds: 15
 
-    - name: Invoking repeating tasks
-      include_tasks: ./tasks/sdkperf.ping.testrun.yml
-      with_sequence: "end={{general.count}} start=0"
-      when: is_solace_cloud == False
+    - name: "Warmup Sample Runs"
+      include_tasks: ./tasks/_sdkperf.ping.testrun.yml
+      vars:
+        warm_up_run: true
+      with_sequence: "end=0 start=0"
 
-    - name: "Warning: Solace Cloud"
-      debug:
-        msg: "cannot ping a Solace Cloud Broker, aborting ..."
-      when: is_solace_cloud == True
-
+    - name: "Starting Sample Runs"
+      include_tasks: ./tasks/_sdkperf.ping.testrun.yml
+      with_sequence: "end={{monitor.general.total_num_samples-1}} start=0"
 
 ###
 # The End.

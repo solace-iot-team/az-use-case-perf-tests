@@ -6,54 +6,101 @@
 ---
 
 - set_fact:
-    sample_start_timestamp: "{{now(True)}}"
     sample_num: "{{item}}"
+    is_warm_up_run: "{{warm_up_run | default(False)}}"
 
-- name: "Ping broker node..."
-  shell: "ping -c {{ping.msg_number}} -q {{broker_pubsub.private_ip_address}} > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
+- name: "Determine Sampling Start Time"
+  block:
+    - name: "get time from local host"
+      shell: "date -u +%s"
+      register: t_result
+      delegate_to: localhost
+    - set_fact:
+        sample_start_ts_epoch_secs: "{{t_result.stdout}}"
+  when: is_warm_up_run == False
+
+- name: "Set Initial Sampling Start Time"
+  set_fact:
+    sample_start_ts_epoch_secs: "{{run_start_ts_epoch_secs}}"
+  when: is_warm_up_run == True
+
+- set_fact:
+    sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
+    sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+
+# # TEST & DEBUG
+# - debug:
+#     msg:
+#       - "sample_start_ts_epoch_secs={{sample_start_ts_epoch_secs}}"
+#       - "sample_start_ts_str={{sample_start_ts_str}}"
+#       - "sample_end_ts_epoch_secs={{sample_end_ts_epoch_secs}}"
+#       - "ping_msg_number={{ping_msg_number}}"
+# - pause:
+#     seconds: 19
+
+- name: "Run 'ping' to broker node for sample={{sample_num}}"
+  command:
+    argv:
+      - ping
+      - "-c {{ping_msg_number}}"
+      - "-q"
+      - "{{broker_pubsub.private_ip_address}}"
   register: ping_result
-  ignore_errors: true
 
-- name: "Wait for PING to collect results"
-  pause:
-    seconds: "{{ping.pause_between_calls_secs}}"
-
-- name: "Download PING log file to local tmp"
-  become: true
-  fetch:
-    src: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
-    dest: "./tmp/ping/ping-stats.current.log"
-    flat: yes
-  register: result
-
-- name: "Post-process ping log file"
-  shell: "cat {{ result.dest }} | ./lib/post-process.ping.sh ./lib/ping.template.json '{{sample_start_timestamp}}'"
+- name: "Post-process ping results"
+  command: "{{ping_post_process_exe}}"
   environment:
     RUN_ID: "{{run_id}}"
     SAMPLE_NUM: "{{sample_num}}"
+    TEMPLATE_FILE: "{{ping_post_process_template_file}}"
+    START_TIMESTAMP_STR: "{{sample_start_ts_str}}"
+    PING_OUTPUT: "{{ping_result.stdout}}"
   delegate_to: localhost
   register: pp_result
-  failed_when: pp_result.stderr != '' or pp_result.rc > 0
+  failed_when: pp_result.rc > 0 or pp_result.stderr != ''
 
 - set_fact:
     pp_ping_json: "{{pp_result.stdout | from_json}}"
 
-- name: "Display Post-Processed Ping Result"
-  debug:
-    msg: "{{pp_ping_json}}"
+# # TEST & DEBUG
+# - name: "Display Post-Processed Ping Result"
+#   debug:
+#     msg: "{{pp_ping_json}}"
 
 - name: "Copy Ping Json to {{ result_dir }}"
-  local_action:
-    module: copy
+  copy:
     content: "{{pp_ping_json | to_nice_json }}"
-    dest: "{{ result_dir }}/ping-stats.{{sample_start_timestamp}}.json"
-  when: pp_ping_json.metrics.ping.rtt_avg.value != -1
+    dest: "{{ result_dir }}/ping-stats.{{sample_start_ts_str}}.json"
+  delegate_to: localhost
+  when: is_warm_up_run == False
+  failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1
 
-- name: "Delete ping log file on server"
-  become: true
-  file:
-    path: "{{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf.ping_log_filename}}"
-    state: absent
+- name: "Wait for sample cyle to complete"
+  block:
+    - name: "get time from local host"
+      shell: "date -u +%s"
+      register: t_result
+      delegate_to: localhost
+    - set_fact:
+        # -1: ensures that there is at least 1 sample in every minute
+        wait_secs: "{{(sample_end_ts_epoch_secs | int) - (t_result.stdout | int) - 1 }}"
+    - name: "Check playbook execution time is within time span"
+      fail:
+        msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
+      when: is_warm_up_run == False and wait_secs|int < 0
+    - name: "Wait for sample cycle to complete"
+      # note: waits for 1 second if parameter is negative
+      pause:
+        seconds: "{{wait_secs}}"
+  when: sample_num|int < (monitor.general.total_num_samples-1)
+
+# # TEST & DEBUG
+# - name: "summarize timings"
+#   debug:
+#     msg:
+#       - "timings summary:"
+#       - "sample_start_ts_epoch_secs={{sample_start_ts_epoch_secs}}"
+#       - "TARGET: sample_end_ts_epoch_secs={{sample_end_ts_epoch_secs}}"
 
 ###
 # The End.
