@@ -9,11 +9,11 @@ general:
     use_case: uc_non_persistent
     # test run time in seconds: sample_run_time_secs * total_num_samples
     # ----release settings:
-    # sample_run_time_secs: 60
-    # total_num_samples: 60
-    # ----devel settings:
     sample_run_time_secs: 60
-    total_num_samples: 10
+    total_num_samples: 60
+    # ----devel settings:
+    # sample_run_time_secs: 60
+    # total_num_samples: 3
 vpn_stats:
     select_vpn_stats: >-
       dataRxByteCount,
