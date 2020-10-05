@@ -6,20 +6,20 @@
 
 echo;
 echo "##############################################################################################################"
-echo "# Running Monitor VPN Stats ..."
+echo "# Running Monitor Latency ..."
 echo
 
-############################################################################################################################
-# Settings
+  ############################################################################################################################
+  # Settings
 
-  scriptDir=$(cd $(dirname "$0") && pwd);
-  source $scriptDir/.lib/functions.sh
-  scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-  projectHome=${scriptDir%/ansible/*}
+    scriptDir=$(cd $(dirname "$0") && pwd);
+    source $scriptDir/../../.lib/functions.sh
+    scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
+    projectHome=${scriptDir%/ansible/*}
 
-  export ANSIBLE_LOG_PATH="./ansible.log"
-  export ANSIBLE_DEBUG=False
-  export ANSIBLE_HOST_KEY_CHECKING=False
+    export ANSIBLE_LOG_PATH="./ansible.log"
+    export ANSIBLE_DEBUG=False
+    export ANSIBLE_HOST_KEY_CHECKING=False
 
 ############################################################################################################################
 # Environment Variables
@@ -47,17 +47,14 @@ echo
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-statsName="vpn-stats"
+statsName="latency-stats"
 rm -f "$resultDir/$statsName".*.json
-brokerNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUCTURE.broker-nodes.json") || exit
-sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUCTURE.sdkperf-nodes.json") || exit
-
 
 ##############################################################################################################################
 # Run
 
-  inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/broker.get-stats.playbook.yml"
+  inventoryFile=$(assertFile "$scriptDir/../../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+  playbook="$scriptDir/sdkperf.get-latency.playbook.yml"
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
@@ -67,15 +64,14 @@ sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFR
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "RUN_ID=$runId" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
-                  --extra-vars "STATS_NAME=$statsName" \
-                  --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
+                  --extra-vars "HOSTS=sdkperf_latency" \
+                  --extra-vars "STATS_NAME=$statsName"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving vpn stats: $scriptName"; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
 
-echo "##############################################################################################################"
-echo "# Results in: $resultDir"
-echo;echo;
+  echo "##############################################################################################################"
+  echo "# Results in: $resultDir"
+  echo;echo;
 
 ###
 # The End.
