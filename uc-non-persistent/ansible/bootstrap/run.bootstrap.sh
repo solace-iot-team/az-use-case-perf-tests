@@ -88,42 +88,45 @@ $scriptDir/../load/start.load.sh
 $scriptDir/../load/stop.load.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
+# NOTE:
+# Starting and stopping load seems sufficient to initialize SDKPerf working correctly on the VMs.
+# If this is not the case, re-think the init process.
+    #
+    # ##############################################################################################################################
+    # # Connect Consumer to Broker initially
+    #
+    #   playbook=$(assertFile "$scriptDir/sdkperf.consumer.init.playbook.yml") || exit
+    #   ansible-playbook \
+    #                     -i $inventoryFile \
+    #                     --private-key $privateKeyFile \
+    #                     $playbook
+    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+    #
+    # ##############################################################################################################################
+    # # Connect Publisher once to Broker initially
+    #
+    #   playbook=$(assertFile "$scriptDir/sdkperf.publisher.init.playbook.yml") || exit
+    #   ansible-playbook \
+    #                     -i $inventoryFile \
+    #                     --private-key $privateKeyFile \
+    #                     $playbook
+    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+    #
+    # ##############################################################################################################################
+    # # Connect Latency once to Broker initially
+    #
+    #   playbook=$(assertFile "$scriptDir/sdkperf.latency.init.playbook.yml") || exit
+    #   ansible-playbook \
+    #                     -i $inventoryFile \
+    #                     --private-key $privateKeyFile \
+    #                     $playbook
+    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
-# TODO:
-echo "!!!!!!!!!!!!!!"
-echo " !!!! check if the inits are still required here after changes in calling sdkperf method.."
-echo "!!!!!!!!!!!!!!"
-exit 1
+echo;
+echo "##############################################################################################################"
+echo " >>> Successfully bootstrap & initialized infrastructure."
+echo
 
-##############################################################################################################################
-# Connect Consumer to Broker initially
-
-  playbook=$(assertFile "$scriptDir/sdkperf.consumer.init.playbook.yml") || exit
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-
-##############################################################################################################################
-# Connect Publisher once to Broker initially
-
-  playbook=$(assertFile "$scriptDir/sdkperf.publisher.init.playbook.yml") || exit
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-
-##############################################################################################################################
-# Connect Latency once to Broker initially
-
-  playbook=$(assertFile "$scriptDir/sdkperf.latency.init.playbook.yml") || exit
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ###
 # The End.
