@@ -10,7 +10,7 @@ scriptDir=$(cd $(dirname "$0") && pwd);
 source $scriptDir/.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
-monitorVarsFile=$(assertFile "$scriptDir/vars/_monitor.vars.yml") || exit
+monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit
 pids=""
 
 ############################################################################################################################
@@ -64,25 +64,25 @@ echo
 
 # echo "##############################################################################################################"
 echo ">>> Start VPN Stats Monitor ..."
-  $scriptDir/_run.monitor.vpn-stats.sh 2>&1 > $scriptDir/run.monitor.vpn-stats.log &
+  $scriptDir/run.monitor.vpn-stats.sh 2>&1 > $scriptDir/run.monitor.vpn-stats.log &
   vpn_stats_pid=" $!"
   pids+=" $!"
 
 # echo "##############################################################################################################"
 echo ">>> Start Latency Stats Monitor ..."
-  $scriptDir/_run.monitor.latency.sh 2>&1 > $scriptDir/run.monitor.latency.log &
+  $scriptDir/run.monitor.latency.sh 2>&1 > $scriptDir/run.monitor.latency.log &
   latency_pid=" $!"
   pids+=" $!"
 
 # echo "##############################################################################################################"
 echo ">>> Start Latency Broker Node Stats Monitor ..."
-  $scriptDir/_run.monitor.brokernode.latency.sh 2>&1 > $scriptDir/run.monitor.brokernode.latency.log &
+  $scriptDir/run.monitor.brokernode.latency.sh 2>&1 > $scriptDir/run.monitor.brokernode.latency.log &
   brokernode_latency_pid=" $!"
   pids+=" $!"
 
 # echo "##############################################################################################################"
 echo ">>> Start Ping Latency Stats Monitor ..."
-  $scriptDir/_run.monitor.ping.sh 2>&1 > $scriptDir/run.monitor.ping.log &
+  $scriptDir/run.monitor.ping.sh 2>&1 > $scriptDir/run.monitor.ping.log &
   ping_pid=" $!"
   pids+=" $!"
 
