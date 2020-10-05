@@ -1,5 +1,7 @@
 # Ansible
 
+**TODO: rework entirely for new structure **
+
 Ansible scripts to:
 - bootstrap test machines:
   - broker

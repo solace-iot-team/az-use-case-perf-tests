@@ -19,7 +19,7 @@ projectHome=${scriptDir%/ansible/*}
     if [ -z "$1" ]; then
       if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
           echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
-          echo "    for example: ./run.bootstrap.sh azure.standalone"
+          echo "    for example: $scriptName azure.standalone"
           echo; exit 1
       fi
     else
@@ -35,7 +35,7 @@ echo
 echo
 
 echo " >>> Starting Load ..."
-  $scriptDir/start.load.sh > $scriptDir/start.load.log
+  $scriptDir/load/start.load.sh > $scriptDir/start.load.log
   if [[ $? != 0 ]]; then echo ">>> ERROR starting load"; echo; exit 1; fi
 
 echo " >>> Running Monitors ..."
@@ -43,7 +43,7 @@ echo " >>> Running Monitors ..."
   if [[ $? != 0 ]]; then echo ">>> ERROR running monitors"; echo; exit 1; fi
 
 echo " >>> Stop Load ..."
-  $scriptDir/stop.load.sh > $scriptDir/stop.load.log
+  $scriptDir/load/stop.load.sh > $scriptDir/stop.load.log
   if [[ $? != 0 ]]; then echo ">>> ERROR stopping load"; echo; exit 1; fi
 
 echo " >>> DONE"; echo
