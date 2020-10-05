@@ -3,6 +3,9 @@
 # The "subnet_id" variable is left "empty"
 ####################################################################################################
 
+
+
+
 resource "aws_vpc" "sdkperf_vpc" {  
   count = var.subnet_id == "" ? 1 : 0
 
