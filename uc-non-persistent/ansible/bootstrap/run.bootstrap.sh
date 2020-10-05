@@ -82,10 +82,10 @@ privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 ##############################################################################################################################
 # Initializing load
 
-$scriptDir/../load/start.load.sh
+$scriptDir/../tests/load/start.load.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
-$scriptDir/../load/stop.load.sh
+$scriptDir/../tests/load/stop.load.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 # NOTE:
