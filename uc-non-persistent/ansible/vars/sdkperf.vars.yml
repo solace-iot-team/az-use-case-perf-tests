@@ -2,11 +2,7 @@
 sdkperf:
   publisher_log_filename: "publisher"
   consumer_log_filename: "consumer"
-  # latency_log_filename: "latency"
-  # latency_repeat_filename: "latency-repeat.log"
-  # ping_log_filename: "ping.log"
 
-  # datetimeprefix: "{{ ansible_date_time.date }}-{{ ansible_date_time.hour}}-{{ ansible_date_time.minute}}-{{ ansible_date_time.second}}"
   broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
   broker_port: 55555
   broker_msg_vpn: "sdkperf"
