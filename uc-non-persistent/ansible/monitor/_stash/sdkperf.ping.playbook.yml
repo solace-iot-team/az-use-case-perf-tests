@@ -1,0 +1,54 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "PING broker node"
+  hosts: sdkperf_latency
+  vars_files:
+    - "../vars/bootstrap.vars.yml"
+    - "../vars/sdkperf.vars.yml"
+    - "./vars/monitor.vars.yml"
+
+  tasks:
+
+    - include_vars:
+        file: "../inventory/inventory.json"
+        name: inventory
+
+    - set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        is_solace_cloud: "{{ True if inventory.all.hosts.broker_pubsub.sempv2_is_secure_connection else False }}"
+
+    - name: "Ensure ./tmp/ping exists"
+      local_action:
+        module: file
+        path: "./tmp/ping"
+        state: directory
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - name: kicking of playbook
+      debug:
+        msg: "kicking of playbook"
+      when: is_solace_cloud == False
+
+    - name: Invoking repeating tasks
+      include_tasks: ./tasks/sdkperf.ping.testrun.yml
+      with_sequence: "end={{general.count}} start=0"
+      when: is_solace_cloud == False
+
+    - name: "Warning: Solace Cloud"
+      debug:
+        msg: "cannot ping a Solace Cloud Broker, aborting ..."
+      when: is_solace_cloud == True
+
+
+###
+# The End.

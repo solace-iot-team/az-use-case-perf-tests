@@ -6,32 +6,48 @@
 
 ---
 general:
-    # number of tests to run for all tests
-    count: 60 # should run roughly 1 hour
-    # count: 1 # devel setting
     use_case: uc_non_persistent
+    # test run time in seconds: sample_run_time_secs * total_num_samples
+    # ----release settings:
+    # sample_run_time_secs: 60
+    # total_num_samples: 60
+    # ----devel settings:
+    sample_run_time_secs: 60
+    total_num_samples: 10
 vpn_stats:
-    # aiming for 1 measurement per minute
-    pause_between_calls_secs: 57
-    #
-    # ignore_message_loss
-    #   False:
-    #     aborts collecting the stats as soon as it sees messages (sent/received) being discarded
-    #   True: continues collecting stats regardless
-    ignore_message_loss: True
+    select_vpn_stats: >-
+      dataRxByteCount,
+      dataTxByteCount,
+      dataRxMsgCount,
+      dataTxMsgCount,
+      discardedRxMsgCount,
+      discardedTxMsgCount,
+      averageRxByteRate,
+      averageRxMsgRate,
+      averageTxByteRate,
+      averageTxMsgRate
+    # rate
+    select_client_connection_stats: >-
+      rxDiscardedMsgCount,
+      rxMsgCount,
+      rxMsgRate,
+      rxByteRate,
+      rxByteCount,
+      txDiscardedMsgCount,
+      txMsgCount,
+      txMsgRate,
+      txByteRate,
+      txByteCount,
+      clientAddress,
+      clientName,
+      uptime
 latency:
-    # aiming for 1 measurement per minute
-    pause_between_calls_secs: 53
-    # latency producer and consumer settings
-    topics: "private/direct/latency"
+    topic_prefix: "private/direct/latency"
+    warmup_secs: 10
     msg_rate_per_second: 1000 # 0=max
-    msg_number: 60000
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
 ping:
-    # aiming for 1 measurement per minute
-    msg_number: 45
-    pause_between_calls_secs: 12
-    # msg_number: 2 # devel setting
+    # placeholder, no additional settings required
 
 ###
 # The End.

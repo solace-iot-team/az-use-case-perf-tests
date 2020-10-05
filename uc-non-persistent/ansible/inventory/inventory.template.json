@@ -2,7 +2,8 @@
 {
   "all": {
     "vars": {
-      "infrastrucure": "{infrastrucure}",
+      "infrastructure": "{infrastrucure}",
+      "cloud_provider": "{cloud-provider}",
       "broker_pubsub": {
         "public_ip_address": "{public-ip-address}",
         "private_ip_address": "{private-ip-address}"

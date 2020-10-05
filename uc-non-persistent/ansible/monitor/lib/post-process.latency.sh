@@ -4,28 +4,27 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-# usage:
-# cat latency.log | prost-process.latency.sh latency-template.json {timestamp-string} {sdkperf_command}
-# stdout: the json
-# stderr: any errors
+# check inputs
+if [ -z "$LATENCY_OUTPUT" ]; then echo "no LATENCY_OUTPUT env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$TEMPLATE_FILE" ]; then echo "no TEMPLATE_FILE env var found" >>/dev/stderr; exit 1; fi
+  if [[ ! -f "$TEMPLATE_FILE" ]]; then echo "template file: '$TEMPLATE_FILE' not found." >>/dev/stderr; exit 1; fi
+if [ -z "$START_TIMESTAMP_STR" ]; then echo "no START_TIMESTAMP_STR env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$SDKPERF_COMMAND" ]; then echo "no SDKPERF_COMMAND env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$SDKPERF_PARAMS_JSON" ]; then echo "no SDKPERF_PARAMS_JSON env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$STATS_NAME" ]; then echo "no STATS_NAME env var found" >>/dev/stderr; exit 1; fi
+if [ -z "$INVENTORY_HOST" ]; then echo "no INVENTORY_HOST env var found" >>/dev/stderr; exit 1; fi
 
-if [ ! -p /dev/stdin ]; then echo "no latency log input received" >>/dev/stderr; exit 1; fi
-if [[ ! -f "$1" ]]; then echo "template file: '$1' not found." >>/dev/stderr; exit 1; fi
-if [ -z "$2" ]; then echo "no timestamp string received" >>/dev/stderr; exit 1; fi
-if [ -z "$3" ]; then echo "no sdkperf_command received" >>/dev/stderr; exit 1; fi
-if [ -z "$RUN_ID" ]; then echo "no RUN_ID env var received" >>/dev/stderr; exit 1; fi
-if [ -z "$SAMPLE_NUM" ]; then echo "no SAMPLE_NUM env var received" >>/dev/stderr; exit 1; fi
-if [ -z "$NODE" ]; then echo "no NODE env var received" >>/dev/stderr; exit 1; fi
-
-export timestamp=$2
-export sdkperf_command=$3
-
-latencyJson=$(cat $1 | jq -r .) || exit
-latencyJson=$( echo $latencyJson | jq -r '.sample_start_timestamp=env.timestamp' )
+latencyJson=$(cat $TEMPLATE_FILE | jq -r .) || exit
+latencyJson=$( echo $latencyJson | jq -r '.sample_start_timestamp=env.START_TIMESTAMP_STR' )
 latencyJson=$( echo $latencyJson | jq -r '.run_id=env.RUN_ID')
 latencyJson=$( echo $latencyJson | jq -r '.sample_num=env.SAMPLE_NUM')
 latencyJson=$( echo $latencyJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
-latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf_command=env.sdkperf_command' )
+latencyJson=$( echo $latencyJson | jq -r '.meta.stats_name=env.STATS_NAME' )
+latencyJson=$( echo $latencyJson | jq -r '.meta.host=env.INVENTORY_HOST' )
+latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf.command=env.SDKPERF_COMMAND' )
+latencyJson=$( echo $latencyJson | jq -r '.meta.sdkperf.params=(env.SDKPERF_PARAMS_JSON | fromjson)' )
 
 # read input line by line
 lineCount=0
@@ -45,10 +44,10 @@ while IFS= read line; do
     statsString+=$line
   fi
   ((lineCount++))
-done
+done < <(printf '%s\n' "$LATENCY_OUTPUT")
 
 export statsJson=$(echo $statsString | jq -r .)
-latencyJson=$( echo $latencyJson | jq -r '.metrics[env.NODE]=(env.statsJson | fromjson)')
+latencyJson=$( echo $latencyJson | jq -r '.metrics[env.STATS_NAME]=(env.statsJson | fromjson)')
 
 echo $latencyJson
 

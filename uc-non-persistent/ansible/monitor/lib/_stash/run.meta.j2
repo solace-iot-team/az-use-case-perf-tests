@@ -2,7 +2,7 @@
 
 {
   "meta": {
-    "testStartTimestamp": "{{ meta_test_start_ts_str }}",
+    "testStartTimestamp": "{{ run_timestamp }}",
     "testEndTimestamp": "{{ now(True) }}",
     "run_id": "{{ run_id }}",
     "use_case": "{{use_case}}",
@@ -29,6 +29,13 @@
       "broker_nodes": {{ brokerNodes.broker_nodes | to_nice_json }},
       {% endif %}
       "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
+    },
+    "result": {
+      "is_message_loss": "{{ is_message_loss }}"
+      {% if is_message_loss == True %}
+        ,
+        "error_msg": "{{ error_msg  }}"
+      {% endif %}
     },
     "client_connections": {
       "start_test": {

@@ -5,13 +5,11 @@
   "sample_corr_id": "{run_id.sample_num}",
   "meta": {
     "description": "Latency from latency node to broker node",
-    "stats_name": "{stats_name}",
-    "host": "{host-name}",
-    "sdkperf": {
-      "command": "{sdkperf_command}",
-      "params":{}
-    },
+    "node": "latency_node",
+    "sdkperf_command": "{sdkperf_command}",
     "log_file": []
   },
-  "metrics": {}
+  "metrics": {
+    "latency_node": {}
+  }
 }
