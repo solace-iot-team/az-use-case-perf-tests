@@ -6,14 +6,14 @@
 
 echo;
 echo "##############################################################################################################"
-echo "# Running Monitor Latency ..."
+echo "# Running Monitor Ping ..."
 echo
 
-  ############################################################################################################################
-  # Settings
+############################################################################################################################
+# Settings
 
     scriptDir=$(cd $(dirname "$0") && pwd);
-    source $scriptDir/.lib/functions.sh
+    source $scriptDir/../../.lib/functions.sh
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     projectHome=${scriptDir%/ansible/*}
 
@@ -47,14 +47,14 @@ echo
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-statsName="latency-stats"
-rm -f "$resultDir/$statsName".*.json
+
+rm -f $resultDir/ping-stats.*.json
 
 ##############################################################################################################################
 # Run
 
-  inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/sdkperf.get-latency.playbook.yml"
+  inventoryFile=$(assertFile "$scriptDir/../../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+  playbook="$scriptDir/sdkperf.ping.playbook.yml"
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
@@ -64,10 +64,9 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "RUN_ID=$runId" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
-                  --extra-vars "HOSTS=sdkperf_latency" \
-                  --extra-vars "STATS_NAME=$statsName"
+                  --extra-vars "INVENTORY_FILE=$inventoryFile"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving ping stats: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"

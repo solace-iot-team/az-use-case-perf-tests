@@ -13,7 +13,7 @@ echo
 # Settings
 
   scriptDir=$(cd $(dirname "$0") && pwd);
-  source $scriptDir/.lib/functions.sh
+  source $scriptDir/../../.lib/functions.sh
   scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
   projectHome=${scriptDir%/ansible/*}
 
@@ -54,7 +54,7 @@ rm -f "$resultDir/$statsName".*.json
 ##############################################################################################################################
 # Run
 
-  inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+  inventoryFile=$(assertFile "$scriptDir/../../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
   playbook="$scriptDir/sdkperf.get-latency.playbook.yml"
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
