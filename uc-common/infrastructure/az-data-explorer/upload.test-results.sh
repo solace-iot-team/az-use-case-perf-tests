@@ -20,7 +20,7 @@ echo "# Script: $scriptName $*"
 ##############################################################################################################################
 # Args
 runDir=$1
-if [[ ! -d "$runDir" ]]; then echo " >>> ERROR: run directory not found: '$runDir'"; exit 1; fi
+if [[ ! -d "$runDir" ]]; then echo " >>> ERROR: run directory not found: '$runDir'. use: $scriptName {run-directory}"; exit 1; fi
 metaFile="$runDir/run.meta.json"
 if [[ ! -f "$metaFile" ]]; then echo " >>> ERROR: meta file not found: '$metaFile'"; exit 1; fi
 
@@ -106,6 +106,7 @@ for statsPath in ${statsPaths[@]}; do
   echo "    $statsPath: $link2StorageBase/$statsPath?$sasToken" >> $ingestOutputFile
 done
 echo "    $metaPath: $link2StorageBase/$metaPath?$sasToken" >> $ingestOutputFile
+echo "    run-id: $testRunId"  >> $ingestOutputFile
 echo "##############################################################################################################" >> $ingestOutputFile
 echo "" >> $ingestOutputFile
 

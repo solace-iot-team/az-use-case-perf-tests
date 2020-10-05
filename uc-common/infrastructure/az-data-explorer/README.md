@@ -38,6 +38,16 @@ Follow the instructions at the end of the upload script.
 
 ### Kusto Misc Queries
 
+#### Delete all rows in all tables
+````js
+// scope: the db
+.drop extents from all tables;
+latency | take 10;
+latencybrokernode | take 10;
+meta | take 10;
+ping | take 10;
+vpn | take 10;
+````
 #### Delete all rows in a table
 ````js
 // scope: the db
@@ -46,6 +56,30 @@ Follow the instructions at the end of the upload script.
 
 ### Kusto Timeseries Graphs
 
+#### Latency
+
+````js
+let the_run_id = "2020-10-05-14-57-14";
+let min_t = toscalar(latency | where run_id == the_run_id | summarize min(sample_start_timestamp));
+let max_t = toscalar(latency | where run_id == the_run_id | summarize max(sample_start_timestamp));
+let cloud_provider = toscalar(meta | where meta_run_id == the_run_id | project meta_cloud_provider);
+let use_case = toscalar(meta | where meta_run_id == the_run_id | project meta_use_case);
+latency
+| make-series
+     lat_rtt_avg=max(['metrics_latency-stats_latency_latency_stats_average_latency_for_subs_usec']) default=real(null),
+     lat_rtt_50=max(['metrics_latency-stats_latency_latency_stats_50th_percentile_latency_usec']) default=real(null),
+     lat_rtt_95=max(['metrics_latency-stats_latency_latency_stats_95th_percentile_latency_usec']) default=real(null),
+     lat_rtt_99=max(['metrics_latency-stats_latency_latency_stats_99th_percentile_latency_usec']) default=real(null),
+     lat_rtt_99_9=max(['metrics_latency-stats_latency_latency_stats_99_9th_percentile_latency_usec']) default=real(null)
+     on sample_start_timestamp in range (min_t, max_t, 1m)
+     // by run_id
+| as the_series;
+let the_title = strcat("LATENCY:", "cloud:", cloud_provider, " | ", "run-id:", the_run_id, " | ", "use-case:", use_case);
+the_series | render timechart with (legend=visible, title=the_title );
+````
+
+
+#### TODO from here
 #### Union of Latency, Latency BrokerNode, Ping
 ````js
 let the_run_id = "2020-10-01-13-26-51";
@@ -80,23 +114,6 @@ ping
 | render timechart
 ````
 
-#### Latency
-
-````js
-let min_t = toscalar(latency | summarize min(sample_start_timestamp));
-// let min_t = toscalar(todatetime("2020-09-30T14:16:00Z"));
-let max_t = toscalar(latency | summarize max(sample_start_timestamp));
-latency
-| make-series
-     lat_rtt_avg=avg(metrics_latency_node_latency_latency_stats_average_latency_for_subs_usec),
-     lat_rtt_50=avg(metrics_latency_node_latency_latency_stats_50th_percentile_latency_usec),
-     lat_rtt_95=avg(metrics_latency_node_latency_latency_stats_95th_percentile_latency_usec),
-     lat_rtt_99=avg(metrics_latency_node_latency_latency_stats_99th_percentile_latency_usec),
-     lat_rtt_99_9=avg(metrics_latency_node_latency_latency_stats_99_9th_percentile_latency_usec)
-     on sample_start_timestamp in range (min_t, max_t, 1m)
-     // by run_id
-| render timechart
-````
 #### Latency Broker Node
 ````js
 let min_t = toscalar(latencybrokernode | summarize min(sample_start_timestamp));
