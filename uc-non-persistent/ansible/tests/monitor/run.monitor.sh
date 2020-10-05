@@ -7,7 +7,7 @@
 ##############################################################################################################################
 # Prepare
 scriptDir=$(cd $(dirname "$0") && pwd);
-source $scriptDir/.lib/functions.sh
+source $scriptDir/../../.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
 monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit

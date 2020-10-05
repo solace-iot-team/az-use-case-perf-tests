@@ -7,7 +7,7 @@
 - name: "SDKPerf Consumer Start"
   hosts: sdkperf_consumers
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../"
   vars_files:
     - "{{project_root_dir}}/vars/sdkperf.vars.yml"
     - "{{project_root_dir}}/vars/bootstrap.vars.yml"

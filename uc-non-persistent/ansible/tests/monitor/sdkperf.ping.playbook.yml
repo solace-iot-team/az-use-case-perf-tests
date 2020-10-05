@@ -8,7 +8,7 @@
   hosts: sdkperf_latency
   gather_facts: no
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../"
   pre_tasks:
     - include_vars:
         file: "{{INVENTORY_FILE}}"
