@@ -4,7 +4,6 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor Brokernode Latency ..."
@@ -56,7 +55,7 @@ rm -f "$resultDir/$statsName".*.json
 # Run
 
   inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/_sdkperf.get-latency.playbook.yml"
+  playbook="$scriptDir/sdkperf.get-latency.playbook.yml"
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \

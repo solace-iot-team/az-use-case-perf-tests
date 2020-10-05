@@ -11,9 +11,9 @@
     project_root_dir: "../"
   pre_tasks:
     - include_vars: "{{project_root_dir}}/vars/bootstrap.vars.yml"
-    - include_vars: "{{project_root_dir}}/vars/_sdkperf.vars.yml"
+    - include_vars: "{{project_root_dir}}/vars/sdkperf.vars.yml"
     - include_vars:
-        file: "./vars/_monitor.vars.yml"
+        file: "./vars/monitor.vars.yml"
         name: monitor
 
   tasks:
@@ -28,8 +28,8 @@
         sampling_overhead_secs: 10
         min_collection_period_secs: 15
         sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
-        latency_post_process_exe: "./lib/_post-process.latency.sh"
-        latency_post_process_template_file: "./lib/_latency.template.json"
+        latency_post_process_exe: "./lib/post-process.latency.sh"
+        latency_post_process_template_file: "./lib/latency.template.json"
 
     - name: "Calculate Parameters"
       set_fact:
@@ -67,13 +67,13 @@
     #     seconds: 15
 
     - name: "Warmup Sample Runs"
-      include_tasks: ./tasks/_sdkperf.latency.testrun.yml
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
       vars:
         warm_up_run: true
       with_sequence: "end=0 start=0"
 
     - name: "Starting Sample Runs"
-      include_tasks: ./tasks/_sdkperf.latency.testrun.yml
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
       with_sequence: "end={{monitor.general.total_num_samples-1}} start=0"
 
 
