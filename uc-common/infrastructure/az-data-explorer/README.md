@@ -147,7 +147,7 @@ latency
     lat_rtt_99_9=max(['metrics_latency-stats_latency_latency_stats_99_9th_percentile_latency_usec']) default=real(null),
     lat_bn_rtt_99_9=max(['metrics_latency-brokernode-stats_latency_latency_stats_99_9th_percentile_latency_usec']) default=real(null),
     ping_rtt_max=max(metrics_ping_rtt_max_value*1000) default = real(null)
-    on todatetime(sample_start_timestamp) in range(min_t, max_t, 2m)
+    on todatetime(sample_start_timestamp) in range(min_t, max_t, 1m)
 | as the_series;
 let r_lat_rtt_99_9_x_lat_bn_rtt_99_9 = toscalar(the_series | project series_pearson_correlation(lat_rtt_99_9, lat_bn_rtt_99_9));
 let r_lat_rtt_99_9_x_ping_rtt_max = toscalar(the_series | project series_pearson_correlation(lat_rtt_99_9, ping_rtt_max));
