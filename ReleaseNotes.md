@@ -1,5 +1,18 @@
 # Release Notes
 
+## Version: 0.4.0
+Release Purpose: Major release to incorporate multiple infrastrucures in potentially different cloud providers.
+
+* **added aws infrastructure support via terraform**
+  - all scripts receive {cloud-provider}.{infrastructure-id} as parameter or through env var `UC_NON_PERSISTENT_INFRASTRUCTURE`
+* **restructured directories**
+  - ansible/bootstrap
+  - ansible/tests
+    - load
+    - monitor
+* **aligned timing of monitoring results**
+  - results are now within 1 minute buckets, aligned.
+
 ## Version: 0.3.2
 Release Purpose: New monitor: SDKPerf running on broker node.
 
