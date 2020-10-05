@@ -26,6 +26,18 @@ resource "aws_security_group" "sdkperf_secgroup"{
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  #all traffic within VPC
+  ingress{
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["10.0.0.0/16"]
+    #security_groups = var.sdkperf_secgroup_ids == [""] ? ["${aws_security_group.sdkperf_secgroup[0].id}"] : var.sdkperf_secgroup_ids
+  }
+
+  
+
+
   ingress{
     from_port = 22
     to_port = 22
@@ -56,6 +68,17 @@ resource "aws_security_group" "solacebroker_secgroup"{
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  #all traffic within VPC
+  ingress{
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["10.0.0.0/16"]
+    #security_groups = var.sdkperf_secgroup_ids == [""] ? ["${aws_security_group.sdkperf_secgroup[0].id}"] : var.sdkperf_secgroup_ids
+  }
+
+  
 
   ingress{
     from_port = 22
