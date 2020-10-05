@@ -7,7 +7,7 @@
 ############################################################################################################################
 # Settings
   scriptDir=$(cd $(dirname "$0") && pwd);
-  source $scriptDir/../.lib/functions.sh
+  source $scriptDir/../../.lib/functions.sh
   scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
   projectHome=${scriptDir%/ansible/*}
 
@@ -38,42 +38,41 @@ rm -f ./*.log
 
 ##############################################################################################################################
 # General for all playbooks
-inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+inventoryFile=$(assertFile "$scriptDir/../../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
 ##############################################################################################################################
-# Start SDKPerf Consumers
-echo;
-echo "######################################"
-echo "#                                    #"
-echo "#    Starting SDKPerf Consumers      #"
-echo "#                                    #"
-echo "######################################"
+# Stop SDKPerf Publishers
+  echo;
+  echo "######################################"
+  echo "#                                    #"
+  echo "#    Stopping SDKPerf Publishers     #"
+  echo "#                                    #"
+  echo "######################################"
 
-  playbook="$scriptDir/sdkperf.consumer.start.playbook.yml"
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+    playbook="$scriptDir/sdkperf.publisher.stop.playbook.yml"
+    ansible-playbook \
+                      -i $inventoryFile \
+                      --private-key $privateKeyFile \
+                      $playbook
+    if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
-# Start SDKPerf Publishers
-echo;
-echo "######################################"
-echo "#                                    #"
-echo "#    Starting SDKPerf Publishers     #"
-echo "#                                    #"
-echo "######################################"
+##############################################################################################################################
+# Stop SDKPerf Consumers
+  echo;
+  echo "######################################"
+  echo "#                                    #"
+  echo "#    Stopping SDKPerf Consumers      #"
+  echo "#                                    #"
+  echo "######################################"
 
-  playbook="$scriptDir/sdkperf.publisher.start.playbook.yml"
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook
-  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-
-
+    playbook="$scriptDir/sdkperf.consumer.stop.playbook.yml"
+    ansible-playbook \
+                      -i $inventoryFile \
+                      --private-key $privateKeyFile \
+                      $playbook
+    if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ###
 # The End.

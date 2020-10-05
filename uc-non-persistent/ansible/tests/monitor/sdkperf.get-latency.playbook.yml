@@ -8,7 +8,7 @@
   hosts: "{{HOSTS}}"
   gather_facts: no
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../"
   pre_tasks:
     - include_vars: "{{project_root_dir}}/vars/bootstrap.vars.yml"
     - include_vars: "{{project_root_dir}}/vars/sdkperf.vars.yml"

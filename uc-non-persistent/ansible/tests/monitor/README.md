@@ -1,6 +1,6 @@
 # Monitor
 
-Gathers stats during a load test run.
+Gathers stats:
 
  * Broker Message VPN Stats
  * SDKPerf Latency Stats
@@ -13,19 +13,13 @@ vi ./vars/monitor.vars.yml
 
 ````
 
-### Run
+### Run all monitors
+
+_**Note: Instead of passing the infrastrucure as an argument to the scripts, set env var `UC_NON_PERSISTENT_INFRASTRUCTURE`.**_
 
 ````bash
-# start it in the background
-./run.monitor.sh &
-  # starts vpn stats & latency scripts in the background
-
-# get the pids
-ps -ef | grep run.monitor
-
-# log files:
-ls *.log
-
+./run.monitor.sh {cloud_provider}.{infrastructure-id}
+# example: ./run.monitor.sh azure.standalone
 ````
 Results:
 - interim: run.current
@@ -34,30 +28,22 @@ Results:
 
 #### Run VPN Stats only
 ````bash
-./run.monitor.vpn-stats.sh
+./run.monitor.vpn-stats.sh {cloud_provider}.{infrastructure-id}
 ````
 #### Run Latency only
 ````bash
-./run.monitor.latency.sh
+./run.monitor.latency.sh {cloud_provider}.{infrastructure-id}
 ````
 #### Run Ping only
 ````bash
-./run.monitor.ping.sh
+./run.monitor.ping.sh {cloud_provider}.{infrastructure-id}
 ````
-
-### Run Broker Node Latency
+### Run Broker Node Latency only
 Running SDKPerf on the same VM as the Broker Docker container is running.
 Eliminates any network.
 
-Run with/without load and latency monitor.
-
 ````bash
-./run.monitor.brokernode.latency.sh
-````
-
-To stop it again:
-````bash
-./stop.monitor.brokernode.latency.sh
+./run.monitor.brokernode.latency.sh {cloud_provider}.{infrastructure-id}
 ````
 
 ### Results
@@ -65,9 +51,10 @@ To stop it again:
 * Directory: **{root}/test-results/stats**
 * Directory for each test run: **{root}/test-results/stats/run.{UTC-timestamp}**
 * Within each directory:
-  - latency-stats.{timestamp}.log
-  - vpn-stats.{timestamp}.log
-  - ping-stats.{timestamp}.log
+  - latency-stats.{timestamp}.json
+  - latency-brokernode-stats.{timestamp}.json
+  - vpn-stats.{timestamp}.json
+  - ping-stats.{timestamp}.json
   - run.meta.json
 
 ---

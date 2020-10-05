@@ -1,11 +1,4 @@
-# Ansible
-
-Ansible scripts to:
-- bootstrap test machines:
-  - broker
-  - sdk_perf
-- run the tests
-- ...
+# Boostrap Infrastructure
 
 ## Change Directory
 ````bash
@@ -65,7 +58,7 @@ ansible-doc -l | grep solace
 ## Configure
 
 ````bash
-cd vars
+cd ../vars
 vi bootstrap.vars.yml
 
     # make sure this is the user create in the VMs

@@ -9,7 +9,7 @@
   hosts: broker_pubsub
   gather_facts: no
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../"
 
   pre_tasks:
     - include_vars:
