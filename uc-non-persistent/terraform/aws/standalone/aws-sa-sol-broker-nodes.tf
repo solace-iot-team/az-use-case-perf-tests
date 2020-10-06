@@ -72,11 +72,9 @@ resource "aws_instance" "solace-broker-nodes" {
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.broker-nodes.json"
   }
 
-  resource "null_resource" "delete_inventory_file" {
-   provisioner "local-exec" {
-     # command = "echo rm -f ../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
-     command = "rm -f ../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
-   }
+  resource "local_file" "inventory_file" {
+      content     = "bootstrap to generate"
+      filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
   }
 
 # Trigger Ansible Tasks for the Brokers - Only after all the VM resources and Ansible Inventories & Playbooks have been created
