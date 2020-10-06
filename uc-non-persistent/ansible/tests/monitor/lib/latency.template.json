@@ -1,0 +1,17 @@
+{
+  "sample_start_timestamp": "{timestamp}",
+  "run_id": "{run_id}",
+  "sample_num": "{sample-number}",
+  "sample_corr_id": "{run_id.sample_num}",
+  "meta": {
+    "description": "Latency from latency node to broker node",
+    "stats_name": "{stats_name}",
+    "host": "{host-name}",
+    "sdkperf": {
+      "command": "{sdkperf_command}",
+      "params":{}
+    },
+    "log_file": []
+  },
+  "metrics": {}
+}
