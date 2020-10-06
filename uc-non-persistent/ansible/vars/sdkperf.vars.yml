@@ -4,6 +4,7 @@ sdkperf:
   consumer_log_filename: "consumer"
 
   broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
+  broker_uri_local: "localhost"
   broker_port: 55555
   broker_msg_vpn: "sdkperf"
   client_publisher_username: "testUsr"

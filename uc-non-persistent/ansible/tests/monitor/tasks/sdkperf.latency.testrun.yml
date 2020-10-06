@@ -42,7 +42,7 @@
   shell: >
     taskset -c 1,2
     {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh
-    -cip={{sdkperf.broker_uri}}:{{sdkperf.broker_port}}
+    -cip={{broker_uri}}:{{sdkperf.broker_port}}
     -cn={{hostvars[inventory_hostname].boxname}}-1
     -cu={{ sdkperf.client_publisher_username }}@{{ sdkperf.broker_msg_vpn }}
     -ptl={{ monitor.latency.topic_prefix }}/{{STATS_NAME}}

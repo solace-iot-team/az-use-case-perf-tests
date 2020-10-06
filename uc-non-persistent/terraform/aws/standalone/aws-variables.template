@@ -19,8 +19,8 @@ variable "tag_owner" {
 }
 # the VM size for the solace broker node
 variable "sol_messaging_vm_type" {
-  # default = "m5a.4xlarge"    # (16 CPUs  64G RAM - AMD Powered General Purpose)
-  default = "m5a.8xlarge"    # (32 CPUs  128G RAM - AMD Powered General Purpose)
+  default = "m5a.4xlarge"    # (16 CPUs  64G RAM - AMD Powered General Purpose)
+  # default = "m5a.8xlarge"    # (32 CPUs  128G RAM - AMD Powered General Purpose)
 }
 # the VM size for the sdk perf nodes
 variable "sdkperf_vm_type" {

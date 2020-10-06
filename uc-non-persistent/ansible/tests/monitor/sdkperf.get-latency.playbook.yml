@@ -30,6 +30,7 @@
         sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
         latency_post_process_exe: "./lib/post-process.latency.sh"
         latency_post_process_template_file: "./lib/latency.template.json"
+        broker_uri: "{{sdkperf.broker_uri_local if RUN_LOCALLY=='True' else sdkperf.broker_uri}}"
 
     - name: "Calculate Parameters"
       set_fact:

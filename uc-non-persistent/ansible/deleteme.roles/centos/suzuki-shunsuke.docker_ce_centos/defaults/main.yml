@@ -1,6 +1,0 @@
----
-# defaults file for docker_ce_centos
-docker_centos_users: []
-docker_centos_version: latest
-docker_centos_started: false
-docker_centos_enabled: false

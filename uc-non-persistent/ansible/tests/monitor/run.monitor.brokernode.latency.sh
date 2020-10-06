@@ -67,7 +67,8 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "RUN_ID=$runId" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "HOSTS=broker_centos" \
-                  --extra-vars "STATS_NAME=$statsName"
+                  --extra-vars "STATS_NAME=$statsName" \
+                  --extra-vars "RUN_LOCALLY=True"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving broker node latency stats: $scriptName"; echo; exit 1; fi
 
