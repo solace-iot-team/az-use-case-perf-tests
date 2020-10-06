@@ -12,7 +12,6 @@ source $projectHome/uc-common/.lib/functions.sh
 stateTemplateFile=$(assertFile "$scriptDir/lib/template.adx.state.json") || exit
 stateDir="$scriptDir/state"
 stateFile=$(assertFile "$stateDir/az.adx.state.json") || exit
-ingestOutputFile="$scriptDir/ingest.instructions.txt"
 
 echo;
 echo "##############################################################################################################"
@@ -23,6 +22,10 @@ runDir=$1
 if [[ ! -d "$runDir" ]]; then echo " >>> ERROR: run directory not found: '$runDir'. use: $scriptName {run-directory}"; exit 1; fi
 metaFile="$runDir/run.meta.json"
 if [[ ! -f "$metaFile" ]]; then echo " >>> ERROR: meta file not found: '$metaFile'"; exit 1; fi
+
+_statsId=${runDir##.*stats}
+statsId=${_statsId//\//.}
+ingestOutputFile="$scriptDir/ingest$statsId"txt
 
 ##############################################################################################################################
 # State vars
