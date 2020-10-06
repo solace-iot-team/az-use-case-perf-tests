@@ -1,0 +1,44 @@
+
+
+{
+  "meta": {
+    "testStartTimestamp": "{{ meta_test_start_ts_str }}",
+    "testEndTimestamp": "{{ now(True) }}",
+    "run_id": "{{ run_id }}",
+    "use_case": "{{use_case}}",
+    "cloud_provider": "{{cloud_provider}}",
+    "load_setup": {
+      "topics_publisher": "{{sdkperf.topics_publisher}}",
+      "topics_consumer_group_1": "{{sdkperf.topics_consumer_group_1}}",
+      "topics_consumer_group_2": "{{sdkperf.topics_consumer_group_2}}",
+      "client_connection_count": "{{sdkperf.client_connection_count}}",
+      "msg_payload_size_bytes": "{{sdkperf.msg_payload_size_bytes}}",
+      "msg_number": "{{sdkperf.msg_number}}",
+      "msg_rate_per_second": "{{sdkperf.msg_rate_per_second}}"
+    },
+    "nodes": {
+      {% if solace_cloud_service_id is defined %}
+      "broker_nodes": [
+        {
+          "type": "solace_cloud",
+          "solace_cloud_service_id": "{{ solace_cloud_service_id }}",
+          "meta": {{ meta | to_nice_json }}
+        }
+      ],
+      {% else %}
+      "broker_nodes": {{ brokerNodes.broker_nodes | to_nice_json }},
+      {% endif %}
+      "sdkperf_nodes": {{ sdkPerfNodes.sdkperf_nodes | to_nice_json }}
+    },
+    "client_connections": {
+      "start_test": {
+        "number": {{ number_connected_clients_start }},
+        "list": {{ connected_client_list_start | to_nice_json }}
+      },
+      "end_test": {
+        "number": {{ number_connected_clients_end }},
+        "list": {{ connected_client_list_end | to_nice_json }}
+      }
+    }
+  }
+}

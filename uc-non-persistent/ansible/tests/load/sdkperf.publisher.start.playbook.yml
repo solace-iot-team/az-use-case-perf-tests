@@ -1,0 +1,55 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "SDKPerf Publisher Start"
+  hosts: sdkperf_publishers
+  vars:
+    project_root_dir: "../../"
+  vars_files:
+    - "{{project_root_dir}}/vars/sdkperf.vars.yml"
+    - "{{project_root_dir}}/vars/bootstrap.vars.yml"
+
+  tasks:
+
+    - name: remove all sdkperf tasks
+      become: true
+      command: pkill --signal 2 -f sdkperf
+      ignore_errors: true
+
+    - pause:
+        seconds: 3
+        prompt: "Waiting 3 seconds ...."
+
+    - set_fact:
+        sdkperf_datetimeprefix: "{{ '%Y-%m-%d-%H-%M-%S' | strftime }}"
+
+    - name: run sdkperf publishing job 1
+      shell: nohup taskset -c 0 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn=publisher_1 -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.publisher_log_filename}}-0.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
+
+    - name: run sdkperf publishing job 2
+      shell: nohup taskset -c 1 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn=publisher_2 -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.publisher_log_filename}}-1.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
+
+    - name: run sdkperf publishing job 3
+      shell: nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn=publisher_3 -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.publisher_log_filename}}-2.log 2>&1 &
+
+    - pause:
+        seconds: 5
+        prompt: "Waiting 5 seconds ...."
+
+    - name: run sdkperf publishing job 4
+      shell: nohup taskset -c 3 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn=publisher_4 -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_publisher_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_publisher_password }}" -cc="{{ sdkperf.client_connection_count }}" -ptl="{{ sdkperf.topics_publisher }}" -mn="{{ sdkperf.msg_number }}" -msa="{{ sdkperf.msg_payload_size_bytes }}" -mr="{{ sdkperf.msg_rate_per_second }}" -apw="{{ sdkperf.ack_window }}" -mt=direct </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.publisher_log_filename}}-3.log 2>&1 &
+
+
+###
+# The End.

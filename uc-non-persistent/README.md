@@ -10,15 +10,13 @@ Follow the links to see installation & setup requirements.
 
 - [Generate Keys](./keys)
 
-- [Create Azure Resources: Terraform](./terraform/azure/standalone)
-  - generates output in `shared-setup`
+- [Create Infrastructure Resources using Terraform](./terraform)
 
 - [Check Output](./shared-setup)
 
-- [Configure VMs: Ansible & Ansible-Solace](./ansible)
-  - reads `shared-setup` to generate the inventory file
+- [Bootstrap VMs using Ansible & Ansible-Solace](./ansible/bootstrap)
 
-- [Run Tests: Ansible](./ansible)
+- [Run Tests using Ansible](./ansible/tests)
 
 - [Check Results](./test-results)
 
