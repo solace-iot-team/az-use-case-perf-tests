@@ -188,11 +188,10 @@ resource "local_file" "broker_nodes_file" {
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.broker-nodes.json"
 }
-resource "null_resource" "delete_inventory_file" {
- provisioner "local-exec" {
-   # command = "echo rm -f ../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
-   command = "rm -f ../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
- }
+
+resource "local_file" "inventory_file" {
+    content     = "bootstrap to generate"
+    filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
 }
 
 
