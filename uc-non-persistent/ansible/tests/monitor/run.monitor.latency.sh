@@ -66,7 +66,8 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "RUN_ID=$runId" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "HOSTS=sdkperf_latency" \
-                  --extra-vars "STATS_NAME=$statsName"
+                  --extra-vars "STATS_NAME=$statsName" \
+                  --extra-vars "RUN_LOCALLY=False"
 
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
 
