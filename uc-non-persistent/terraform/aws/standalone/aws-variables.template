@@ -12,10 +12,10 @@ variable "aws_region" {
   default = "eu-central-1"
 }
 variable "tag_name_prefix" {
-  default = "rjgu"
+  default = "{unique_prefix}"
 }
 variable "tag_owner" {
-  default = "rjgu"
+  default = "{owner}"
 }
 # the VM size for the solace broker node
 variable "sol_messaging_vm_type" {

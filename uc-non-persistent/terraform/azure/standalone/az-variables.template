@@ -18,7 +18,7 @@ variable "az_region" {
 }
 # prefix for all resources
 variable "tag_name_prefix" {
-  default = "{prefix}"
+  default = "{unique_prefix}"
 }
 # the tag for all resources
 variable "tag_owner" {
