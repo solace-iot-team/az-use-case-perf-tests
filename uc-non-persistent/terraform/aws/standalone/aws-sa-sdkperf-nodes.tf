@@ -23,7 +23,8 @@ resource "aws_instance" "sdkperf-nodes" {
 
   placement_group        = aws_placement_group.sdkperf_placement_grp.id
   ami                    = var.centOS_ami[var.aws_region]
-  key_name               = var.aws_ssh_key_name
+  # key_name               = var.aws_ssh_key_name
+  key_name               = "${var.tag_name_prefix}_${var.aws_ssh_key_name}"
   subnet_id              = var.subnet_id == "" ? aws_subnet.sdkperf_subnet[0].id : var.subnet_id
   vpc_security_group_ids = var.sdkperf_secgroup_ids == [""] ? ["${aws_security_group.sdkperf_secgroup[0].id}"] : var.sdkperf_secgroup_ids
 

@@ -18,7 +18,8 @@ resource "aws_instance" "solace-broker-nodes" {
 
   placement_group        = aws_placement_group.sdkperf_placement_grp.id #placement group defined in aws-sa-sdkperf-nodes.tf
   ami                    = var.centOS_ami[var.aws_region]
-  key_name               = var.aws_ssh_key_name
+  # key_name               = var.aws_ssh_key_name
+  key_name               = "${var.tag_name_prefix}_${var.aws_ssh_key_name}"
   subnet_id              = var.subnet_id == "" ? aws_subnet.sdkperf_subnet[0].id : var.subnet_id
   vpc_security_group_ids = var.solacebroker_secgroup_ids == [""] ? ["${aws_security_group.solacebroker_secgroup[0].id}"] : var.solacebroker_secgroup_ids
 
