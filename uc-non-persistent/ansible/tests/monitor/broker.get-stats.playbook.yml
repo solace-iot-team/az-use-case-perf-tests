@@ -23,7 +23,7 @@
         file: "{{ SDKPERF_NODES_FILE }}"
         name: sdkPerfNodes
     - include_vars:
-        file: "./vars/monitor.vars.yml"
+        file: "{{project_root_dir}}/vars/monitor.vars.yml"
         name: monitor
 
   tasks:

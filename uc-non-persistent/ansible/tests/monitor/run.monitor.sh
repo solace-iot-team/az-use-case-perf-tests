@@ -11,7 +11,7 @@ source $scriptDir/../../.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
 sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
-monitorVarsFile=$(assertFile "$scriptDir/vars/monitor.vars.yml") || exit
+monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
 pids=""
 
 ############################################################################################################################

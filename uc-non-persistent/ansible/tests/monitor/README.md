@@ -9,13 +9,13 @@ Gathers stats:
 ### Customize
 
 ````bash
-vi ./vars/monitor.vars.yml
+vi ../../vars/monitor.vars.yml
 
 ````
 
 ### Run all monitors
 
-_**Note: Instead of passing the infrastrucure as an argument to the scripts, set env var `UC_NON_PERSISTENT_INFRASTRUCTURE`.**_
+_**Note: Instead of passing the infrastrucure as an argument to the scripts, you can set env var `UC_NON_PERSISTENT_INFRASTRUCTURE`.**_
 
 ````bash
 ./run.monitor.sh {cloud_provider}.{infrastructure-id}

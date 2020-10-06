@@ -16,7 +16,7 @@
     - include_vars: "{{project_root_dir}}/vars/bootstrap.vars.yml"
     - include_vars: "{{project_root_dir}}/vars/sdkperf.vars.yml"
     - include_vars:
-        file: "./vars/monitor.vars.yml"
+        file: "{{project_root_dir}}/vars/monitor.vars.yml"
         name: monitor
 
   tasks:
