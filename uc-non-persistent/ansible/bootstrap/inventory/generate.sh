@@ -4,20 +4,31 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
-
-############################################################################################################################
-echo
-echo "##############################################################################################################"
-echo "# Generate inventory for $UC_NON_PERSISTENT_INFRASTRUCTURE"
-echo "# "
 
 ############################################################################################################################
 # prepare
   scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
   scriptDir=$(cd $(dirname "$0") && pwd);
-  source $scriptDir/.lib/functions.sh
+  source $scriptDir/../../.lib/functions.sh
   projectHome=${scriptDir%/ansible/*}
+
+############################################################################################################################
+# Environment Variables
+
+  if [ -z "$1" ]; then
+    if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
+        echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
+        echo "    for example: $scriptName azure.infra1-standalone"
+        echo; exit 1
+    fi
+  else
+    export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
+  fi
+############################################################################################################################
+echo
+echo "##############################################################################################################"
+echo "# Generate inventory for $UC_NON_PERSISTENT_INFRASTRUCTURE"
+echo "# "
 
 ############################################################################################################################
 # Settings
@@ -26,7 +37,7 @@ echo "# "
     [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
   brokerNodesFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.broker-nodes.json") || exit
   sdkPerfNodesFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.sdkperf-nodes.json") || exit
-  targetInventoryFile="$scriptDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json"
+  targetInventoryFile="$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json"
   srcInventoryTemplateFile="$scriptDir/inventory.template.json"
   solaceCloudInventoryFile="$sharedSetupDir/inventory.sc-service.az_use_case_perf_tests.json"
 

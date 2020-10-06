@@ -13,6 +13,7 @@ echo
   source $scriptDir/../.lib/functions.sh
   scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
   projectHome=${scriptDir%/ansible/*}
+  sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
 
   export ANSIBLE_LOG_PATH="./ansible.log"
   export ANSIBLE_DEBUG=False
@@ -37,7 +38,7 @@ echo
 ##############################################################################################################################
 # Generate inventory
 
-  $scriptDir/../inventory/generate-with-sc.sh
+  $scriptDir/inventory/generate.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR generate inventories. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
@@ -47,7 +48,7 @@ rm -f ./*.log
 
 ##############################################################################################################################
 # General for all playbooks
-inventoryFile=$(assertFile "$scriptDir/../inventory/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+inventoryFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
