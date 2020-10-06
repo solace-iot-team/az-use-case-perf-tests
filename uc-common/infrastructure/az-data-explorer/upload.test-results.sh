@@ -46,6 +46,15 @@ metaFilePattern="run.meta.json"
 dockerComposePath="docker"
 dockerComposeFilePattern="PubSub.docker-compose.*.yml"
 
+
+echo " >>> Create Storage Container ..."
+resp=$(az storage container create \
+        --name $storageContainerName \
+        --public-access blob \
+        --connection-string $storageConnectionString \
+        --verbose)
+echo " >>> Success."
+
 ##############################################################################################################################
 # Upload stats
 for statsPath in ${statsPaths[@]}; do
