@@ -1,20 +1,25 @@
 # Shared Setup
 
-Generated infrastructure information that was created.
+Shared infrastructure and setup information.
 
 Patterns:
-- `{cloud-provider}.{scope}.broker-nodes.json`
-- `{cloud-provider}.{scope}.sdkperf-nodes.json`
+- `{cloud-provider}.{infrastructure-id}.broker-nodes.json`
+- `{cloud-provider}.{infrastructure-id}.sdkperf-nodes.json`
+- with:
+  - `{infrastrucure-id}`:
+    - `{prefix}-{setup}`
 
 For example:
-- `azure.standalone.broker-nodes.json`
-- `azure.standalone.sdkperf-nodes.json`
+````bash
+azure.infra-1-standalone.broker-nodes.json
+azure.infra-1-standalone.sdkperf-nodes.json
 
-or:
+azure.infra-2-standalone.broker-nodes.json
+azure.infra-2-standalone.sdkperf-nodes.json
 
-- `aws.standalone.broker-nodes.json`
-- `aws.standalone.sdkperf-nodes.json`
-
+aws.infra-1-standalone.broker-nodes.json
+aws.infra-1-standalone.sdkperf-nodes.json
+````
 
 ---
 The End.

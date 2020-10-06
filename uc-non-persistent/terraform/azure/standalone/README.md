@@ -1,21 +1,7 @@
-# Terraform: Azure: Standalone
+# Azure Infrastructure: Standalone
+Creates Azure resources for a standalone Solace broker deployment using terraform.
 
-- creates azure resources for the use case.
-- generates output in {root}/shared-setup
-
-## Change Directory
-````bash
-# execute all commands in this directory
-cd {root}/uc-non-persistent/terraform/azure/standalone
-````
-
-## Pre-Requisites
-
-### Terraform
-
-Install Terraform.
-
-### Azure Login
+### Azure Credentials
 
 ````bash
 az login
@@ -23,20 +9,7 @@ az login
 export ARM_SUBSCRIPTION_ID={subscription-id}
 export ARM_TENANT_ID={tenant-id}
 ````
-
-### AWS credentials
-
-````bash
-export AWS_ACCESS_KEY_ID={aws-access-key}
-export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
-export AWS_DEFAULT_REGION={aws-default-region}
-````
-
-
-
-## Settings
-
-Customizing the deployment to Azure:
+## Deployment Settings
 
 ````bash
 
@@ -67,22 +40,17 @@ vi az-variables.tf
 
 ````
 
-## Prepare
+#### Generate keys
 
-**[See here for generating the keys](../../../keys).**
+* Name: `azure_key`
+* [For details see here](../../../keys)
 
+#### Init terraform
 ````bash
-# to enable terraform logging
-export TF_LOG_PATH=./tf_log.log
-export TF_LOG=TRACE # TRACE, DEBUG, INFO, WARN or ERROR
-````
-
-````bash
-# initialize terraform
 terraform init
 ````
-## Run
 
+## Deploy
 ````bash
 # check what if
 terraform plan
@@ -91,51 +59,15 @@ terraform plan
 terraform apply
 ````
 
-#### Check Output of Run
+## Check
 
-##### Azure
-Login into the Azure Portal and check the new resource group: _**{prefix}-sdkperf_resgrp**_.
-
-Check the generated output:
 ````bash
-cd {root}/shared-setup
-  less az.broker-nodes.json
-  less az.sdkperf-nodes.json
+ls ../../../shared-setup/azure.*.broker-nodes.json
+ls ../../../shared-setup/azure.*.sdkperf-nodes.json
 ````
 
-##### AWS
-Login into the AWS Console and check the new resource group: _**{prefix}-sdkperf_resgrp**_.
-
-Check the generated output:
+## Destroy
 ````bash
-cd {root}/shared-setup
-  less aws.broker-nodes.json
-  less
-
-#### Login to the VMs
-
-##### Azure
-````bash
-# find the public ip address of the Azure vms:
-less {root}/shared-setup/az.broker-nodes.json
-less {root}/shared-setup/az.sdkperf-nodes.json
-# ssh ...
-ssh -i ../../../keys/azure_key centos@{public-ip-address}
-````
-
-##### AWS
-````bash
-# find the public ip address of the Azure vms:
-less {root}/shared-setup/aws.broker-nodes.json
-less {root}/shared-setup/aws.sdkperf-nodes.json
-# ssh ...
-ssh -i ../../../keys/aws_key centos@{public-ip-address}
-````
-
-### Destroy Resources
-
-````bash
-# destroy the resources
 terraform destroy
 ````
 
