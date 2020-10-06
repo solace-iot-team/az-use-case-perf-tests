@@ -12,7 +12,7 @@ export AWS_DEFAULT_REGION={aws-default-region}
 
 ## Deployment Settings
 ````bash
-cp aws-variables.tf.template aws-variables.tf
+cp aws-variables.template aws-variables.tf
 vi aws-variables.tf
  # customize settings
 ````

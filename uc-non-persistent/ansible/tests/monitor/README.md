@@ -19,7 +19,7 @@ _**Note: Instead of passing the infrastrucure as an argument to the scripts, set
 
 ````bash
 ./run.monitor.sh {cloud_provider}.{infrastructure-id}
-# example: ./run.monitor.sh azure.standalone
+# example: ./run.monitor.sh azure.infra1-standalone
 ````
 Results:
 - interim: run.current

@@ -13,14 +13,14 @@ msg_rate_per_second: 200000
 
 #### Start Load
 ````bash
-export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure}
+export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure-id}
 # for example:
-export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.standalone
+export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.infra1-standalone
 ./start.load.sh
 ````
 Or, pass the infrastrucure as an argument:
 ````bash
-./start.load.sh azure.standalone
+./start.load.sh azure.infra1-standalone
 ````
 #### Stop Load
 

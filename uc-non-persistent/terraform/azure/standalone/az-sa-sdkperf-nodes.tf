@@ -127,7 +127,7 @@ resource "local_file" "sdkperf_nodes_file" {
       # node-private-ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.private_ip_address
     }
   )
-  filename = "../../../shared-setup/azure.standalone.sdkperf-nodes.json"
+  filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.sdkperf-nodes.json"
 }
 
 ###

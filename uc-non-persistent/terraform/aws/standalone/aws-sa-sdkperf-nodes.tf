@@ -63,5 +63,5 @@ resource "aws_instance" "sdkperf-nodes" {
       #nodes = aws_instance.sdkperf-nodes.*.public_ip
     }
   )
-  filename = "../../../shared-setup/aws.standalone.sdkperf-nodes.json"
+  filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.sdkperf-nodes.json"
  }
