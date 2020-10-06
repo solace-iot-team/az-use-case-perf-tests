@@ -84,21 +84,21 @@ Configures the VMs with their respective software.
 
 #### Run Bootstrap
 ````bash
-export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure}
+export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure-id}
 # for example:
-export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.standalone
+export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.infra1-standalone
 ./run.bootstrap.sh
 ````
 Or, pass the infrastrucure as an argument:
 ````bash
-./run.bootstrap.sh azure.standalone
+./run.bootstrap.sh azure.infra1-standalone
 ````
 
 #### Login to the Standalone Broker Console
 
 Get the public ip address of the broker node:
 ````bash
-less {root}/shared-setup/{cloud-provider}.{infrastructure}.broker-nodes.json
+less {root}/shared-setup/{cloud-provider}.{infrastructure-id}.broker-nodes.json
 ````
 
 In Incognito / Private Browser Window:

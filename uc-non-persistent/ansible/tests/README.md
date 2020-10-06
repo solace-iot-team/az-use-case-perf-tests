@@ -3,17 +3,17 @@
 ## Run all tests
 
 ````bash
-export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure}
+export UC_NON_PERSISTENT_INFRASTRUCTURE={cloud-provider}.{infrastructure-id}
 # for example:
-export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.standalone
+export UC_NON_PERSISTENT_INFRASTRUCTURE=azure.infra1-standalone
 
 ./run.tests.sh
 ````
 
-Or, pass the infrastrucure as an argument:
+Or, pass the infrastrucure-id as an argument:
 
 ````bash
-./run.tests.sh azure.standalone
+./run.tests.sh azure.infra1-standalone
 ````
 
 - starts load

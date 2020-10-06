@@ -15,7 +15,7 @@
 
 resource "aws_instance" "solace-broker-nodes" {
   count = var.solace_broker_count
-  
+
   placement_group        = aws_placement_group.sdkperf_placement_grp.id #placement group defined in aws-sa-sdkperf-nodes.tf
   ami                    = var.centOS_ami[var.aws_region]
   key_name               = var.aws_ssh_key_name
@@ -68,7 +68,7 @@ resource "aws_instance" "solace-broker-nodes" {
       nodes = aws_instance.solace-broker-nodes.*
     }
   )
-  filename = "../../../shared-setup/aws.standalone.broker-nodes.json"
+  filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.broker-nodes.json"
   }
 
 # Trigger Ansible Tasks for the Brokers - Only after all the VM resources and Ansible Inventories & Playbooks have been created

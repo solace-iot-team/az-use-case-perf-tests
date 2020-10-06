@@ -186,7 +186,7 @@ resource "local_file" "broker_nodes_file" {
       # node-private-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
     }
   )
-  filename = "../../../shared-setup/azure.standalone.broker-nodes.json"
+  filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.broker-nodes.json"
 }
 
 
