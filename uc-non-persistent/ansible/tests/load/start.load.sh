@@ -12,19 +12,17 @@
   source $scriptDir/../../.lib/functions.sh
   sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
 
-  export ANSIBLE_LOG_PATH="./ansible.log"
+  if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
+  export ANSIBLE_LOG_PATH="$RUN_LOG_DIR/$scriptName.ansible.log"
   export ANSIBLE_DEBUG=False
-  export ANSIBLE_VERBOSITY=0
   export ANSIBLE_HOST_KEY_CHECKING=False
-  export ANSIBLE_SOLACE_LOG_PATH="./ansible-solace.log"
-  export ANSIBLE_SOLACE_ENABLE_LOGGING=True
 
 ############################################################################################################################
 # Environment Variables
 
   if [ -z "$1" ]; then
     if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
-        echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
+        echo ">>> ERROR: missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
         echo "    for example: $scriptName azure.infra1-standalone"
         echo; exit 1
     fi
@@ -35,7 +33,7 @@
 ##############################################################################################################################
 # Prepare
 
-rm -f ./*.log
+# rm -f ./*.log
 
 ##############################################################################################################################
 # General for all playbooks
