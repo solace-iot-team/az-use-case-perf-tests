@@ -27,6 +27,7 @@
 - set_fact:
     sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
     sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+    sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
 
 # TEST & DEBUG
 # - debug:
@@ -82,18 +83,11 @@
 
 - set_fact:
     pp_latency_json: "{{pp_result.stdout | from_json}}"
-    pp_latency_file_dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
 
-# # TEST & DEBUG
-# - name: "Display Post-Processed Ping Result"
-#   debug:
-#     msg: "{{pp_latency_json}}"
-
-- name: "Copy Latency Json to {{ result_dir }}"
+- name: "Copy Latency Json to {{ pp_latency_file_dest }}"
   copy:
     content: "{{pp_latency_json | to_nice_json }}"
-    # dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
-    dest: "{{ pp_latency_file_dest }}"
+    dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
 
