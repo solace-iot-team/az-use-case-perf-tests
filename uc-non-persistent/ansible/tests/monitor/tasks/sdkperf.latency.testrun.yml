@@ -82,6 +82,7 @@
 
 - set_fact:
     pp_latency_json: "{{pp_result.stdout | from_json}}"
+    pp_latency_file_dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
 
 # # TEST & DEBUG
 # - name: "Display Post-Processed Ping Result"
@@ -91,7 +92,8 @@
 - name: "Copy Latency Json to {{ result_dir }}"
   copy:
     content: "{{pp_latency_json | to_nice_json }}"
-    dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
+    # dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
+    dest: "{{ pp_latency_file_dest }}"
   delegate_to: localhost
   when: is_warm_up_run == False
 
