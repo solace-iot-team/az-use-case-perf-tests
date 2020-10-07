@@ -18,16 +18,26 @@ echo
   projectHome=${scriptDir%/ansible/*}
   sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
 
-  export ANSIBLE_LOG_PATH="./ansible.log"
+  if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
+  # export ANSIBLE_LOG_PATH="$RUN_LOG_DIR/$scriptName.ansible.log"
   export ANSIBLE_DEBUG=False
   export ANSIBLE_HOST_KEY_CHECKING=False
+
+############################################################################################################################
+# Check if monitor running
+# finds 3: script, grep, and awk
+monitorPids=( $(ps -ef | grep $scriptName | awk '{ print $2 }') )
+let countMonitors=${#monitorPids[@]}
+if [ "$countMonitors" -gt 3 ]; then
+  echo ">>> ERROR: found already at least 1 instance of monitor '$scriptName' running, exiting"; exit 1
+fi
 
 ############################################################################################################################
 # Environment Variables
 
     if [ -z "$1" ]; then
       if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
-          echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
+          echo ">>> ERROR: missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
           echo "    for example: $scriptName azure.infra1-standalone"
           echo; exit 1
       fi

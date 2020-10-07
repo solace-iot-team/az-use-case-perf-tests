@@ -4,49 +4,31 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-clear
-
-##############################################################################################################################
-# Prepare
 scriptDir=$(cd $(dirname "$0") && pwd);
-source $scriptDir/../.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/ansible/*}
 
-############################################################################################################################
-# Environment Variables
+if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=0; fi
+export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1;
 
-    if [ -z "$1" ]; then
-      if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
-          echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
-          echo "    for example: $scriptName azure.infra1-standalone"
-          echo; exit 1
-      fi
-    else
-      export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
-    fi
+callScript=_run.tests.sh
+logFile="$RUN_LOG_DIR/$callScript.log"
 
-    export ANSIBLE_VERBOSITY=0
+# check if there is a .run.tests.sh already running ==> no start
+runningPids=( $(ps -ef|grep $callScript | awk '{ print $2 }') )
+let countPids=${#runningPids[@]}
+if [ "$countPids" -gt 1 ]; then
+  echo ">>> ERROR: found already running $callScript, exiting"; exit 1
+fi
 
-echo;
-echo "##############################################################################################################"
-echo "# Running tests: start load, run monitors, stop load ..."
+rm -f $RUN_LOG_DIR/*;
+
+nohup $scriptDir/$callScript > $logFile $* 2>&1 &
+
 echo
-echo
-
-echo " >>> Starting Load ..."
-  $scriptDir/load/start.load.sh > $scriptDir/start.load.log
-  if [[ $? != 0 ]]; then echo ">>> ERROR starting load"; echo; exit 1; fi
-
-echo " >>> Running Monitors ..."
-  $scriptDir/monitor/run.monitor.sh $UC_NON_PERSISTENT_INFRASTRUCTURE auto
-  if [[ $? != 0 ]]; then echo ">>> ERROR running monitors"; echo; exit 1; fi
-
-echo " >>> Stop Load ..."
-  $scriptDir/load/stop.load.sh > $scriptDir/stop.load.log
-  if [[ $? != 0 ]]; then echo ">>> ERROR stopping load"; echo; exit 1; fi
-
-echo " >>> DONE"; echo
+echo ">>> log: $logFile"
+echo ">>> calling tail -f, ctrl-c to abort"
+sleep 1
+tail -f $logFile
 
 ###
 # The End.
