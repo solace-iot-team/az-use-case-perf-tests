@@ -35,9 +35,9 @@ monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
 # Set monitor scripts
 monitorScripts=(
   "run.monitor.vpn-stats.sh"
-  "run.monitor.latency.sh"
-  "run.monitor.brokernode.latency.sh"
-  "run.monitor.ping.sh"
+  # "run.monitor.latency.sh"
+  # "run.monitor.brokernode.latency.sh"
+  # "run.monitor.ping.sh"
 )
 
 ############################################################################################################################
@@ -88,10 +88,14 @@ echo
 if [ -z "$auto" ]; then x=$(wait4Key); fi
 echo
 
+##############################################################################################################################
+# Call monitor scripts
 pids=""
 for monitorScript in ${monitorScripts[@]}; do
   echo ">>> Start $monitorScript ..."
-  $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
+  # nohup $scriptDir/$callScript > $logFile $* 2>&1 &
+  # $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
+  nohup $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
   pids+=" $!"
 done
 
