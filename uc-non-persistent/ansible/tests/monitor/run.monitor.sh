@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# echo $BASH_VERSION
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -30,6 +31,7 @@ monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
     fi
 
     if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
+    if [ -z "$RUN_ID" ]; then export RUN_ID=$(date -u +"%Y-%m-%d-%H-%M-%S"); fi
 
 ############################################################################################################################
 # Set monitor scripts
@@ -42,19 +44,6 @@ monitorScripts=(
 
 ############################################################################################################################
 # Check if any monitors running
-let count=0
-for monitorScript in ${monitorScripts[@]}; do
-  monitorScriptPids=( $(ps -ef | grep $monitorScript | awk '{ print $2 }' ) )
-  # echo "monitorScriptPids = ${monitorScriptPids[@]}"
-  let countMonitors=${#monitorScriptPids[@]}
-  if [ "$countMonitors" -gt 1 ]; then
-    let "count+=1";
-    echo ">>> ERROR: monitor: $monitorScript already running"
-  fi
-done
-if [ "$count" -gt 0 ]; then
-  echo ">>> ERROR: found $count instance(s) of monitors already running. exiting."; exit 1
-fi
 
 ##############################################################################################################################
 # Prepare
@@ -63,7 +52,6 @@ resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE
 resultDir="$resultDirBase/run.current"
 resultDirLatest="$resultDirBase/run.latest"
 # Set for all monitors
-export runId=$(date -u +"%Y-%m-%d-%H-%M-%S")
 export runStartTsEpochSecs=$(date -u +%s)
 
 totalNumSamplesStr=$(cat $monitorVarsFile | yq '.general.total_num_samples') || exit
@@ -105,46 +93,61 @@ for pid in $pids; do
   # ps -ef $pid doesn't work on ubuntu
   ps $pid
 done
-
+##############################################################################################################################
+# monitor if 1 has failed
 FAILED=0
-for pid in $pids; do
-  if wait $pid; then
-    echo ">>> SUCCESS: Process $pid"
-  else
-    echo ">>> ERROR: Process $pid"; FAILED=1
-  fi
-done
+set -e
+while true; do
+  wait -n || {
+    code="$?"
+    if [ $code = "127" ]; then
+      # 127: last background job has exited successfully, ignore code
+      # echo "last job exited successfully"
+      FAILED=0
+    else
+      # echo "we have a failed code"
+      FAILED=1
+    fi
+    break
+  }
+done;
+
+pidtree() {
+  echo $1
+  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+    pidtree $p
+  done
+}
 
 if [ "$FAILED" -gt 0 ]; then
+  for pid in $pids; do
+    _pidList=$(pidtree $pid)
+    for _pid in $_pidList; do
+      if [ "$_pid" != "$pid" ]; then
+        kill -9 $_pid || true
+      fi
+    done
+  done
   echo ">>> ERROR: at least one monitor failed. see log files for details.";
   ls -la $RUN_LOG_DIR/*.log
   exit 1
 fi
-##############################################################################################################################
-# Post Processing of Results
-
-# copy docker compose deployed template to result dir
-cp $projectHome/ansible/docker-image/*.deployed.yml "$resultDir/PubSub.docker-compose.$runId.yml"
-# copy all log files to result dir
-mkdir $resultDir/logs > /dev/null 2>&1
-cp $RUN_LOG_DIR/*.log "$resultDir/logs"
 
 ##############################################################################################################################
-# Move ResultDir to Timestamp
-finalResultDir="$resultDirBase/run.$runId"
-mv $resultDir $finalResultDir
-if [[ $? != 0 ]]; then echo ">>> ERROR moving resultDir=$resultDir."; echo; exit 1; fi
-cd $resultDirBase
-rm -f $resultDirLatest
-ln -s $finalResultDir $resultDirLatest
-cd $scriptDir
-
-# echo "##############################################################################################################"
+# finished
 echo
 echo ">>> utc end time   : "$(date -u +"%Y-%m-%d %H:%M:%S")
 echo ">>> local end time : "$(date +"%Y-%m-%d %H:%M:%S")
-echo ">>> Monitor Results in: $finalResultDir"
 echo;echo;
+
+##############################################################################################################################
+# Post Processing of Results
+if [ -z "$auto" ]; then
+  echo ">>> Post processing results ..."
+    runScript="$scriptDir/../lib/post-process-results.sh"
+    nohup $runScript > $RUN_LOG_DIR/post-process-results.sh.log 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
+fi
 
 
 ###

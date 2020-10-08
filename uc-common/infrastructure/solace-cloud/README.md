@@ -1,5 +1,9 @@
 # Solace Cloud
 
+> :warning: **DEFUNCT**
+> may be updated in a later cycle.
+
+
 Manage Solace Cloud service for use cases.
 
 ## Configure
