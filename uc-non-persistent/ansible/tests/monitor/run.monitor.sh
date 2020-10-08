@@ -35,9 +35,9 @@ monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
 # Set monitor scripts
 monitorScripts=(
   "run.monitor.vpn-stats.sh"
-  # "run.monitor.latency.sh"
-  # "run.monitor.brokernode.latency.sh"
-  # "run.monitor.ping.sh"
+  "run.monitor.latency.sh"
+  "run.monitor.brokernode.latency.sh"
+  "run.monitor.ping.sh"
 )
 
 ############################################################################################################################
