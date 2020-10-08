@@ -95,14 +95,14 @@ for monitorScript in ${monitorScripts[@]}; do
   echo ">>> Start $monitorScript ..."
   # nohup $scriptDir/$callScript > $logFile $* 2>&1 &
   # $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
-  nohup $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
+  nohup $scriptDir/$monitorScript > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
   pids+=" $!"
 done
 
 # echo "##############################################################################################################"
 echo ">>> Waiting for Processes to finish:"
 for pid in $pids; do
-  ps $pid
+  ps -ef $pid
 done
 
 FAILED=0

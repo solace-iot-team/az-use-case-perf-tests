@@ -80,8 +80,7 @@ sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFR
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
-
+                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile"
   if [[ $? != 0 ]]; then echo ">>> ERROR retrieving vpn stats: $scriptName"; echo; exit 1; fi
 
 echo "##############################################################################################################"
