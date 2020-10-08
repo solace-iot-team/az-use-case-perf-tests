@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -25,35 +25,45 @@ projectHome=${scriptDir%/ansible/*}
     fi
 
     if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
+    if [ -z "$RUN_ID" ]; then export RUN_ID=$(date -u +"%Y-%m-%d-%H-%M-%S"); fi
 
 ############################################################################################################################
 # Check if any monitors running
 
-monitorPids=( $(ps -ef | grep 'run.monitor' | awk '{ print $2 }') )
-let countMonitors=${#monitorPids[@]}
-if [ "$countMonitors" -gt 1 ]; then
-  echo ">>> ERROR: found running monitors, exiting"; exit 1
-fi
 
 echo
 echo "##############################################################################################################"
 echo "# Running tests: start load, run monitors, stop load ..."
 echo
 
-
 echo ">>> Starting Load ..."
-  $scriptDir/load/start.load.sh > $RUN_LOG_DIR/start.load.sh.log
-  if [[ $? != 0 ]]; then echo ">>> ERROR starting load"; echo; exit 1; fi
+  runScript="$scriptDir/load/start.load.sh"
+  nohup $runScript > $RUN_LOG_DIR/start.load.sh.log 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
 
 echo ">>> Running Monitors ..."
-  $scriptDir/monitor/run.monitor.sh $UC_NON_PERSISTENT_INFRASTRUCTURE auto
-  if [[ $? != 0 ]]; then echo ">>> ERROR running monitors"; echo; exit 1; fi
+  runScript="$scriptDir/monitor/run.monitor.sh $UC_NON_PERSISTENT_INFRASTRUCTURE auto"
+  nohup $runScript > $RUN_LOG_DIR/run.monitor.sh.log 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; fi
 
 echo ">>> Stop Load ..."
-  $scriptDir/load/stop.load.sh > $RUN_LOG_DIR/stop.load.sh.log
-  if [[ $? != 0 ]]; then echo ">>> ERROR stopping load"; echo; exit 1; fi
+  runScript="$scriptDir/load/stop.load.sh"
+  nohup $runScript > $RUN_LOG_DIR/stop.load.sh.log 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
 
-echo " >>> DONE"; echo
+##############################################################################################################################
+# Post Processing of Results
+echo ">>> Post processing results ..."
+  runScript="$scriptDir/lib/post-process-results.sh"
+  nohup $runScript > $RUN_LOG_DIR/post-process-results.sh.log 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
+
+echo ">>> DONE."
+if [ -f "$RUN_LOG_DIR/ERROR.log" ]; then
+  echo ">>> ERROR: see: $RUN_LOG_DIR/ERROR.log"
+else
+  echo ">>> SUCCESS: no errors found"
+fi
 
 ###
 # The End.

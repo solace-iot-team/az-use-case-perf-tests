@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -25,12 +25,6 @@ echo
 
 ############################################################################################################################
 # Check if monitor running
-# finds 3: script, grep, and awk
-monitorPids=( $(ps -ef | grep $scriptName | awk '{ print $2 }') )
-let countMonitors=${#monitorPids[@]}
-if [ "$countMonitors" -gt 3 ]; then
-  echo ">>> ERROR: found already at least 1 instance of monitor '$scriptName' running, exiting"; exit 1
-fi
 
 ############################################################################################################################
 # Environment Variables
@@ -44,14 +38,8 @@ fi
     else
       export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
     fi
-
-    if [ -z "$runId" ]; then
-      export runId=$(date -u +%Y-%m-%d-%H-%M-%S)
-    fi
-
-    if [ -z "$runStartTsEpochSecs" ]; then
-      export runStartTsEpochSecs=$(date -u +%s)
-    fi
+    if [ -z "$RUN_ID" ]; then export RUN_ID=$(date -u +"%Y-%m-%d-%H-%M-%S"); fi
+    if [ -z "$runStartTsEpochSecs" ]; then export runStartTsEpochSecs=$(date -u +%s); fi
 
 ##############################################################################################################################
 # Prepare
@@ -73,7 +61,7 @@ rm -f $resultDir/ping-stats.*.json
                   --private-key $privateKeyFile \
                   $playbook \
                   --extra-vars "RESULT_DIR=$resultDir" \
-                  --extra-vars "RUN_ID=$runId" \
+                  --extra-vars "RUN_ID=$RUN_ID" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "INVENTORY_FILE=$inventoryFile"
 

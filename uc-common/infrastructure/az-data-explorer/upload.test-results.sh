@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)

@@ -36,7 +36,7 @@
         ping_post_process_exe: "./lib/post-process.ping.sh"
         ping_post_process_template_file: "./lib/ping.template.json"
 
-    - name: "ERROR: Solace Cloud"
+    - name: "Check if Solace Cloud - can't ping"
       debug:
         msg: "cannot ping a Solace Cloud Broker, ending play for host ..."
       when: is_solace_cloud == True

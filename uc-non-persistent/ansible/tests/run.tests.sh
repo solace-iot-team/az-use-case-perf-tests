@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -24,9 +24,11 @@ rm -f $RUN_LOG_DIR/*;
 
 nohup $scriptDir/$callScript > $logFile $* 2>&1 &
 
-echo
+echo "###########################################################################################"
 echo ">>> log: $logFile"
-echo ">>> calling tail -f, ctrl-c to abort"
+echo ">>> tail -f $logFile"
+echo ">>> <ctrl-c to abort>"
+echo
 sleep 1
 tail -f $logFile
 
