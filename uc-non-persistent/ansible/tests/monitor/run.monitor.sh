@@ -102,7 +102,8 @@ done
 # echo "##############################################################################################################"
 echo ">>> Waiting for Processes to finish:"
 for pid in $pids; do
-  ps -ef $pid
+  # ps -ef $pid doesn't work on ubuntu
+  ps $pid
 done
 
 FAILED=0
