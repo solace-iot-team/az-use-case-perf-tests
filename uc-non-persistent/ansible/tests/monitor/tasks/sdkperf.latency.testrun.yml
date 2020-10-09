@@ -10,6 +10,9 @@
     is_warm_up_run: "{{warm_up_run | default(False)}}"
     sdkperf_params:
         msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
+        msg_rate_per_second: "{{monitor.latency.msg_rate_per_second}}"
+        lb: "{{monitor.latency.lb}}"
+        lg: "{{monitor.latency.lg}}"
 
 - name: "Determine Sampling Start Time"
   block:
