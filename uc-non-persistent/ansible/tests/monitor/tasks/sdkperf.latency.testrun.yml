@@ -8,6 +8,8 @@
 - set_fact:
     sample_num: "{{item}}"
     is_warm_up_run: "{{warm_up_run | default(False)}}"
+    sdkperf_params:
+        msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
 
 - name: "Determine Sampling Start Time"
   block:
@@ -54,22 +56,19 @@
     -psm
     -l
     -lwu={{monitor.latency.warmup_secs}}
-    -lb=4096
-    -lg=15
+    -lb={{monitor.latency.lb}}
+    -lg={{monitor.latency.lg}}
   register: sdkperf_result
   failed_when: sdkperf_result.stdout == ""
 
-- name: "Test if sdkperf output is json"
-  # fails if output is not JSON
+- name: "Show raw sdkperf stdout"
   debug:
-    msg:
-      - "sdkperf_result.stdout:"
-      - "{{sdkperf_result.stdout | from_json}}"
+    msg: "{{sdkperf_result.stdout}}"
 
-- set_fact:
+- name: "Parse sdkperf output as json"
+  set_fact:
+    # fails if output is not JSON
     sdkperf_output_json: "{{sdkperf_result.stdout | from_json}}"
-    sdkperf_params:
-        msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
 
 - name: "Post-process latency results"
   command: "{{latency_post_process_exe}}"
