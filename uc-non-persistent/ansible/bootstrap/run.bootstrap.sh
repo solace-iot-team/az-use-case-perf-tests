@@ -53,6 +53,15 @@ cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
 ##############################################################################################################################
+# Checks
+  playbook=$(assertFile "$scriptDir/check.env.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
+
+##############################################################################################################################
 # Run SDKPerf VM bootstrap
   playbook=$(assertFile "$scriptDir/sdkperf.centos.bootstrap.playbook.yml") || exit
   ansible-playbook \
