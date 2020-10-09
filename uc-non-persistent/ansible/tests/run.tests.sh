@@ -26,11 +26,7 @@ nohup $scriptDir/$callScript > $logFile $* 2>&1 &
 
 echo "###########################################################################################"
 echo ">>> log: $logFile"
-echo ">>> tail -f $logFile"
-echo ">>> <ctrl-c to abort>"
 echo
-sleep 1
-tail -f $logFile
 
 ###
 # The End.
