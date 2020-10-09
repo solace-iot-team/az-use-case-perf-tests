@@ -19,7 +19,7 @@ echo
   sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
 
   if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
-  # export ANSIBLE_LOG_PATH="$RUN_LOG_DIR/$scriptName.ansible.log"
+  export ANSIBLE_LOG_PATH="$RUN_LOG_DIR/$scriptName.ansible.log"
   export ANSIBLE_DEBUG=False
   export ANSIBLE_HOST_KEY_CHECKING=False
 
