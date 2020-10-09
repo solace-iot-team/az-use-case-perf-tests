@@ -59,8 +59,14 @@
   register: sdkperf_result
   failed_when: sdkperf_result.stdout == ""
 
+- name: "Test if sdkperf output is json"
+  # fails if output is not JSON
+  debug:
+    msg:
+      - "sdkperf_result.stdout:"
+      - "{{sdkperf_result.stdout | from_json}}"
+
 - set_fact:
-    # should fail if output is not json
     sdkperf_output_json: "{{sdkperf_result.stdout | from_json}}"
     sdkperf_params:
         msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
