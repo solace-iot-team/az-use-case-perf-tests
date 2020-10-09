@@ -47,7 +47,7 @@ latency:
     msg_rate_per_second: 1000 # 0=max
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
     lb: 4096
-    lg: 5
+    lg: 15
 ping:
     # placeholder, no additional settings required
 
