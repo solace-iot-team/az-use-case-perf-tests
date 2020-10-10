@@ -4,6 +4,8 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
+trap "" SIGKILL
+
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor Latency ..."
@@ -25,6 +27,11 @@ echo
 
 ############################################################################################################################
 # Check if monitor running
+
+# echo "sleeping ..."
+# sleep 60
+# echo "exit 1"
+# exit 1
 
 ############################################################################################################################
 # Environment Variables
@@ -57,6 +64,7 @@ rm -f "$resultDir/$statsName".*.json
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
+                  --fork 1 \
                   -i $inventoryFile \
                   --private-key $privateKeyFile \
                   $playbook \
@@ -67,7 +75,7 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "RUN_LOCALLY=False"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving latency stats: $scriptName"; echo; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"

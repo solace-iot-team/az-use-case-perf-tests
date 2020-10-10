@@ -61,6 +61,7 @@ sampleRunTimeSecs=$((sampleRunTimeSecsStr))
 testRunMinutes=$((sampleRunTimeSecs/60 * totalNumSamples))
 
 if [ -z "$auto" ]; then rm -f $RUN_LOG_DIR/*.log; fi
+
 rm -f $resultDir/*
 
 echo;
@@ -78,59 +79,76 @@ echo
 
 ##############################################################################################################################
 # Call monitor scripts
-pids=""
+monitorScriptPids=""
 for monitorScript in ${monitorScripts[@]}; do
   echo ">>> Start $monitorScript ..."
   # nohup $scriptDir/$callScript > $logFile $* 2>&1 &
   # $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
   nohup $scriptDir/$monitorScript > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
-  pids+=" $!"
+  monitorScriptPids+=" $!"
 done
 
 # echo "##############################################################################################################"
 echo ">>> Waiting for Processes to finish:"
-for pid in $pids; do
+sleep 1
+for pid in $monitorScriptPids; do
   # ps -ef $pid doesn't work on ubuntu
-  ps $pid
+  ps $pid || true
 done
+
+
+##############################################################################################################################
+# TODO: move to functions.sh
+_getChildrenPids() {
+  echo $1
+  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+    _getChildrenPids $p
+  done
+}
+getChildrenPids() {
+  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+    _getChildrenPids $p
+  done
+}
+##############################################################################################################################
+
+
 ##############################################################################################################################
 # monitor if 1 has failed
 FAILED=0
-set -e
 while true; do
   wait -n || {
     code="$?"
     if [ $code = "127" ]; then
-      # 127: last background job has exited successfully, ignore code
-      # echo "last job exited successfully"
+      # 127: last background job has exited successfully
+      echo ">>> SUCCESS: all monitors finished successfully"
       FAILED=0
     else
-      # echo "we have a failed code"
+      echo ">>> ERROR: monitor failed with code=$code"
       FAILED=1
     fi
     break
   }
 done;
 
-pidtree() {
-  echo $1
-  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
-    pidtree $p
-  done
-}
-
 if [ "$FAILED" -gt 0 ]; then
-  for pid in $pids; do
-    _pidList=$(pidtree $pid)
-    for _pid in $_pidList; do
-      if [ "$_pid" != "$pid" ]; then
-        kill -9 $_pid || true
-      fi
-    done
+  echo ">>> ERROR: at least one monitor failed. terminating all other monitors";
+  for pid in $monitorScriptPids; do
+    echo ">>> DEBUG: children of pid=$pid"
+    _pidList=$(getChildrenPids $pid)
+    echo ">>> DEBUG: _pidList='"$_pidList"'"
+    if [[ ! -z "$_pidList" ]]; then
+      # echo "now kill all the children for pid=$pid"
+      for _pid in $_pidList; do
+        echo ">>> DEBUG: kill -SIGKILL $_pid"
+        kill -SIGKILL $_pid > /dev/null 2>&1 || true
+      done
+    fi
   done
-  echo ">>> ERROR: at least one monitor failed. see log files for details.";
+  echo ">>> ERROR: see log files for details";
   ls -la $RUN_LOG_DIR/*.log
-  exit 1
+  ps | grep run.monitor
+  ps | grep ansible-playbook
 fi
 
 ##############################################################################################################################
@@ -149,6 +167,9 @@ if [ -z "$auto" ]; then
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
 fi
 
+if [ "$FAILED" -gt 0 ]; then
+  exit 1
+fi
 
 ###
 # The End.

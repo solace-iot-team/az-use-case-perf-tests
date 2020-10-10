@@ -25,7 +25,7 @@ projectHome=${scriptDir%/ansible/*}
     fi
 
     if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
-    if [ -z "$RUN_ID" ]; then export RUN_ID=$(date -u +"%Y-%m-%d-%H-%M-%S"); fi
+    if [ -z "$RUN_ID" ]; then D=$(date -u +"%Y-%m-%d-%H-%M-%S"); export RUN_ID=$RUN_ID_PREFIX$D; fi
 
 ############################################################################################################################
 # Check if any monitors running

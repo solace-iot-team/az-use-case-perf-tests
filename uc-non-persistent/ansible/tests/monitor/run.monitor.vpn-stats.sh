@@ -4,6 +4,8 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
+trap "" SIGKILL
+
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor VPN Stats ..."
@@ -60,6 +62,7 @@ sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFR
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
+                  --fork 1 \
                   -i $inventoryFile \
                   --private-key $privateKeyFile \
                   $playbook \
@@ -69,7 +72,8 @@ sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFR
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
                   --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile"
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving vpn stats: $scriptName"; echo; exit 1; fi
+
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
 echo "##############################################################################################################"
 echo "# Results in: $resultDir"

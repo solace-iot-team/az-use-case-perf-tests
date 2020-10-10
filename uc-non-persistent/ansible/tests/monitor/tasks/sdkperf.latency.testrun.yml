@@ -34,6 +34,11 @@
     sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
     sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
 
+- name: "FORCE FAIL on sample_num==1"
+  fail:
+    msg: "forcing an error: sample_num={{sample_num}}"
+  when: sample_num == "1"
+
 # TEST & DEBUG
 # - debug:
 #     msg:

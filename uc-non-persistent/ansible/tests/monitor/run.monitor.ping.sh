@@ -4,6 +4,8 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
+trap "" SIGKILL
+
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor Ping ..."
@@ -57,6 +59,7 @@ rm -f $resultDir/ping-stats.*.json
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
+                  --fork 1 \
                   -i $inventoryFile \
                   --private-key $privateKeyFile \
                   $playbook \
@@ -65,7 +68,7 @@ rm -f $resultDir/ping-stats.*.json
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "INVENTORY_FILE=$inventoryFile"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving ping stats: $scriptName"; echo; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"
