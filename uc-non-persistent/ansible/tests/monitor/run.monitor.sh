@@ -169,8 +169,8 @@ if [ "$FAILED" -gt 0 ]; then
   ls -la $RUN_LOG_DIR/*.log
   if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: failed monitors but not killed any children, expecting kills."; fi
   echo ">>> INFO: checking if any monitors & playbooks still running:"
-  ps | grep run.monitor
-  ps | grep ansible-playbook
+  ps | grep run.monitor || true
+  ps | grep ansible-playbook || true
   exit 1
 fi
 
