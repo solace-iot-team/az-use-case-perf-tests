@@ -14,7 +14,7 @@ callScript=_run.tests.sh
 logFile="$RUN_LOG_DIR/$callScript.log"
 
 # check if there is a .run.tests.sh already running ==> no start
-runningPids=( $(ps -ef|grep $callScript | awk '{ print $2 }') )
+runningPids=( $(ps -ef | grep $callScript | awk '{ print $2 }') )
 let countPids=${#runningPids[@]}
 if [ "$countPids" -gt 1 ]; then
   echo ">>> ERROR: found already running $callScript, exiting"; exit 1
