@@ -19,9 +19,8 @@ projectHome=${scriptDir%/ansible/*}
 source $projectHome/ansible/.lib/functions.sh
 
 ##############################################################################################################################
-# Check for errors
-
-errors=$(grep -n "ERROR" $RUN_LOG_DIR/*.log)
+# Check for errors in the logs
+errors=$(grep -n -e "ERROR" -e "Killed" $RUN_LOG_DIR/*.log)
 if [ -z "$errors" ]; then
   echo ">>> SUCCESS: found no errors in log files"
   touch $RUN_LOG_DIR/SUCCESS.log
