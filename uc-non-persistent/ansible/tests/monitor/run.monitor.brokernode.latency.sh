@@ -4,6 +4,8 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
+trap "" SIGKILL
+
 echo;
 echo "##############################################################################################################"
 echo "# Running Monitor Brokernode Latency ..."
@@ -58,6 +60,7 @@ rm -f "$resultDir/$statsName".*.json
   privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
+                  --fork 1 \
                   -i $inventoryFile \
                   --private-key $privateKeyFile \
                   $playbook \
@@ -68,7 +71,7 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "RUN_LOCALLY=True"
 
-  if [[ $? != 0 ]]; then echo ">>> ERROR retrieving broker node latency stats: $scriptName"; echo; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
   echo "##############################################################################################################"
   echo "# Results in: $resultDir"

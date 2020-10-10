@@ -21,7 +21,6 @@ source $projectHome/ansible/.lib/functions.sh
 ##############################################################################################################################
 # Check for errors
 
-# errors=$(grep -rni "ERROR" $RUN_LOG_DIR/*.log)
 errors=$(grep -n "ERROR" $RUN_LOG_DIR/*.log)
 if [ -z "$errors" ]; then
   echo ">>> SUCCESS: found no errors in log files"

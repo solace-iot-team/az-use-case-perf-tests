@@ -6,7 +6,7 @@
 ---
 - name: "SDKPerf Latency to broker node"
   hosts: "{{HOSTS}}"
-  gather_facts: no
+  gather_facts: yes
   vars:
     project_root_dir: "../../"
   pre_tasks:

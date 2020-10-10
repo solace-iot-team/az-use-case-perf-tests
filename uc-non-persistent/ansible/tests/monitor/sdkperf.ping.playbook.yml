@@ -6,7 +6,7 @@
 ---
 - name: "PING broker node from latency node"
   hosts: sdkperf_latency
-  gather_facts: no
+  gather_facts: yes
   vars:
     project_root_dir: "../../"
   pre_tasks:
