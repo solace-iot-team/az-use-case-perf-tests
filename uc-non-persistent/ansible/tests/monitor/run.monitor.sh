@@ -99,14 +99,16 @@ done
 
 ##############################################################################################################################
 # TODO: move to functions.sh
+# note: do not use cut, too many different versions
 _getChildrenPids() {
   echo $1
-  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+  # for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
     _getChildrenPids $p
   done
 }
 getChildrenPids() {
-  for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
     _getChildrenPids $p
   done
 }
@@ -169,8 +171,8 @@ if [ "$FAILED" -gt 0 ]; then
   ls -la $RUN_LOG_DIR/*.log
   if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: failed monitors but not killed any children, expecting kills."; fi
   echo ">>> INFO: checking if any monitors & playbooks still running:"
-  ps | grep run.monitor || true
-  ps | grep ansible-playbook || true
+  ps -ef | grep run.monitor || true
+  ps -ef | grep ansible-playbook || true
   exit 1
 fi
 
