@@ -124,7 +124,7 @@ while true; do
       echo ">>> SUCCESS: all monitors finished successfully"
       FAILED=0
     else
-      echo ">>> ERROR: monitor failed with code=$code"
+      echo ">>> ERROR: 1 or more monitors failed with code=$code"
       FAILED=1
     fi
     break
@@ -138,25 +138,18 @@ if [ "$FAILED" -gt 0 ]; then
     _pidList=$(getChildrenPids $pid)
     echo ">>> DEBUG: _pidList='"$_pidList"'"
     if [[ ! -z "$_pidList" ]]; then
-      # echo "now kill all the children for pid=$pid"
       for _pid in $_pidList; do
         echo ">>> DEBUG: kill -SIGKILL $_pid"
         kill -SIGKILL $_pid > /dev/null 2>&1 || true
       done
     fi
   done
-  echo ">>> ERROR: see log files for details";
-  ls -la $RUN_LOG_DIR/*.log
-  ps | grep run.monitor
-  ps | grep ansible-playbook
 fi
 
 ##############################################################################################################################
 # finished
-echo
 echo ">>> utc end time   : "$(date -u +"%Y-%m-%d %H:%M:%S")
 echo ">>> local end time : "$(date +"%Y-%m-%d %H:%M:%S")
-echo;echo;
 
 ##############################################################################################################################
 # Post Processing of Results
@@ -164,10 +157,17 @@ if [ -z "$auto" ]; then
   echo ">>> Post processing results ..."
     runScript="$scriptDir/../lib/post-process-results.sh"
     nohup $runScript > $RUN_LOG_DIR/post-process-results.sh.log 2>&1 &
-    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
+    pid="$!"; if wait $pid; then echo; else echo ">>> ERROR: $runScript"; exit 1; fi
 fi
 
+##############################################################################################################################
+# final output
 if [ "$FAILED" -gt 0 ]; then
+  echo ">>> ERROR: running monitors. see log files for details";
+  ls -la $RUN_LOG_DIR/*.log
+  echo ">>> INFO: checking if any monitors & playbooks still running:"
+  ps | grep run.monitor
+  ps | grep ansible-playbook
   exit 1
 fi
 
