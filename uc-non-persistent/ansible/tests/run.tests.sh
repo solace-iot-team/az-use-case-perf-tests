@@ -25,8 +25,9 @@ rm -f $RUN_LOG_DIR/*;
 nohup $scriptDir/$callScript > $logFile $* 2>&1 &
 
 echo "###########################################################################################"
-echo ">>> log: $logFile"
-echo
+echo ">>> tail -f $logFile"
+sleep 1
+cat $logFile
 
 ###
 # The End.
