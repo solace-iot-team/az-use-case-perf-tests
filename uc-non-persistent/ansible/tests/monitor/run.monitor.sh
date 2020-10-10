@@ -131,6 +131,7 @@ while true; do
   }
 done;
 
+killCount=0
 if [ "$FAILED" -gt 0 ]; then
   echo ">>> ERROR: at least one monitor failed. terminating all other monitors";
   for pid in $monitorScriptPids; do
@@ -140,6 +141,7 @@ if [ "$FAILED" -gt 0 ]; then
     if [[ ! -z "$_pidList" ]]; then
       for _pid in $_pidList; do
         echo ">>> DEBUG: kill -SIGKILL $_pid"
+        ((killCount=killCount+1))
         kill -SIGKILL $_pid > /dev/null 2>&1 || true
       done
     fi
@@ -165,6 +167,7 @@ fi
 if [ "$FAILED" -gt 0 ]; then
   echo ">>> ERROR: running monitors. see log files for details";
   ls -la $RUN_LOG_DIR/*.log
+  if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: failed monitors but not killed any children, expecting kills."; fi
   echo ">>> INFO: checking if any monitors & playbooks still running:"
   ps | grep run.monitor
   ps | grep ansible-playbook
