@@ -24,5 +24,21 @@ function wait4Key() {
   echo "$x" > /dev/tty
   return 0
 }
+
+# note: do not use cut, too many different versions
+_getChildrenPids() {
+  echo $1
+  # for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
+  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
+    _getChildrenPids $p
+  done
+}
+# usage: _pidList=$(getChildrenPids $pid)
+getChildrenPids() {
+  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
+    _getChildrenPids $p
+  done
+}
+##############################################################################################################################
 ###
 # The End.
