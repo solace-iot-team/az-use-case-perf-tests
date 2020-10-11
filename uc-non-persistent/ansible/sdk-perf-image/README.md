@@ -27,7 +27,7 @@ vi sdkperf_c.sh
 - script contents:
 
   ````bash
-  #!/bin/bash
+  #!/usr/bin/env bash
   basedir=`dirname $0`
   cd $basedir
   ./sdkperf_c $*

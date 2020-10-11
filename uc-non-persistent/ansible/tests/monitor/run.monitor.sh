@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# echo $BASH_VERSION
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -12,17 +13,18 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/ansible/*}
 sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
 monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
-pids=""
 
 ############################################################################################################################
-# Environment Variables
+# Arguments & Environment Variables
 
-  # is set, doesn't wait for user input
+  # if set:
+  # - doesn't wait for user input
+  # - post processes results
   auto=$2
 
     if [ -z "$1" ]; then
       if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
-          echo ">>> missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
+          echo ">>> ERROR: missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
           echo "    for example: $scriptName azure.infra1-standalone"
           echo; exit 1
       fi
@@ -30,6 +32,20 @@ pids=""
       export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
     fi
 
+    if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
+    if [ -z "$RUN_ID" ]; then export RUN_ID=$(date -u +"%Y-%m-%d-%H-%M-%S"); fi
+
+############################################################################################################################
+# Set monitor scripts
+monitorScripts=(
+  "run.monitor.vpn-stats.sh"
+  "run.monitor.latency.sh"
+  "run.monitor.brokernode.latency.sh"
+  "run.monitor.ping.sh"
+)
+
+############################################################################################################################
+# Check if any monitors running
 
 ##############################################################################################################################
 # Prepare
@@ -38,7 +54,6 @@ resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE
 resultDir="$resultDirBase/run.current"
 resultDirLatest="$resultDirBase/run.latest"
 # Set for all monitors
-export runId=$(date -u +"%Y-%m-%d-%H-%M-%S")
 export runStartTsEpochSecs=$(date -u +%s)
 
 totalNumSamplesStr=$(cat $monitorVarsFile | yq '.general.total_num_samples') || exit
@@ -47,7 +62,8 @@ sampleRunTimeSecsStr=$(cat $monitorVarsFile | yq '.general.sample_run_time_secs'
 sampleRunTimeSecs=$((sampleRunTimeSecsStr))
 testRunMinutes=$((sampleRunTimeSecs/60 * totalNumSamples))
 
-rm -f ./*.log
+if [ -z "$auto" ]; then rm -f $RUN_LOG_DIR/*.log; fi
+
 rm -f $resultDir/*
 
 echo;
@@ -63,70 +79,89 @@ echo
 if [ -z "$auto" ]; then x=$(wait4Key); fi
 echo
 
-# echo "##############################################################################################################"
-echo ">>> Start VPN Stats Monitor ..."
-  $scriptDir/run.monitor.vpn-stats.sh 2>&1 > $scriptDir/run.monitor.vpn-stats.log &
-  vpn_stats_pid=" $!"
-  pids+=" $!"
-
-# echo "##############################################################################################################"
-echo ">>> Start Latency Stats Monitor ..."
-  $scriptDir/run.monitor.latency.sh 2>&1 > $scriptDir/run.monitor.latency.log &
-  latency_pid=" $!"
-  pids+=" $!"
-
-# echo "##############################################################################################################"
-echo ">>> Start Latency Broker Node Stats Monitor ..."
-  $scriptDir/run.monitor.brokernode.latency.sh 2>&1 > $scriptDir/run.monitor.brokernode.latency.log &
-  brokernode_latency_pid=" $!"
-  pids+=" $!"
-
-# echo "##############################################################################################################"
-echo ">>> Start Ping Latency Stats Monitor ..."
-  $scriptDir/run.monitor.ping.sh 2>&1 > $scriptDir/run.monitor.ping.log &
-  ping_pid=" $!"
-  pids+=" $!"
+##############################################################################################################################
+# Call monitor scripts
+monitorScriptPids=""
+for monitorScript in ${monitorScripts[@]}; do
+  echo ">>> Start $monitorScript ..."
+  # nohup $scriptDir/$callScript > $logFile $* 2>&1 &
+  # $scriptDir/$monitorScript 2>&1 > $RUN_LOG_DIR/$monitorScript.log &
+  nohup $scriptDir/$monitorScript > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
+  monitorScriptPids+=" $!"
+done
 
 # echo "##############################################################################################################"
 echo ">>> Waiting for Processes to finish:"
-for pid in $pids; do
-  ps $pid
+sleep 1
+for pid in $monitorScriptPids; do
+  # ps -ef $pid doesn't work on ubuntu
+  ps $pid || true
 done
 
+##############################################################################################################################
+# monitor if 1 has failed
 FAILED=0
-for pid in $pids; do
-  if wait $pid; then
-    echo ">>> SUCCESS: Process $pid"
-  else
-    echo ">>> FAILED: Process $pid"; FAILED=1
-  fi
-done
+while true; do
+  wait -n || {
+    code="$?"
+    if [ $code = "127" ]; then
+      # 127: last background job has exited successfully
+      echo ">>> SUCCESS: all monitors finished successfully"
+      FAILED=0
+    else
+      echo ">>> ERROR: 1 or more monitors failed with code=$code"
+      FAILED=1
+    fi
+    break
+  }
+done;
 
+killCount=0
 if [ "$FAILED" -gt 0 ]; then
-  echo ">>> ERROR: at least one monitor failed. see log files for details.";
-  ls -la *.log
-  exit 1
+  echo ">>> ERROR: at least one monitor failed. terminating all other monitors";
+  for pid in $monitorScriptPids; do
+    echo ">>> DEBUG: children of pid=$pid"
+    _pidList=$(getChildrenPids $pid)
+    echo ">>> DEBUG: _pidList='"$_pidList"'"
+    if [[ ! -z "$_pidList" ]]; then
+      for _pid in $_pidList; do
+        echo ">>> DEBUG: kill -SIGKILL $_pid"
+        ((killCount=killCount+1))
+        kill -SIGKILL $_pid > /dev/null 2>&1 || true
+      done
+    fi
+  done
 fi
+
+##############################################################################################################################
+# finished
+echo ">>> utc end time   : "$(date -u +"%Y-%m-%d %H:%M:%S")
+echo ">>> local end time : "$(date +"%Y-%m-%d %H:%M:%S")
+
 ##############################################################################################################################
 # Post Processing of Results
-
-# copy docker compose deployed template to result dir
-cp $projectHome/ansible/docker-image/*.deployed.yml "$resultDir/PubSub.docker-compose.$runId.yml"
+if [ -z "$auto" ]; then
+  echo ">>> Post processing results"
+    runScript="$scriptDir/../lib/post-process-results.sh"
+    nohup $runScript > $RUN_LOG_DIR/post-process-results.sh.log 2>&1 &
+    pid="$!"; if wait $pid; then echo; else echo ">>> ERROR: $runScript"; exit 1; fi
+fi
 
 ##############################################################################################################################
-# Move ResultDir to Timestamp
-finalResultDir="$resultDirBase/run.$runId"
-mv $resultDir $finalResultDir
-if [[ $? != 0 ]]; then echo ">>> ERROR moving resultDir=$resultDir."; echo; exit 1; fi
-cd $resultDirBase
-rm -f $resultDirLatest
-ln -s $finalResultDir $resultDirLatest
-cd $scriptDir
-
-# echo "##############################################################################################################"
-echo
-echo ">>> Monitor Results in: $finalResultDir"
-echo;echo;
+# final output
+if [ "$FAILED" -gt 0 ]; then
+  echo ">>> ERROR: running monitors. see log files for details";
+  ls -la $RUN_LOG_DIR/*.log
+  if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: found failed monitors but not killed any child processes. they may still be running."; fi
+  # wait for playbooks to end
+  sleep 2
+  echo ">>> INFO: checking if any monitors & playbooks still running:"
+  ps -ef | grep run.monitor || true
+  ps -ef | grep ansible-playbook || true
+  exit 1
+else
+  echo ">>> SUCCESS: $scriptName"
+fi
 
 ###
 # The End.

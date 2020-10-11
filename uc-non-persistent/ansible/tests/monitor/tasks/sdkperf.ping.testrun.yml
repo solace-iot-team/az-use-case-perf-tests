@@ -27,6 +27,8 @@
 - set_fact:
     sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
     sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+    sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+
 
 # # TEST & DEBUG
 # - debug:
@@ -70,7 +72,7 @@
 - name: "Copy Ping Json to {{ result_dir }}"
   copy:
     content: "{{pp_ping_json | to_nice_json }}"
-    dest: "{{ result_dir }}/ping-stats.{{sample_start_ts_str}}.json"
+    dest: "{{ result_dir }}/ping-stats.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
   failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1

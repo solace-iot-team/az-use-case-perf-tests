@@ -1,5 +1,18 @@
 # Release Notes
 
+## Version: 0.4.1
+Release Purpose: Maintenance release: logging & error handling
+
+* **logging**
+  - scripts `run.tests.sh` and `monitor/run.monitor.sh` create log files
+* **error handling**
+  - in case a test/monitor fails, the entire run is stopped
+  - log files are searched for errors and
+    - `ERROR.log` created with file / error details
+    - `SUCCESS.log` created, empty
+* **log files included in results**
+  - each run has a sub-directory: `logs`
+
 ## Version: 0.4.0
 Release Purpose: Major release to incorporate multiple infrastrucures in potentially different cloud providers.
 
