@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  tests_spec:
+    use_case: uc_non_persistent
+    sample_run_time_secs: 60
+    total_num_samples: 60
+    # ----devel settings:
+    # sample_run_time_secs: 60
+    # total_num_samples: 2
+    runs:
+      - name: run_1
+        monitors: # can override defaults
+          latency: true
+          latency_brokernode: false
+          ping: false
+          vpn: false
+
+    latency:
+      topic_prefix: "private/direct/latency"
+      warmup_secs: 10
+      msg_rate_per_second: 1000 # 0=max
+      msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+  ping:
+      # placeholder, no additional settings required
+
+
+sdkperf:
+- latency msg payload size
+- load msg payload size
+- number of topics
+
+
+###
+# The End.
