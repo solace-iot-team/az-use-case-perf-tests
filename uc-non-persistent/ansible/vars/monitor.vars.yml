@@ -8,12 +8,11 @@
 general:
     use_case: uc_non_persistent
     # test run time in seconds: sample_run_time_secs * total_num_samples
-    # ----release settings:
+    # sample_run_time_secs:
+    #  - min: 45 secs
+    #  - max: 120 secs
     sample_run_time_secs: 60
     total_num_samples: 60
-    # ----devel settings:
-    # sample_run_time_secs: 60
-    # total_num_samples: 2
 vpn_stats:
     select_vpn_stats: >-
       dataRxByteCount,
@@ -48,6 +47,7 @@ latency:
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
     lb: 4096
     lg: 15
+    lpm: true
 ping:
     # placeholder, no additional settings required
 

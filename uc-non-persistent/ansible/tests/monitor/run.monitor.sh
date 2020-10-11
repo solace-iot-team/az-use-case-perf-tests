@@ -15,9 +15,11 @@ sharedSetupDir="$projectHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">
 monitorVarsFile=$(assertFile "$scriptDir/../../vars/monitor.vars.yml") || exit
 
 ############################################################################################################################
-# Environment Variables
+# Arguments & Environment Variables
 
-  # is set, doesn't wait for user input
+  # if set:
+  # - doesn't wait for user input
+  # - post processes results
   auto=$2
 
     if [ -z "$1" ]; then
@@ -96,25 +98,6 @@ for pid in $monitorScriptPids; do
   ps $pid || true
 done
 
-
-##############################################################################################################################
-# TODO: move to functions.sh
-# note: do not use cut, too many different versions
-_getChildrenPids() {
-  echo $1
-  # for p in $(ps -o pid=,ppid= | grep $1$ | cut -f1 -d' '); do
-  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
-    _getChildrenPids $p
-  done
-}
-getChildrenPids() {
-  for p in $(ps -o pid=,ppid= | grep $1$ | awk -F" " '{print $1}'); do
-    _getChildrenPids $p
-  done
-}
-##############################################################################################################################
-
-
 ##############################################################################################################################
 # monitor if 1 has failed
 FAILED=0
@@ -158,7 +141,7 @@ echo ">>> local end time : "$(date +"%Y-%m-%d %H:%M:%S")
 ##############################################################################################################################
 # Post Processing of Results
 if [ -z "$auto" ]; then
-  echo ">>> Post processing results ..."
+  echo ">>> Post processing results"
     runScript="$scriptDir/../lib/post-process-results.sh"
     nohup $runScript > $RUN_LOG_DIR/post-process-results.sh.log 2>&1 &
     pid="$!"; if wait $pid; then echo; else echo ">>> ERROR: $runScript"; exit 1; fi
@@ -169,11 +152,15 @@ fi
 if [ "$FAILED" -gt 0 ]; then
   echo ">>> ERROR: running monitors. see log files for details";
   ls -la $RUN_LOG_DIR/*.log
-  if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: failed monitors but not killed any children, expecting kills."; fi
+  if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: found failed monitors but not killed any child processes. they may still be running."; fi
+  # wait for playbooks to end
+  sleep 2
   echo ">>> INFO: checking if any monitors & playbooks still running:"
   ps -ef | grep run.monitor || true
   ps -ef | grep ansible-playbook || true
   exit 1
+else
+  echo ">>> SUCCESS: $scriptName"
 fi
 
 ###

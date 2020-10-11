@@ -25,6 +25,8 @@
 
     - name: "Settings"
       set_fact:
+        max_sample_run_time_secs: 120
+        # overhead depends on lpm - shell takes a lot longer to get each metric
         sampling_overhead_secs: 10
         min_collection_period_secs: 15
         sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
@@ -45,6 +47,14 @@
       with_items:
         - "{{latency_post_process_exe}}"
         - "{{latency_post_process_template_file}}"
+
+    - name: "Check input: sample_run_time_secs"
+      fail:
+        msg:
+          - "maximum sample_run_time_secs: {{ max_sample_run_time_secs}}"
+          - "configured: {{monitor.general.sample_run_time_secs}}"
+          - "pls change"
+      when: monitor.general.sample_run_time_secs > max_sample_run_time_secs
 
     - name: "Check input"
       fail:
