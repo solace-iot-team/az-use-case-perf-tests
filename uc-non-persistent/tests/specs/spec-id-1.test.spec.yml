@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -58,17 +57,26 @@
     runs:
       # add all this to meta for the run
       # include number of samples if not there
-      - name: run_az_1
-      - name: run_az_2
+      - name: run_az_base
+      - name: run_az_var_1
         monitors:
           latency:
             lpm: false
           latency_brokernode:
             lpm: false
-      - name: run_aws_1
+      - name: run_aws_base
         infrastructure:
           cloud_provider: aws
           id: rjgu-standalone
+      - name: run_aws_var_1
+        infrastructure:
+          cloud_provider: aws
+          id: rjgu-standalone
+        monitors:
+          latency:
+            lpm: false
+          latency_brokernode:
+            lpm: false
 
 
 ###
