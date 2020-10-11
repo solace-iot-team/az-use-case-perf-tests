@@ -51,7 +51,11 @@ ansible-doc -l | grep solace
 
 
 #### Misc Tools
-- bash
+- bash >= 4.4.20
+  ````bash
+  bash --version
+  GNU bash, version 4.4.20(1)-release (x86_64-pc-linux-gnu)
+  ````
 - [jq](https://stedolan.github.io/jq/download/)
 - [yq](https://github.com/mikefarah/yq): `pip3 install yq`
 

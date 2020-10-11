@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
@@ -51,6 +51,15 @@ rm -f ./*.log
 inventoryFile=$(assertFile "$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
+
+##############################################################################################################################
+# Checks
+  playbook=$(assertFile "$scriptDir/check.env.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook
+  if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap

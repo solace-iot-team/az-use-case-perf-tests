@@ -8,6 +8,12 @@
 - set_fact:
     sample_num: "{{item}}"
     is_warm_up_run: "{{warm_up_run | default(False)}}"
+    sdkperf_params:
+        msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
+        msg_rate_per_second: "{{monitor.latency.msg_rate_per_second}}"
+        lb: "{{monitor.latency.lb}}"
+        lg: "{{monitor.latency.lg}}"
+        lpm: "{{monitor.latency.lpm}}"
 
 - name: "Determine Sampling Start Time"
   block:
@@ -27,6 +33,13 @@
 - set_fact:
     sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
     sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+    sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+
+# # TEST & DEBUG
+# - name: "FORCE FAIL on sample_num==1"
+#   fail:
+#     msg: "forcing an error: sample_num={{sample_num}}"
+#   when: sample_num == "1"
 
 # TEST & DEBUG
 # - debug:
@@ -51,18 +64,22 @@
     -msa={{ monitor.latency.msg_payload_size_bytes }}
     -mr={{ monitor.latency.msg_rate_per_second }}
     -psm
+    {{'-lpm' if monitor.latency.lpm else '' }}
     -l
     -lwu={{monitor.latency.warmup_secs}}
-    -lb=4096
-    -lg=15
+    -lb={{monitor.latency.lb}}
+    -lg={{monitor.latency.lg}}
   register: sdkperf_result
   failed_when: sdkperf_result.stdout == ""
 
-- set_fact:
-    # should fail if output is not json
+- name: "Show raw sdkperf stdout"
+  debug:
+    msg: "{{sdkperf_result.stdout}}"
+
+- name: "Parse sdkperf output as json"
+  set_fact:
+    # fails if output is not JSON
     sdkperf_output_json: "{{sdkperf_result.stdout | from_json}}"
-    sdkperf_params:
-        msg_payload_size_bytes: "{{monitor.latency.msg_payload_size_bytes}}"
 
 - name: "Post-process latency results"
   command: "{{latency_post_process_exe}}"
@@ -83,15 +100,10 @@
 - set_fact:
     pp_latency_json: "{{pp_result.stdout | from_json}}"
 
-# # TEST & DEBUG
-# - name: "Display Post-Processed Ping Result"
-#   debug:
-#     msg: "{{pp_latency_json}}"
-
-- name: "Copy Latency Json to {{ result_dir }}"
+- name: "Copy Latency Json to {{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
   copy:
     content: "{{pp_latency_json | to_nice_json }}"
-    dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_start_ts_str}}.json"
+    dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
 

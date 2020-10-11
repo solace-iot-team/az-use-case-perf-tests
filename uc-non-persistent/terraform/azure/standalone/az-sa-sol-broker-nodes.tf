@@ -191,7 +191,7 @@ resource "local_file" "broker_nodes_file" {
 
 resource "local_file" "inventory_file" {
     content     = "bootstrap to generate"
-    filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
+    filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
 }
 
 

@@ -155,7 +155,34 @@ let the_title = strcat("cloud:", cloud_provider, " | ", "run-id:", the_run_id, "
 the_series | render timechart with (legend=visible, title=the_title );
 ````
 
-
+#### Comparing Two Runs
+````js
+let azure_run_id="2020-10-06-13-05-36";
+let aws_run_id="2020-10-06-11-16-32";
+let the_run_id_1 = aws_run_id;
+let the_run_id_2 = azure_run_id;
+let cloud_provider_1 = toscalar(meta | where meta_run_id == the_run_id_1 | project meta_cloud_provider);
+let cloud_provider_2 = toscalar(meta | where meta_run_id == the_run_id_2 | project meta_cloud_provider);
+let use_case = toscalar(meta | where meta_run_id == the_run_id_1 | project meta_use_case);
+let min_t_1 = toscalar(latency | where run_id == the_run_id_1 | summarize min(sample_start_timestamp));
+let max_t_1 = toscalar(latency | where run_id == the_run_id_1 | summarize max(sample_start_timestamp));
+let min_t_2 = toscalar(latency | where run_id == the_run_id_2 | summarize min(sample_start_timestamp));
+let max_t_2 = toscalar(latency | where run_id == the_run_id_2 | summarize max(sample_start_timestamp));
+let min_t = min_of(min_t_1, min_t_2);
+let max_t = max_of(max_t_1, max_t_2);
+let msg_size_bytes = toscalar(latency | where run_id == the_run_id_1 or run_id == the_run_id_2 | summarize avg(meta_sdkperf_params_msg_payload_size_bytes));
+latency
+| union ping, latencybrokernode
+| make-series
+    lat_rtt_99=max(['metrics_latency-stats_latency_latency_stats_99th_percentile_latency_usec']) default=real(null),
+    lat_rtt_99_9=max(['metrics_latency-stats_latency_latency_stats_99_9th_percentile_latency_usec']) default=real(null),
+    // lat_bn_rtt_99_9=max(['metrics_latency-brokernode-stats_latency_latency_stats_99_9th_percentile_latency_usec']) default=real(null),
+    ping_rtt_max=max(metrics_ping_rtt_max_value*1000) default = real(null)
+    on todatetime(sample_start_timestamp) in range(min_t, max_t, 1m)
+| as the_series;
+let the_title = strcat("use-case: ", use_case, " -- cloud-1:", cloud_provider_1, ",run-id-1:", the_run_id_1, " | ", "cloud-2:", cloud_provider_2, ", run-id-2:", the_run_id_2, " | msg_size_bytes:", msg_size_bytes);
+the_series | render timechart with (legend=visible, title=the_title );
+````
 
 
 
