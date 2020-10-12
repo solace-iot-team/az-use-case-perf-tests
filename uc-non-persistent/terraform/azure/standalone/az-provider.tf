@@ -1,3 +1,5 @@
+
+
 # Configure the Azure Provider
 provider "azurerm" {
   version = "=2.0.0"
@@ -11,7 +13,7 @@ resource "azurerm_resource_group" "sdkperf_az_resgrp" {
 
   name     = "${var.tag_name_prefix}-sdkperf_resgrp"
   location = var.az_region
-  
+
   tags = {
     Name    = "${var.tag_name_prefix}-sdkperf_az_resgrp"
     Owner   = var.tag_owner
@@ -24,7 +26,7 @@ resource "azurerm_resource_group" "sdkperf_az_resgrp" {
 resource "azurerm_proximity_placement_group" "sdkperf_az_ppgrp" {
   name                = "${var.tag_name_prefix}-sdkperf-ppgrp"
   location            =  azurerm_resource_group.sdkperf_az_resgrp[0].location
-  resource_group_name =  azurerm_resource_group.sdkperf_az_resgrp[0].name 
+  resource_group_name =  azurerm_resource_group.sdkperf_az_resgrp[0].name
 
  tags = {
     Name    = "${var.tag_name_prefix}-sdkperf_az_ppgrp"
@@ -37,8 +39,22 @@ resource "azurerm_proximity_placement_group" "sdkperf_az_ppgrp" {
 #Query the AZ Res Group location for the specified AZ Res Group Name
 data "azurerm_resource_group" "input_resgroup" {
   count = var.az_resgrp_name == "" ? 0 : 1
-  
+
   name = var.az_resgrp_name
 }
 
+resource "local_file" "env_file" {
+  content = templatefile(
+    "../../templates/shared-setup/az.env.tpl",
+    {
+      ppg_id = azurerm_proximity_placement_group.sdkperf_az_ppgrp.id
+      ppg = azurerm_proximity_placement_group.sdkperf_az_ppgrp.*
+    }
+  )
+  filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.env.json"
+}
 
+
+
+###
+# The End.

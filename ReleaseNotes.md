@@ -1,5 +1,13 @@
 # Release Notes
 
+## Version: 0.4.2
+Release Purpose: Controller Create/Delete
+
+* **terraform/azure**
+  - added: shared-setup/azure.{infrastructure-id}.env.json
+    - contains proximity placement group
+* 
+
 ## Version: 0.4.1
 Release Purpose: Maintenance release: logging & error handling
 
