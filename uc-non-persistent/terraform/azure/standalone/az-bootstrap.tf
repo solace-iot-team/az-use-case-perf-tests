@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 resource "local_file" "inventory_file" {
-  content = templatefile("../../templates/shared-setup/inventory.tpl",
+  content = templatefile("../../templates/shared-setup/az.inventory.tpl",
     {
       sdk_perf_nodes = azurerm_linux_virtual_machine.sdkperf-nodes.*
       solace_broker_nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*

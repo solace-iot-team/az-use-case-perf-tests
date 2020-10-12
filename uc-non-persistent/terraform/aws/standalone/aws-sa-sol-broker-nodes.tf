@@ -63,7 +63,7 @@ resource "aws_instance" "solace-broker-nodes" {
   }
 }
 
-  resource "local_file" "solacebroker_nodes_file" {
+  resource "local_file" "broker_nodes_file" {
   content = templatefile("../../templates/shared-setup/aws.broker-nodes.tpl",
     {
       nodes = aws_instance.solace-broker-nodes.*
@@ -72,21 +72,5 @@ resource "aws_instance" "solace-broker-nodes" {
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.broker-nodes.json"
   }
 
-  resource "local_file" "inventory_file" {
-      content     = "bootstrap to generate"
-      filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
-  }
-
-# Trigger Ansible Tasks for the Brokers - Only after all the VM resources and Ansible Inventories & Playbooks have been created
-#resource "null_resource" "trigger_broker_ansible" {
-#  provisioner "local-exec" {
-
-#    command = "echo 'trigger_ansible!! - ${local_file.solacebroker_inv_file.filename}'"
-#    command = "ansible-playbook -i ${local_file.solacebroker_inv_file.filename} --private-key ${var.private_key_path} ../../../ansible/playbooks/bootstrap/aws-sa-sol-broker-centosnodes.yml"
-#  }
-
-#  depends_on = [
-#    local_file.solacebroker_inv_file,
-#    local_file.solace_vars_loop_queues # Dependency to create Queues on the broker(s) based on the number of SDKPerf nodes created
-#  ]
-#}
+###
+# The End.
