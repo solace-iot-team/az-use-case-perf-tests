@@ -59,11 +59,13 @@ terraform plan
 terraform apply
 ````
 
-## Check
+## Check Shared Setup
 
 ````bash
 ls ../../../shared-setup/azure.*.broker-nodes.json
 ls ../../../shared-setup/azure.*.sdkperf-nodes.json
+ls ../../../shared-setup/azure.*.env.json
+ls ../../../shared-setup/azure.*.inventory.json
 ````
 
 ## Destroy
