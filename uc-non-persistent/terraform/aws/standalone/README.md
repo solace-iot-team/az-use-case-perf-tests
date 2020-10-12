@@ -49,6 +49,8 @@ terraform apply
 ````bash
 ls ../../../shared-setup/aws.*.broker-nodes.json
 ls ../../../shared-setup/aws.*.sdkperf-nodes.json
+ls ../../../shared-setup/aws.*.env.json
+ls ../../../shared-setup/aws.*.inventory.json
 ````
 
 ## Destroy
