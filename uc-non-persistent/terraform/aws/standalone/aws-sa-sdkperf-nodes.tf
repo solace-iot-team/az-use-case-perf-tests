@@ -61,7 +61,6 @@ resource "aws_instance" "sdkperf-nodes" {
   content = templatefile("../../templates/shared-setup/aws.sdkperf-nodes.tpl",
     {
       nodes = aws_instance.sdkperf-nodes.*
-      #nodes = aws_instance.sdkperf-nodes.*.public_ip
     }
   )
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.sdkperf-nodes.json"
