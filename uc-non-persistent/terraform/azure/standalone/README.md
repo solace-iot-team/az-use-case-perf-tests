@@ -1,5 +1,6 @@
 # Azure Infrastructure: Standalone
-Creates Azure resources for a standalone Solace broker deployment using terraform.
+
+Creates Azure resources for a standalone Solace broker deployment using **Terraform** and **Ansible**.
 
 ### Azure Credentials
 
@@ -9,6 +10,13 @@ az login
 export ARM_SUBSCRIPTION_ID={subscription-id}
 export ARM_TENANT_ID={tenant-id}
 ````
+
+### Ansible Python Interpreter
+
+````bash
+export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+````
+
 ## Deployment Settings
 
 ````bash
