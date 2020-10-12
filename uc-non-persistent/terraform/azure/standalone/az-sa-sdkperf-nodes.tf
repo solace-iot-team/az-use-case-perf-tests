@@ -121,10 +121,6 @@ resource "local_file" "sdkperf_nodes_file" {
   content = templatefile("../../templates/shared-setup/az.sdkperf-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.sdkperf-nodes.*
-      #
-      # node-names = azurerm_linux_virtual_machine.sdkperf-nodes.*.name
-      # node-public-ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.public_ip_address
-      # node-private-ips = azurerm_linux_virtual_machine.sdkperf-nodes.*.private_ip_address
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.sdkperf-nodes.json"

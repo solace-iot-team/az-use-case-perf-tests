@@ -181,17 +181,9 @@ resource "local_file" "broker_nodes_file" {
   content = templatefile("../../templates/shared-setup/az.broker-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
-      # node-names = azurerm_linux_virtual_machine.solace-broker-nodes.*.name
-      # node-public-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.public_ip_address
-      # node-private-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.broker-nodes.json"
-}
-
-resource "local_file" "inventory_file" {
-    content     = "bootstrap to generate"
-    filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
 }
 
 

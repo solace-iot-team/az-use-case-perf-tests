@@ -56,6 +56,10 @@ variable "sdk_perf_nodes_vm_size" {
 #
 ############################################################################################################
 
+variable "cloud_provider" {
+  default = "azure"
+}
+
 variable "tag_days" {
   default = "1"
 }

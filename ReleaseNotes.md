@@ -1,12 +1,16 @@
 # Release Notes
 
 ## Version: 0.4.2
-Release Purpose: Controller Create/Delete
+Release Purpose: Infrastructure Bootstrap & Controller Create/Delete
 
 * **terraform/azure**
   - added: shared-setup/azure.{infrastructure-id}.env.json
     - contains proximity placement group
-* 
+  - added: generation of shared-setup/azure.{infrastructure-id}.inventory.json
+    - this is the ansible inventory
+  - added: run ansible/bootstrap/run.bootstrap.sh
+    - at the end of the provisioning process
+*
 
 ## Version: 0.4.1
 Release Purpose: Maintenance release: logging & error handling

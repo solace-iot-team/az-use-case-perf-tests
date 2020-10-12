@@ -1,10 +1,9 @@
 # Inventory
 
-script: `generate.sh`
+> :warning: **DEFUNCT**
 
-generates inventory file
+**Inventory creation by Terraform scripts.**
 
-`{root}/shared-setup/{cloud-provider}.{infrastructure-id}.inventory.json`
 
 ---
 The End.
