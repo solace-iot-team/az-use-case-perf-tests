@@ -16,6 +16,10 @@ Release Purpose: Infrastructure Bootstrap & Controller Create/Delete
     - az-variables.template
 * **infrastructure/controller/azure**
   - create controller VM in Azure using ARM template
+* **bin/pubsub**
+  - added directory to hold copy or link to solace docker image
+* **uc-non-persistent/ansible/bootstrap**
+  - extracts manifest and reads the image:tag info automatically. no need for manual adjustment in var files any more.
 
 ## Version: 0.4.1
 Release Purpose: Maintenance release: logging & error handling
