@@ -39,7 +39,10 @@ variable "sdk_perf_nodes_vm_size" {
   # default = "Standard_B1ms"
   # default = "Standard_B4ms" # (4 CPUs, 16 GB RAM, max IOPS: 2880)
 }
-
+# availability zone. should match the controller zone.
+variable "zone" {
+  default = "1"
+}
 #
 # END CUSTOMIZATION
 ############################################################################################################
