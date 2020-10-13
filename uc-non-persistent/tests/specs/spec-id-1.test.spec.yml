@@ -4,11 +4,12 @@
 # ---------------------------------------------------------------------------------------------
 
 # cloud_provider + infrastructure_id - required
-# run tests in parallel against different infrastructures? - no
 # add fanout ratio?
 #  - yes
 #  - dynamic publiser assignment to vms
 #  - calculate number of consumers per consumer vm that was provisioned
+# run tests in parallel on all infrastructures?
+# - should organize runs by infrastructure id?
 ---
   test_spec:
     use_case: uc_non_persistent
@@ -22,8 +23,14 @@
         include: true
         num_pubs: 4
         pub_num_topics: 100 # auto generate them and generate the consumers based on fan-out ratio
-        pub_msg_rate_per_second: 100000 # 0=max
-        pub_msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+        pub_msg_rate_per_second: 100000 #
+
+        # 50 - 60K outbound messages per second
+        # e.g.
+        #   - 1 producer, 40 consumers receiving 1/40 of the messages
+        #     fan-out of 1
+        #
+        pub_msg_payload_size_bytes: 100 # 100 || 500 || 1000
         # calculate the total number of messages published
         # don't write log files
         # calculate the sub topics based on fan-out: 1 to 4
