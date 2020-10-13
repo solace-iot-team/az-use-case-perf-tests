@@ -8,13 +8,17 @@
 - name: "Broker Centos Bootstrap"
   hosts: broker_centos
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../../"
   pre_tasks:
     - include_vars:
-        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+        file: "{{project_root_dir}}/uc-non-persistent/ansible/vars/bootstrap.vars.yml"
         name: bootstrap
 
   tasks:
+    - name: "Set Vars"
+      set_fact:
+        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
+
     - name: "Check local docker image exists"
       local_action:
         module: stat
@@ -31,14 +35,8 @@
         cmd: "tar -C ../docker-image --extract --file={{ bootstrap.broker.docker_image.solace_image_file_src }} manifest.json"
     - set_fact:
         manifest: "{{lookup('file', '../docker-image/manifest.json')}}"
-        configured: "{{bootstrap.broker.docker_image.solace_image_name}}:{{bootstrap.broker.docker_image.solace_image_version}}"
-    - name: "Compare versions of docker image"
-      fail:
-        msg:
-          - "Different version of docker image and configuration. fix either one."
-          - "manifest.RepoTags[0]={{manifest[0].RepoTags[0]}}"
-          - "bootstrap.vars.yml={{configured}}"
-      when: manifest[0].RepoTags[0] != configured
+    - set_fact:
+        docker_image: "{{manifest[0].RepoTags[0]}}"
 
     - name: "Centos Bootstrap: AWS Setup Swap Tasks"
       include_tasks: ./tasks/aws.centos.bootstrap.yml

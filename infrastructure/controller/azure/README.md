@@ -121,11 +121,6 @@ terraform version
 ````bash
 cd ~/downloads
 wget -O solace-pubsub-evaluation-docker.tar.gz https://products.solace.com/download/PUBSUB_DOCKER_EVAL
-tar --extract --file=solace-pubsub-evaluation-docker.tar.gz manifest.json
-cat manifest.json | jq
-# make a note of:
-# RepoTags: image name and tag/version
-# you will need this when setting up the testing infrastrucure.
 ````
 
 ## Get the Project
@@ -134,8 +129,19 @@ Clone the master or get a specific release.
 
 Master:
 ````bash
+
+mkdir {project-root}
+cd {project-root}
+
 git clone https://github.com/solace-iot-team/az-use-case-perf-tests.git
 ````
+
+### Link Docker Image into Project
+````bash
+cd {project-root}/az-use-case-perf-tests/bin/pubsub
+ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+````
+
 
 ---
 The End.

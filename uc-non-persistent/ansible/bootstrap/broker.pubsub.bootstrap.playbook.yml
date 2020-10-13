@@ -9,7 +9,7 @@
   hosts: broker_pubsub
   gather_facts: no
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../../"
 
   module_defaults:
     solace_get_available:
@@ -44,13 +44,16 @@
       timeout: "{{ sempv2_timeout }}"
 
   pre_tasks:
+    - set_fact:
+        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
     - include_vars:
-        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+        file: "{{use_case_root_dir}}/ansible/vars/bootstrap.vars.yml"
         name: bootstrap
 
   tasks:
 
     - set_fact:
+        # use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http' }}"
         is_solace_cloud: "{{ True if sempv2_is_secure_connection else False }}"
 
