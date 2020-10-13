@@ -19,8 +19,6 @@ ssh-keygen -t rsa -b 4096 -f azure_key
 
   > EMPTY PASSPHRASE! # otherwise terraform scripts will fail
 
-# ensure the private key has the correct permissions
-chmod 600 azure_key
 ````
 ### AWS
 **_Note: `aws_key` is the default key name used in the scripts for AWS._**
@@ -33,8 +31,6 @@ ssh-keygen -t rsa -b 4096 -f aws_key
 
   > EMPTY PASSPHRASE! # otherwise terraform scripts will fail
 
-# ensure the private key has the correct permissions
-chmod 600 aws_key
 ````
 
 ---
