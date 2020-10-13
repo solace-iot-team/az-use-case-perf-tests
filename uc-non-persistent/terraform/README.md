@@ -1,8 +1,8 @@
 # Infrastructure Deployment using Terraform
 
-## Install Terraform
+## Pre-Requisites
 
-Install it.
+[Controller Setup](/infrastructure/controller/azure).
 
 ## Prepare
 

@@ -1,22 +1,8 @@
-####################################################################################################
-# INSTRUCTIONS:
-# (1) Customize these instance values to your preference.
-#       * instance:
-#         - size
-#         - zone (Availability Zone)
-#       * Ultra disk usage & configs - UNCOMMENT config properties on the Az Resources:
-#         - azurerm_linux_virtual_machine
-#         - azurerm_managed_disk
-#         - azurerm_virtual_machine_data_disk_attachment
-#       * tags
-# (2) On the Ansible Playbooks & Var files - Adjust the PubSub+ SW Broker:
-#         - Scaling tier
-#         - external storage device name - ex: /dev/sdc or /dev/xvdc
-#         - Docker Version
-#         - Solace Image Type, Standard, Enterprise or Enterprise Eval
-#     according to the VM size/type
-# (3) Make sure the account you're running terraform with has proper permissions in your Azure env
-####################################################################################################
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
 
 resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
 
@@ -29,8 +15,7 @@ resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
 
   #share same proximity placement group with SolaceBroker and SDKPerf nodes
   proximity_placement_group_id = azurerm_proximity_placement_group.sdkperf_az_ppgrp.id
-
-
+  zone                   = var.zone
   admin_username         = var.az_admin_username
   network_interface_ids  = [azurerm_network_interface.solacebroker-nodes-nic[count.index].id]
   size                   = var.solace_broker_node_vm_size
@@ -94,14 +79,7 @@ resource "azurerm_managed_disk" "solace-broker-datadisk" {
   disk_size_gb         = var.solacebroker_storage_size
 
   storage_account_type = "Premium_LRS"
-
-#NOTE: "disk_iops_read_write" & "disk_mbps_read_write" Can only (and HAVE to...) be set when using UltraSSD_LRS data disks,
-#Otherwhise these options should be commented
-#  storage_account_type = "UltraSSD_LRS"
-#  disk_iops_read_write = "35000"
-#  disk_mbps_read_write = "2000"
-
-#  zones                  = [ 2 ]
+  zones                  = [ var.zone ]
 
   tags = {
     Name    = "${var.tag_name_prefix}-solacebroker-node-${count.index}-datadisk"
@@ -155,11 +133,9 @@ resource "azurerm_public_ip" "solacebroker-nodes-pubip" {
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
 
-#  allocation_method      = "Dynamic"
-#  sku                    = "Basic"
   allocation_method      = "Static"
   sku                    = "Standard"
-#  zones                  = [ 2 ]
+  zones                   = [var.zone]
 
   tags = {
     Name    = "${var.tag_name_prefix}-solacebroker-pubip-${count.index}"
@@ -181,17 +157,9 @@ resource "local_file" "broker_nodes_file" {
   content = templatefile("../../templates/shared-setup/az.broker-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
-      # node-names = azurerm_linux_virtual_machine.solace-broker-nodes.*.name
-      # node-public-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.public_ip_address
-      # node-private-ips = azurerm_linux_virtual_machine.solace-broker-nodes.*.private_ip_address
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.broker-nodes.json"
-}
-
-resource "local_file" "inventory_file" {
-    content     = "bootstrap to generate"
-    filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
 }
 
 

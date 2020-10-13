@@ -9,13 +9,14 @@
   hosts: broker_pubsub
   gather_facts: no
   vars:
-    project_root_dir: "../../"
-
+    project_root_dir: "../../../../"
   pre_tasks:
+    - set_fact:
+        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
     - include_vars:
-        file: "{{project_root_dir}}/vars/bootstrap.vars.yml"
+        file: "{{use_case_root_dir}}/ansible/vars/bootstrap.vars.yml"
         name: bootstrap
-    - include_vars: "{{project_root_dir}}/vars/sdkperf.vars.yml"
+    - include_vars: "{{use_case_root_dir}}/ansible/vars/sdkperf.vars.yml"
     - include_vars:
         file: "{{ BROKER_NODES_FILE }}"
         name: brokerNodes
@@ -23,7 +24,7 @@
         file: "{{ SDKPERF_NODES_FILE }}"
         name: sdkPerfNodes
     - include_vars:
-        file: "{{project_root_dir}}/vars/monitor.vars.yml"
+        file: "{{use_case_root_dir}}/ansible/vars/monitor.vars.yml"
         name: monitor
 
   tasks:

@@ -1,5 +1,6 @@
 # Azure Infrastructure: Standalone
-Creates Azure resources for a standalone Solace broker deployment using terraform.
+
+Creates Azure resources for a standalone Solace broker deployment using **Terraform** and **Ansible**.
 
 ### Azure Credentials
 
@@ -9,6 +10,13 @@ az login
 export ARM_SUBSCRIPTION_ID={subscription-id}
 export ARM_TENANT_ID={tenant-id}
 ````
+
+### Ansible Python Interpreter
+
+````bash
+export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+````
+
 ## Deployment Settings
 
 ````bash
@@ -17,26 +25,8 @@ cp az-variables.template az-variables.tf
 
 vi az-variables.tf
 
-    # the azure region
-    variable "az_region" {
-      default = "{azure-region}"
-    }
-    # prefix for all resources
-    variable "tag_name_prefix" {
-      default = "{prefix}"
-    }
-    # the tag for all resources
-    variable "tag_owner" {
-      default = "{owner}"
-    }
-    # the VM size for the solace broker
-    variable "solace_broker_node_vm_size" {
-      default = "{vm-size}"
-    }
-    # the VM size for the sdk perf nodes
-    variable "sdk_perf_nodes_vm_size" {
-      default = "{vm-size}"
-    }
+  # change settings
+  ...
 
 ````
 
@@ -59,11 +49,13 @@ terraform plan
 terraform apply
 ````
 
-## Check
+## Check Shared Setup
 
 ````bash
 ls ../../../shared-setup/azure.*.broker-nodes.json
 ls ../../../shared-setup/azure.*.sdkperf-nodes.json
+ls ../../../shared-setup/azure.*.env.json
+ls ../../../shared-setup/azure.*.inventory.json
 ````
 
 ## Destroy

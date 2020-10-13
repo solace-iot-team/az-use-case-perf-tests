@@ -10,6 +10,12 @@ export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
 export AWS_DEFAULT_REGION={aws-default-region}
 ````
 
+### Ansible Python Interpreter
+
+````bash
+export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+````
+
 ## Deployment Settings
 ````bash
 cp aws-variables.template aws-variables.tf
@@ -43,6 +49,8 @@ terraform apply
 ````bash
 ls ../../../shared-setup/aws.*.broker-nodes.json
 ls ../../../shared-setup/aws.*.sdkperf-nodes.json
+ls ../../../shared-setup/aws.*.env.json
+ls ../../../shared-setup/aws.*.inventory.json
 ````
 
 ## Destroy

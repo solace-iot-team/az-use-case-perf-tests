@@ -7,57 +7,21 @@ cd {root}/uc-non-persistent/ansible/bootstrap
 ````
 ## Pre-requisites
 
-#### Solace docker image
-- download: https://products.solace.com/download/PUBSUB_DOCKER_EVAL
-  ````bash
-  cp {image-file} ../docker-image/solace-pubsub-docker.tar.gz
-  # or create a link
-  cd ../docker-image
-  ln -s {image-file} solace-pubsub-docker.tar.gz
-  cd ..
-  ````
-- Make a note of the image name and tag:
-  ````bash
-  cd ../docker-image
-  tar --extract --file=solace-pubsub-docker.tar.gz manifest.json
-  cat manifest.json | jq
-  # jot down:
-  # RepoTags: image name and tag/version
-  cd ..
-  ````
+[Setup Controller VM in Azure](/infrastructure/controller/azure).
+
+#### Solace Docker Image
+
+Ensure the two following files / links are present:
+````bash
+ls {root}/bin/pubsub/solace-pubsub-docker.tar.gz
+ls {root}/bin/pubsub/manifest.json
+````
 
 #### Solace SDKPerf executables
 
 The project includes an SDKPerf distribution.
 
 [See here for more information](./sdk-perf-image).
-
-#### Ansible & Ansible-Solace
-
-[For more Details see Ansible-Solace instructions on GitHub](https://github.com/solace-iot-team/ansible-solace).
-
-In short:
-* **requires: python >= 3.6**
-````bash
-# ansible: install version 2.9.11 using pip3
-sudo pip3 install ansible==2.9.11
-# ansible-solace
-sudo pip3 install ansible-solace
-# ensure python interpreter is pointing to python3
-export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
-# check installation
-ansible-doc -l | grep solace
-````
-
-
-#### Misc Tools
-- bash >= 4.4.20
-  ````bash
-  bash --version
-  GNU bash, version 4.4.20(1)-release (x86_64-pc-linux-gnu)
-  ````
-- [jq](https://stedolan.github.io/jq/download/)
-- [yq](https://github.com/mikefarah/yq): `pip3 install yq`
 
 ## Configure
 
@@ -67,9 +31,6 @@ vi bootstrap.vars.yml
 
     # make sure this is the user create in the VMs
     docker_centos_users: ["centos"]
-    # make sure the docker image info is correct
-    solace_image_name: solace-pubsub-evaluation
-    solace_image_version: 9.6.0.32
 ````
 
 ````bash

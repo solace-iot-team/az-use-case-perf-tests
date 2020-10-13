@@ -3,8 +3,8 @@
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
-clear
-echo; echo "##############################################################################################################"
+
+echo "##############################################################################################################"
 echo
 
 ############################################################################################################################
@@ -17,7 +17,7 @@ echo
 
   export ANSIBLE_LOG_PATH="./ansible.log"
   export ANSIBLE_DEBUG=False
-  export ANSIBLE_VERBOSITY=0
+  if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=0; fi
   export ANSIBLE_HOST_KEY_CHECKING=False
   export ANSIBLE_SOLACE_LOG_PATH="./ansible-solace.log"
   export ANSIBLE_SOLACE_ENABLE_LOGGING=True
@@ -38,8 +38,9 @@ echo
 ##############################################################################################################################
 # Generate inventory
 
-  $scriptDir/inventory/generate.sh
-  if [[ $? != 0 ]]; then echo ">>> ERROR generate inventories. aborting."; echo; exit 1; fi
+  # move to terraform scripts
+  # $scriptDir/inventory/generate.sh
+  # if [[ $? != 0 ]]; then echo ">>> ERROR generate inventories. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
 # Prepare
@@ -62,8 +63,9 @@ privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
-# Run SDKPerf VM bootstrap
-  playbook=$(assertFile "$scriptDir/sdkperf.centos.bootstrap.playbook.yml") || exit
+# Run Broker VM bootstrap
+
+  playbook=$(assertFile "$scriptDir/broker.centos.bootstrap.playbook.yml") || exit
   ansible-playbook \
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
@@ -71,9 +73,8 @@ privateKeyFile=$(assertFile "$projectHome/keys/"$cloudProvider"_key") || exit
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 ##############################################################################################################################
-# Run Broker VM bootstrap
-
-  playbook=$(assertFile "$scriptDir/broker.centos.bootstrap.playbook.yml") || exit
+# Run SDKPerf VM bootstrap
+  playbook=$(assertFile "$scriptDir/sdkperf.centos.bootstrap.playbook.yml") || exit
   ansible-playbook \
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
@@ -97,40 +98,6 @@ $scriptDir/../tests/load/start.load.sh
 
 $scriptDir/../tests/load/stop.load.sh
   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-
-# NOTE:
-# Starting and stopping load seems sufficient to initialize SDKPerf working correctly on the VMs.
-# If this is not the case, re-think the init process.
-    #
-    # ##############################################################################################################################
-    # # Connect Consumer to Broker initially
-    #
-    #   playbook=$(assertFile "$scriptDir/sdkperf.consumer.init.playbook.yml") || exit
-    #   ansible-playbook \
-    #                     -i $inventoryFile \
-    #                     --private-key $privateKeyFile \
-    #                     $playbook
-    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-    #
-    # ##############################################################################################################################
-    # # Connect Publisher once to Broker initially
-    #
-    #   playbook=$(assertFile "$scriptDir/sdkperf.publisher.init.playbook.yml") || exit
-    #   ansible-playbook \
-    #                     -i $inventoryFile \
-    #                     --private-key $privateKeyFile \
-    #                     $playbook
-    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
-    #
-    # ##############################################################################################################################
-    # # Connect Latency once to Broker initially
-    #
-    #   playbook=$(assertFile "$scriptDir/sdkperf.latency.init.playbook.yml") || exit
-    #   ansible-playbook \
-    #                     -i $inventoryFile \
-    #                     --private-key $privateKeyFile \
-    #                     $playbook
-    #   if [[ $? != 0 ]]; then echo ">>> ERROR. aborting."; echo; exit 1; fi
 
 echo;
 echo "##############################################################################################################"
