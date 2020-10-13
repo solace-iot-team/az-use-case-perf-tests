@@ -32,6 +32,13 @@ variable "sdkperf_vm_type" {
 # END CUSTOMIZATION
 ############################################################################################################
 
+variable "zone" {
+  default = "unused"
+}
+variable "cloud_provider" {
+  default = "aws"
+}
+
 variable "tag_days" {
   default = "1"
 }

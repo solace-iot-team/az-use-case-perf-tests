@@ -4,7 +4,7 @@ version: "3.3"
 services:
   primary:
     container_name: "PubSubSingleNode"
-    image: "{{ bootstrap.broker.docker_image.solace_image_name }}:{{ bootstrap.broker.docker_image.solace_image_version }}"
+    image: "{{ docker_image }}"
     shm_size: 4g
     network_mode: host
     user: "4000"

@@ -41,16 +41,14 @@ broker:
     #aws_solace_mount_dev: /dev/sdc
     #aws_solace_storage_part: /dev/sdc1
   docker_image:
-    solace_image_file_src: "{{project_root_dir}}/docker-image/solace-pubsub-docker.tar.gz"
-    solace_image_file_dest: "{{project_root_dir}}/solace-pubsub-evaluation-docker.tar.gz"
-    solace_image_name: solace-pubsub-evaluation
-    solace_image_version: 9.6.0.38
-    docker_compose_file_src: "{{project_root_dir}}/docker-image/PubSub.docker-compose.template.yml"
-    docker_compose_file_dest: "{{project_root_dir}}/PubSub.docker-compose.template.yml"
+    solace_image_file_src: "{{project_root_dir}}/bin/pubsub/solace-pubsub-docker.tar.gz"
+    solace_image_file_dest: "/solace-pubsub-evaluation-docker.tar.gz"
+    docker_compose_file_src: "{{use_case_root_dir}}/ansible/docker-image/PubSub.docker-compose.template.yml"
+    docker_compose_file_dest: "/PubSub.docker-compose.template.yml"
     file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
     file_mode: "0666"
     system_scaling_maxconnectioncount: 1000
-    docker_compose_file_dest_local: "{{project_root_dir}}/docker-image/PubSub.docker-compose.deployed.yml"
+    docker_compose_file_dest_local: "{{use_case_root_dir}}/ansible/docker-image/PubSub.docker-compose.deployed.yml"
   pubsub:
     max_spool_usage: 100000
     vpn_name: "sdkperf"
@@ -62,7 +60,7 @@ sdkperf_nodes:
   sdkperf_user: centos
   sdkperf_root: "/opt/sdkperf"
   sdkperf_log_root: "/opt/sdkperf/logs"
-  sdkperf_image_src_dir: "{{project_root_dir}}/sdk-perf-image/sdkperf-c-x64"
+  sdkperf_image_src_dir: "{{use_case_root_dir}}/ansible/sdk-perf-image/sdkperf-c-x64"
 
 
 ###

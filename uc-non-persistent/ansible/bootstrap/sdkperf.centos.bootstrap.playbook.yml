@@ -8,11 +8,14 @@
 - name: "SDKPerf Centos Bootstrap"
   hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
   vars:
-    project_root_dir: "../"
+    project_root_dir: "../../../"
   vars_files:
-    - "{{project_root_dir}}/vars/bootstrap.vars.yml"
+    - "{{project_root_dir}}/uc-non-persistent/ansible/vars/bootstrap.vars.yml"
 
   tasks:
+    - name: "Set Vars"
+      set_fact:
+        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
 
     - name: sdkperf | create sdkperf_group
       group:

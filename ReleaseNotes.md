@@ -1,5 +1,26 @@
 # Release Notes
 
+## Version: 0.4.2
+Release Purpose: Infrastructure Bootstrap & Controller Create/Delete
+
+* **terraform/{cloud-provider}/standalone**
+  - added: shared-setup/{cloud_provider}.{infrastructure-id}.env.json
+    - contains proximity placement group
+  - added: generation of shared-setup/{cloud_provider}.{infrastructure-id}.inventory.json
+    - this is the ansible inventory
+  - added: run ansible/bootstrap/run.bootstrap.sh
+    - at the end of the provisioning process
+* **terraform/azure/standalone**
+  - added: zone parameter
+    - sdkperf & broker node
+    - az-variables.template
+* **infrastructure/controller/azure**
+  - create controller VM in Azure using ARM template
+* **bin/pubsub**
+  - added directory to hold copy or link to solace docker image
+* **uc-non-persistent/ansible/bootstrap**
+  - extracts manifest and reads the image:tag info automatically. no need for manual adjustment in var files any more.
+
 ## Version: 0.4.1
 Release Purpose: Maintenance release: logging & error handling
 

@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "projectPrefix": {
+            "value": "{unique-prefix}"
+        },
+        "azLocation": {
+            "value": "{location}"
+        },
+        "zone": {
+            "value": "1"
+        },
+        "vm_admin_username": {
+            "value": "{username}"
+        },
+        "vm_admin_password": {
+            "value": "{password}"
+        }
+    }
+}
