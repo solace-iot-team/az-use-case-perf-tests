@@ -1,11 +1,9 @@
-####################################################################################################
-# INSTRUCTIONS:
-# (1) Customize these instance values to your preference.
-#       * instance_type
-#       * availability_zone
-#       * tags
-# (2) Make sure the account you're running terraform with has proper permissions in your Azure env
-####################################################################################################
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
 
 resource "azurerm_linux_virtual_machine" "sdkperf-nodes" {
 
@@ -21,7 +19,7 @@ resource "azurerm_linux_virtual_machine" "sdkperf-nodes" {
   size                   = var.sdk_perf_nodes_vm_size
   admin_username         = var.az_admin_username
   network_interface_ids  = [azurerm_network_interface.sdkperf-nodes-nic[count.index].id]
-#  zone                   = 1
+  zone                   = var.zone
 
   source_image_reference {
     publisher = "OpenLogic"
@@ -60,7 +58,6 @@ resource "azurerm_linux_virtual_machine" "sdkperf-nodes" {
       host        = self.public_ip_address
       type        = "ssh"
       user        = var.az_admin_username
-      # private_key = file("../../../keys/azure_key")
       private_key = file(var.private_key_path)
     }
   }
@@ -94,10 +91,11 @@ resource "azurerm_network_interface" "sdkperf-nodes-nic" {
 resource "azurerm_public_ip" "sdkperf-nodes-pubip" {
   count = var.sdkperf_nodes_count
 
-  name                = "${var.tag_name_prefix}-sdkperf-pubip-${count.index}"
+  name                   = "${var.tag_name_prefix}-sdkperf-pubip-${count.index}"
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
   allocation_method      = "Dynamic"
+  zones                  = [ var.zone ]
 
   tags = {
     Name    = "${var.tag_name_prefix}-sdkperf-pubip-${count.index}"

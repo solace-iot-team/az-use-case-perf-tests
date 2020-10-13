@@ -54,6 +54,7 @@ resource "local_file" "env_file" {
     {
       ppg_id = azurerm_proximity_placement_group.sdkperf_az_ppgrp.id
       ppg = azurerm_proximity_placement_group.sdkperf_az_ppgrp.*
+      zone = var.zone
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.env.json"
