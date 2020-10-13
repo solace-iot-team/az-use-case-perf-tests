@@ -10,7 +10,12 @@ Release Purpose: Infrastructure Bootstrap & Controller Create/Delete
     - this is the ansible inventory
   - added: run ansible/bootstrap/run.bootstrap.sh
     - at the end of the provisioning process
-*
+* **terraform/azure/standalone**
+  - added: zone parameter
+    - sdkperf & broker node
+    - az-variables.template
+* **infrastructure/controller/azure**
+  - create controller VM in Azure using ARM template
 
 ## Version: 0.4.1
 Release Purpose: Maintenance release: logging & error handling

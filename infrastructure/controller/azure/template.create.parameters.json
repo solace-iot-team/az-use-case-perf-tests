@@ -8,6 +8,9 @@
         "azLocation": {
             "value": "{location}"
         },
+        "zone": {
+            "value": "1"
+        },
         "vm_admin_username": {
             "value": "{username}"
         },

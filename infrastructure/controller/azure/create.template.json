@@ -15,12 +15,17 @@
                 "description": "The Azure location."
             }
         },
-        // "proximity_placement_group_id": {
-        //     "type": "string",
-        //     "metadata": {
-        //         "description": "The proximity placement group id of the vm"
-        //     }
-        // },
+        "zone": {
+            "type": "string",
+            "allowedValues": [
+                "1",
+                "2",
+                "3"
+            ],
+            "metadata": {
+                "description": "Zone number for the virtual machine"
+            }
+        },
         "vm_admin_username": {
             "type": "string",
             "metadata": {
@@ -79,6 +84,9 @@
             "sku": {
                 "name": "Basic" // Standard
             },
+            "zones": [
+                "[parameters('zone')]"
+            ],            
             "properties": {
                 // "ipAddress": "40.68.26.99",
                 "publicIPAddressVersion": "IPv4",
@@ -174,7 +182,10 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
             "name": "[variables('virtualMachines_controller_vm_name')]",
-            "location": "[resourceGroup().location]",            
+            "location": "[resourceGroup().location]",      
+            "zones": [
+                "[parameters('zone')]"
+            ],            
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaces_controller_vmNetInt_name'))]"
             ],
