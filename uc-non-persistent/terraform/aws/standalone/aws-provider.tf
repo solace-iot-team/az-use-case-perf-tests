@@ -15,6 +15,7 @@ resource "local_file" "env_file" {
     {
       ppg_id = aws_placement_group.sdkperf_placement_grp.id
       ppg = "none"
+      zone = var.zone
     }
   )
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.env.json"
