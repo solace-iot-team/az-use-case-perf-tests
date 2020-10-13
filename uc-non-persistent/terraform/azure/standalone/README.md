@@ -25,26 +25,8 @@ cp az-variables.template az-variables.tf
 
 vi az-variables.tf
 
-    # the azure region
-    variable "az_region" {
-      default = "{azure-region}"
-    }
-    # prefix for all resources
-    variable "tag_name_prefix" {
-      default = "{prefix}"
-    }
-    # the tag for all resources
-    variable "tag_owner" {
-      default = "{owner}"
-    }
-    # the VM size for the solace broker
-    variable "solace_broker_node_vm_size" {
-      default = "{vm-size}"
-    }
-    # the VM size for the sdk perf nodes
-    variable "sdk_perf_nodes_vm_size" {
-      default = "{vm-size}"
-    }
+  # change settings
+  ...
 
 ````
 
