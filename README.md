@@ -9,7 +9,13 @@ Performance tests for Solace PubSub+ Brokers in Azure based on use case specific
 | [Report Issues](https://github.com/solace-iot-team/az-use-case-perf-tests/issues).
 
 
-Use Cases:
+## Setup Controller
+
+  The project requires a controller running tools such as Terraform and Ansible.
+
+  - [Setup Instructions for Azure Controller VM](./infrastructure/controller/azure).
+
+## Use Cases
 
   - [Market Data Distribution (non-persistent)](./uc-non-persistent).
 
