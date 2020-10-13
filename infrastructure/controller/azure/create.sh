@@ -10,7 +10,7 @@
     scriptDir=$(cd $(dirname "$0") && pwd);
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
     source $scriptDir/.lib/functions.sh
-    
+
     parametersFile=$(assertFile $scriptDir/create.parameters.json) || exit
     templateFile=$(assertFile $scriptDir/create.template.json) || exit
     stateDir="$scriptDir/state"
@@ -43,19 +43,19 @@ rm -f $stateDir/*
 
 #####################################################################################
 # Resource Group
-echo " >>> Creating Resource Group ..."
+echo ">>> Creating Resource Group ..."
 resp=$(az group create \
   --name $resourceGroup \
   --location "$azLocation" \
   --tags project=$projectPrefix \
   --verbose)
-if [[ $? != 0 ]]; then echo " >>> ERROR: creating resource group"; exit 1; fi
+if [[ $? != 0 ]]; then echo ">>> ERROR: creating resource group"; exit 1; fi
 echo $resp | jq
 echo " >>> Success."
 
 #####################################################################################
 # Run ARM Template
-echo " >>> Creating Common Resources ..."
+echo ">>> Creating Common Resources ..."
 az deployment group create \
   --name $projectPrefix"_Deployment" \
   --resource-group $resourceGroup \
@@ -63,15 +63,15 @@ az deployment group create \
   --parameters $parametersFile \
   --verbose \
   > "$stateFile"
-if [[ $? != 0 ]]; then echo " >>> ERROR: creating resources."; FAILED=1; fi
+if [[ $? != 0 ]]; then echo ">>> ERROR: creating resources."; FAILED=1; fi
 
 #####################################################################################
 # Update State
 
-if [[ $FAILED != 0 ]]; then 
-  echo " >>> ERROR: $scriptName"; 
+if [[ $FAILED != 0 ]]; then
+  echo ">>> ERROR: $scriptName";
   rm -rf $stateDir
-  exit 1; 
+  exit 1;
 else
   cp $parametersFile $stateDir
 fi
@@ -79,11 +79,11 @@ fi
 loginPwd=$(cat $stateFile | jq -r '.properties.outputs.loginPassword.value' )
 loginSSH=$(cat $stateFile | jq -r '.properties.outputs.loginSSH.value' )
 echo "####" > $loginSSHOutFile
+echo "echo 'password: $loginPwd'" >> $loginSSHOutFile
 echo $loginSSH >> $loginSSHOutFile
-echo "# password: $loginPwd" >> $loginSSHOutFile
 chmod u+x $loginSSHOutFile
-echo " >>> Success."
-echo " >>> log in: $loginSSHOutFile"
+echo ">>> Success."
+echo ">>> log in: $loginSSHOutFile"
 cat $loginSSHOutFile
 
 ###

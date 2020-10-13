@@ -22,13 +22,13 @@
   resourceGroup=$( echo $state | jq -r '.resourceGroup' )
   
 
-echo " >>> Deleting Resource Group '$resourceGroup' ..."
+echo ">>> Deleting Resource Group '$resourceGroup' ..."
 echo
   az group delete \
     --name $resourceGroup \
     --verbose
-  if [[ $? != 0 ]]; then echo " >>> ERROR: deleting resource group"; exit 1; fi
-echo " >>> Success."
+  if [[ $? != 0 ]]; then echo ">>> ERROR: deleting resource group"; exit 1; fi
+echo ">>> Success."
 
 #####################################################################################
 # Remove state
