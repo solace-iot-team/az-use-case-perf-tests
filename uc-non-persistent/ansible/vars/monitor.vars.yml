@@ -24,8 +24,8 @@ vpn_stats:
       averageRxByteRate,
       averageRxMsgRate,
       averageTxByteRate,
-      averageTxMsgRate
-    # rate
+      averageTxMsgRate,
+      rate
     select_client_connection_stats: >-
       rxDiscardedMsgCount,
       rxMsgCount,
@@ -43,7 +43,7 @@ vpn_stats:
 latency:
     topic_prefix: "private/direct/latency"
     warmup_secs: 10
-    msg_rate_per_second: 1000 # 0=max
+    msg_rate_per_second: 1000 # 1000
     msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
     lb: 4096
     lg: 15

@@ -40,7 +40,7 @@
 # - pause:
 #     seconds: 19
 
-- name: "Run 'ping' to broker node for sample={{sample_num}}"
+- name: "Run 'ping' to broker node for sample={{sample_num}} (warmup={{is_warm_up_run}})"
   command:
     argv:
       - ping
@@ -72,12 +72,12 @@
 - name: "Copy Ping Json to {{ result_dir }}"
   copy:
     content: "{{pp_ping_json | to_nice_json }}"
-    dest: "{{ result_dir }}/ping-stats.{{sample_file_name_ts_str}}.json"
+    dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
   failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1
 
-- name: "Wait for sample cyle to complete"
+- name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
   block:
     - name: "get time from local host"
       shell: "date -u +%s"
@@ -90,7 +90,7 @@
       fail:
         msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
       when: is_warm_up_run == False and wait_secs|int < 0
-    - name: "Wait for sample cycle to complete"
+    - name: "Wait for sample cycle to complete sample={{sample_num}} (warmup={{is_warm_up_run}})"
       # note: waits for 1 second if parameter is negative
       pause:
         seconds: "{{wait_secs}}"

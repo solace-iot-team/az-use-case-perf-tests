@@ -40,7 +40,7 @@
   # - pause:
   #     seconds: 5
 
-  - name: "Retrieve VPN Stats"
+  - name: "Retrieve VPN Stats for sample={{sample_num}} (warmup={{is_warm_up_run}})"
     uri:
       # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/msgVpn/getMsgVpn
       # GET /SEMP/v2/monitor/msgVpns/{msgVpnName}?select=
@@ -53,27 +53,21 @@
       return_content: yes
     register: vpn_stats_result
 
-  - name: "Post-process vpn-stats result"
-    command: "{{vpn_post_process_exe}}"
-    environment:
-      RUN_ID: "{{run_id}}"
-      SAMPLE_NUM: "{{sample_num}}"
-      TEMPLATE_FILE: "{{vpn_post_process_template_file}}"
-      START_TIMESTAMP_STR: "{{sample_start_ts_str}}"
-      STATS_INPUT: "{{vpn_stats_result.json.data | to_json }}"
-      STATS_NAME: "{{STATS_NAME}}"
-    delegate_to: localhost
-    register: pp_result
-    failed_when: pp_result.rc > 0 or pp_result.stderr != ''
+    # artificial pause for timing calculations - call is too fast
+  - pause:
+      seconds: "{{min_collection_period_secs}}"
 
-  - name: "Copy VPN stats Json to {{ result_dir }}"
-    copy:
-      content: "{{pp_result.stdout | from_json | to_nice_json }}"
-      dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
+  - set_fact:
+      vpn_stats_output_json: "{{vpn_stats_result.json.data}}"
+
+  - name: "Post-process vpn results"
+    template:
+      src: "{{ vpn_pp_j2_template_file }}"
+      dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
     delegate_to: localhost
     when: is_warm_up_run == False
 
-  - name: "Wait for sample cyle to complete"
+  - name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
     block:
       - name: "get time from local host"
         shell: "date -u +%s"
@@ -86,7 +80,7 @@
         fail:
           msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
         when: is_warm_up_run == False and wait_secs|int < 0
-      - name: "Wait for sample cycle to complete, num={{sample_num}}"
+      - name: "Wait for sample cycle to complete, sample={{sample_num}} (warmup={{is_warm_up_run}})"
         pause:
           seconds: "{{wait_secs}}"
     when: sample_num|int < (monitor.general.total_num_samples-1)

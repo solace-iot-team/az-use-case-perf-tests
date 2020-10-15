@@ -58,8 +58,9 @@
     -cip={{broker_uri}}:{{sdkperf.broker_port}}
     -cn={{hostvars[inventory_hostname].boxname}}-1
     -cu={{ sdkperf.client_publisher_username }}@{{ sdkperf.broker_msg_vpn }}
-    -ptl={{ monitor.latency.topic_prefix }}/{{STATS_NAME}}
-    -stl={{ monitor.latency.topic_prefix }}/{{STATS_NAME}}
+    -cp={{ sdkperf.client_publisher_password }}
+    -ptl={{ monitor.latency.topic_prefix }}/{{stats_name}}
+    -stl={{ monitor.latency.topic_prefix }}/{{stats_name}}
     -mn={{ sdkperf_msg_number }}
     -msa={{ monitor.latency.msg_payload_size_bytes }}
     -mr={{ monitor.latency.msg_rate_per_second }}
@@ -69,12 +70,10 @@
     -lwu={{monitor.latency.warmup_secs}}
     -lb={{monitor.latency.lb}}
     -lg={{monitor.latency.lg}}
+  async: "{{sample_run_time_secs}}"
+  poll: 5
   register: sdkperf_result
-  failed_when: sdkperf_result.stdout == ""
-
-- name: "Show raw sdkperf stdout"
-  debug:
-    msg: "{{sdkperf_result.stdout}}"
+  failed_when: "'Exception' in sdkperf_result.stderr or sdkperf_result.stdout == ''"
 
 - name: "Parse sdkperf output as json"
   set_fact:
@@ -82,28 +81,9 @@
     sdkperf_output_json: "{{sdkperf_result.stdout | from_json}}"
 
 - name: "Post-process latency results"
-  command: "{{latency_post_process_exe}}"
-  environment:
-    RUN_ID: "{{run_id}}"
-    SAMPLE_NUM: "{{sample_num}}"
-    TEMPLATE_FILE: "{{latency_post_process_template_file}}"
-    START_TIMESTAMP_STR: "{{sample_start_ts_str}}"
-    LATENCY_OUTPUT: "{{sdkperf_result.stdout}}"
-    SDKPERF_COMMAND: "{{sdkperf_result.cmd}}"
-    SDKPERF_PARAMS_JSON: "{{sdkperf_params|to_json}}"
-    STATS_NAME: "{{STATS_NAME}}"
-    INVENTORY_HOST: "{{inventory_hostname}}"
-  delegate_to: localhost
-  register: pp_result
-  failed_when: pp_result.rc > 0 or pp_result.stderr != ''
-
-- set_fact:
-    pp_latency_json: "{{pp_result.stdout | from_json}}"
-
-- name: "Copy Latency Json to {{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
-  copy:
-    content: "{{pp_latency_json | to_nice_json }}"
-    dest: "{{ result_dir }}/{{STATS_NAME}}.{{sample_file_name_ts_str}}.json"
+  template:
+    src: "{{ latency_pp_j2_template_file }}"
+    dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
 
