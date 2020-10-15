@@ -44,6 +44,8 @@
         use_case: "{{monitor.general.use_case}}"
         cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
         stats_name: "{{ STATS_NAME }}"
+        infrastrucure_id: "{{ INFRASTRUCTURE_ID }}"
+        
     - set_fact:
         run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_start_ts_epoch_secs) }}"
         meta_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(run_start_ts_epoch_secs) }}"
