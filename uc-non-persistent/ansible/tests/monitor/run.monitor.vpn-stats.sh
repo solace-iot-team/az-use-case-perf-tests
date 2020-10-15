@@ -75,7 +75,8 @@ runEnvFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUC
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
                   --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
                   --extra-vars "RUN_ENV_FILE=$runEnvFile" \
-                  --extra-vars "INVENTORY_FILE=$inventoryFile"
+                  --extra-vars "INVENTORY_FILE=$inventoryFile" \
+                  --extra-vars "INFRASTRUCTURE_ID=$UC_NON_PERSISTENT_INFRASTRUCTURE"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
