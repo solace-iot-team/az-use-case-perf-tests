@@ -4,12 +4,14 @@
   "sample_num": "{sample-number}",
   "sample_corr_id": "{run_id.sample_num}",
   "meta": {
-    "description": "Latency from latency node to broker node",
-    "node": "latency_node",
-    "sdkperf_command": "{sdkperf_command}",
+    "description": "Round-trip latency from host to broker node",
+    "stats_name": "{stats_name}",
+    "host": "{host-name}",
+    "sdkperf": {
+      "command": "{sdkperf_command}",
+      "params":{}
+    },
     "log_file": []
   },
-  "metrics": {
-    "latency_node": {}
-  }
+  "metrics": {}
 }

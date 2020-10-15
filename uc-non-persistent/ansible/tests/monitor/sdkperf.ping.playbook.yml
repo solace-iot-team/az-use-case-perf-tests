@@ -28,6 +28,7 @@
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
         run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        stats_name: "{{ STATS_NAME }}"
 
     - name: "Settings"
       set_fact:

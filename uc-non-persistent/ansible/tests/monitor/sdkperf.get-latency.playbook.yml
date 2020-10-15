@@ -24,31 +24,26 @@
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
         run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        stats_name: "{{ STATS_NAME }}"
 
     - name: "Settings"
       set_fact:
         max_sample_run_time_secs: 120
-        # overhead depends on lpm - shell takes a lot longer to get each metric
         sampling_overhead_secs: 10
         min_collection_period_secs: 15
         sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
-        latency_post_process_exe: "./lib/post-process.latency.sh"
-        latency_post_process_template_file: "./lib/latency.template.json"
+        latency_pp_j2_template_file: "./lib/latency.pp.j2"
         broker_uri: "{{sdkperf.broker_uri_local if RUN_LOCALLY=='True' else sdkperf.broker_uri}}"
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
 
     - name: "Calculate Parameters"
       set_fact:
         sdkperf_msg_number: "{{((sample_run_time_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs ) * monitor.latency.msg_rate_per_second}}"
-
-    - name: "Check Local Files Exist"
-      stat:
-        path: "{{item}}"
-      register: stat_result
-      failed_when: not stat_result.stat.exists
-      delegate_to: localhost
-      with_items:
-        - "{{latency_post_process_exe}}"
-        - "{{latency_post_process_template_file}}"
 
     - name: "Check input: sample_run_time_secs"
       fail:
@@ -67,12 +62,6 @@
           - "sampling_overhead_secs={{sampling_overhead_secs}}"
           - "collection period = {{monitor.general.sample_run_time_secs - sampling_overhead_secs - monitor.latency.warmup_secs}}"
       when: (monitor.general.sample_run_time_secs - sampling_overhead_secs - monitor.latency.warmup_secs) < min_collection_period_secs
-
-    - name: "Ensure {{ result_dir }} exists"
-      local_action:
-        module: file
-        path: "{{result_dir}}"
-        state: directory
 
     # # TEST & DEBUG
     # - name: "TEST: Simulate delay in startup"
