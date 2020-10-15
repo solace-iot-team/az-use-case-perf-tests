@@ -8,6 +8,7 @@
 - name: "Broker VPN Statistics"
   hosts: broker_pubsub
   gather_facts: no
+
   vars:
     project_root_dir: "../../../../"
   pre_tasks:
@@ -24,6 +25,12 @@
         file: "{{ SDKPERF_NODES_FILE }}"
         name: sdkPerfNodes
     - include_vars:
+        file: "{{ RUN_ENV_FILE }}"
+        name: runEnv
+    - include_vars:
+        file: "{{ INVENTORY_FILE }}"
+        name: runInventory
+    - include_vars:
         file: "{{use_case_root_dir}}/ansible/vars/monitor.vars.yml"
         name: monitor
 
@@ -36,29 +43,21 @@
         run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
         use_case: "{{monitor.general.use_case}}"
         cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
-
+        stats_name: "{{ STATS_NAME }}"
+        infrastrucure_id: "{{ INFRASTRUCTURE_ID }}"
+        
+    - set_fact:
+        run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_start_ts_epoch_secs) }}"
+        meta_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(run_start_ts_epoch_secs) }}"
     - name: "Settings"
       set_fact:
         sampling_overhead_secs: 10
         min_collection_period_secs: 15
         sample_run_time_secs: "{{monitor.general.sample_run_time_secs}}"
-        vpn_post_process_exe: "./lib/post-process.vpn-stats.sh"
-        vpn_post_process_template_file: "./lib/vpn-stats.template.json"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
-        meta_result_file: "{{ result_dir }}/run.meta.json"
+        meta_result_file: "{{ result_dir }}/meta.{{meta_file_name_ts_str}}.json"
         meta_j2_template_file: "./lib/run.meta.j2"
-        meta_test_start_ts_str: "{{ now(True) }}"
-
-
-    - name: "Check Local Files Exist"
-      stat:
-        path: "{{item}}"
-      register: stat_result
-      failed_when: not stat_result.stat.exists
-      delegate_to: localhost
-      with_items:
-        - "{{vpn_post_process_exe}}"
-        - "{{vpn_post_process_template_file}}"
+        vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
 
     - name: "Ensure {{ result_dir }} exists"
       local_action:
@@ -119,6 +118,7 @@
       include_tasks: ./tasks/broker.vpn-stats.testrun.yml
       with_sequence: "end={{monitor.general.total_num_samples-1}} start=0"
 
+# for meta:
     - name: "Get Client Connections: End"
       uri:
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
@@ -135,6 +135,9 @@
     - set_fact:
         number_connected_clients_end: "{{ result.json.data | length }}"
         connected_client_list_end: "{{ result.json.data }}"
+        run_end_ts_epoch_secs: "{{lookup('pipe','date -u +%s')}}"
+    - set_fact:
+        run_end_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_end_ts_epoch_secs) }}"
 
     - name: "Write Test Meta Data to Results"
       template:

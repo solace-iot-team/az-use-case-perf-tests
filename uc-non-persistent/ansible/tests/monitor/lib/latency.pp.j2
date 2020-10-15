@@ -1,0 +1,27 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+
+{
+  "sample_start_timestamp": "{{sample_start_ts_str}}",
+  "run_id": "{{run_id}}",
+  "sample_num": "{{sample_num}}",
+  "sample_corr_id": "{{run_id}}.{{sample_num}}",
+  "meta": {
+    "description": "Round-trip latency from host to broker node",
+    "stats_name": "{{stats_name}}",
+    "host": "{{inventory_hostname}}",
+    "sdkperf": {
+      "command": {{sdkperf_result.cmd | to_json(ensure_ascii=False)}},
+      "params": {{sdkperf_params | to_nice_json}}
+    },
+    "log_file": "--omitted--"
+  },
+  "metrics": {
+    "{{stats_name}}": {{ sdkperf_output_json | to_nice_json}}
+  }
+}

@@ -48,7 +48,7 @@ echo
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-statsName="latency-stats"
+statsName="latency_stats"
 rm -f "$resultDir/$statsName".*.json
 
 ##############################################################################################################################

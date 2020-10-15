@@ -48,8 +48,8 @@ echo
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-
-rm -f $resultDir/ping-stats.*.json
+statsName="ping_stats"
+rm -f "$resultDir/$statsName".*.json
 
 ##############################################################################################################################
 # Run
@@ -66,6 +66,7 @@ rm -f $resultDir/ping-stats.*.json
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "RUN_ID=$RUN_ID" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
+                  --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "INVENTORY_FILE=$inventoryFile"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
