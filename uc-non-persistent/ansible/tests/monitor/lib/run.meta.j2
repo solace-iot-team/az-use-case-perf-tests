@@ -1,9 +1,14 @@
-
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
 
 {
   "meta": {
-    "testStartTimestamp": "{{ meta_test_start_ts_str }}",
-    "testEndTimestamp": "{{ now(True) }}",
+    "run_start_time": "{{ run_start_ts_str }}",
+    "run_end_time": "{{ run_end_ts_str }}",
     "run_id": "{{ run_id }}",
     "use_case": "{{use_case}}",
     "cloud_provider": "{{cloud_provider}}",
@@ -16,6 +21,8 @@
       "msg_number": "{{sdkperf.msg_number}}",
       "msg_rate_per_second": "{{sdkperf.msg_rate_per_second}}"
     },
+    "env": {{runEnv.env | to_nice_json }},
+    "inventory": {{runInventory | to_nice_json }},
     "nodes": {
       {% if solace_cloud_service_id is defined %}
       "broker_nodes": [

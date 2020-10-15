@@ -48,10 +48,12 @@ echo
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-statsName="vpn-stats"
+statsName="vpn_stats"
 rm -f "$resultDir/$statsName".*.json
+rm -f $resultDir/meta.*.json
 brokerNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUCTURE.broker-nodes.json") || exit
 sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUCTURE.sdkperf-nodes.json") || exit
+runEnvFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFRASTRUCTURE.env.json") || exit
 
 
 ##############################################################################################################################
@@ -71,7 +73,9 @@ sdkPerfNodesFile=$(assertFile "$projectHome/shared-setup/$UC_NON_PERSISTENT_INFR
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "BROKER_NODES_FILE=$brokerNodesFile" \
-                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile"
+                  --extra-vars "SDKPERF_NODES_FILE=$sdkPerfNodesFile" \
+                  --extra-vars "RUN_ENV_FILE=$runEnvFile" \
+                  --extra-vars "INVENTORY_FILE=$inventoryFile"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

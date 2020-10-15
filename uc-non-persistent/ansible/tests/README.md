@@ -28,5 +28,10 @@ Or, pass the infrastrucure-id as an argument:
 * [load](./load)
 * [monitors](./monitor)
 
+## Abort all running tests
+````bash
+./abort.tests.sh {cloud-provider}.{infrastructure-id}
+````
+
 ---
 The End.

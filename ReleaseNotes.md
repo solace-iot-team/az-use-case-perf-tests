@@ -1,5 +1,22 @@
 # Release Notes
 
+## Version: 0.4.3
+Release Purpose: Introduce Latency per Message Metric
+
+* **vars/monitor.vars.yml**
+  - added lpm flag to latency parameters
+* **monitor/latency and monitor/brokernode-latency**
+  - output contains latency_per_message_in_usec - array of individual message latencies.
+* **test-results/stats**
+  - stats files renamed:
+    - latency-brokernode-stats.{rund-id}.json ==> latency_brokernode_stats.{run-id}.json
+    - latency-stats.{run-id}.json ==> latency_stats.{run-id}.json
+    - ping-stats{run-id}.json ==> ping_stats.{run-id}.json
+    - vpn-stats{run-id}.json ==> vpn_stats.{run-id}.json
+    - run.meta.json ==> meta.{run-id}.json
+* **tests/abort.tests.sh**
+  - added: call to abort running tests
+
 ## Version: 0.4.2
 Release Purpose: Infrastructure Bootstrap & Controller Create/Delete
 
