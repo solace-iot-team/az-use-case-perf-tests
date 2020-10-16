@@ -7,10 +7,8 @@ from jsonpath_ng import jsonpath, parse
 def to_int(text:str) -> int:
     return int(text)
 
-
 def to_float(text:str) -> float:
     return float(text)
-
 
 def to_str(text:str) -> str:
     return text
@@ -35,6 +33,7 @@ K_PING_RTT_AVG = "rtt_avg"
 K_PING_RTT_MDEV = "rtt_medv"
 
 KEYS_LATENCY_METRIC =[K_50TH, K_95TH, K_99TH, K_99_9TH, K_MINIMUM, K_MAXIMUM, K_AVERAGE, K_STD_DEVIATION]
+KEYS_PING_METRIC = [K_PING_RTT_MAX, K_PING_RTT_MIN, K_PING_RTT_AVG, K_PING_RTT_MDEV]
 
 LAT_NODE__COLUMNS = {
     # "run_id": {"p": parse('run_id'), "convert": str},
@@ -67,6 +66,7 @@ LAT_BROKER__COLUMNS = {
 
 PING__COLUMNS = {
     # "run_id": {"p": parse('run_id'), "convert": str},
+    K_TS:  {"p": parse('sample_start_timestamp'), "convert": to_date},
     K_SAMPLE_NUM: {"p": parse('sample_num'), "convert": int},
     K_PING_RTT_AVG: {"p": parse('metrics.ping.rtt_avg.value'), "convert": float},
     K_PING_RTT_MAX: {"p": parse('metrics.ping.rtt_max.value'), "convert": float},
@@ -77,9 +77,9 @@ PING__COLUMNS = {
 logger = logging.getLogger("solace")
 
 
-def extractLatency(metric_key, columns, stat_json):
+def extractMetric(metric_key, columns, stat_json):
     # print("DEBUG extract ", metric_key)
-    return columns[metric_key]['p'].find(stat_json)[0].value
+    return columns[metric_key]['convert'](columns[metric_key]['p'].find(stat_json)[0].value)
 
 def parse_all_latency_node_as_metric_items(dir: str, context: str) -> list:
     search_pattern = dir+"/"+"latency_stats*"
@@ -100,6 +100,16 @@ def parse_all_latency_broker_as_metric_items(dir: str, context: str) -> list:
         # print("processing file:",json_file_name)
         latency_list.extend(parse_latency_broker_as_metric_items(json_file_name, context))
     return latency_list
+
+def parse_all_ping_as_metric_items(dir: str, context: str) -> list:
+    search_pattern = dir+"/"+"ping_stats*"
+    list_json_files = glob.glob(search_pattern)
+    ping_list = []
+    for json_file_name in list_json_files:
+        logger.debug("processing file:",json_file_name)
+        # print("processing file:",json_file_name)
+        ping_list.extend(parse_ping_as_metric_items(json_file_name, context))
+    return ping_list
 
 def parse_all_ping(dir: str, context: str) -> list:
     search_pattern = dir+"/"+"ping-stats*"
@@ -168,6 +178,21 @@ def parse_ping(stat_file_name: str) -> dict:
             logger.debug('Extracted value:', str(result[key]))
     return result
 
+def parse_ping_as_metric_items(stat_file_name: str, context:str) -> list:
+    result = list()
+    with open(stat_file_name) as stat_file:
+        stat_json = json.load(stat_file)
+        for key in KEYS_PING_METRIC:
+            #logger.debug('key',key)
+            #print('key',key)
+            list_item = dict()
+            list_item[K_CONTEXT]=context
+            list_item[K_TS]=extractMetric(K_TS, PING__COLUMNS, stat_json)
+            list_item[K_SAMPLE_NUM]=extractMetric(K_SAMPLE_NUM, PING__COLUMNS, stat_json)
+            list_item['metric']=key
+            list_item['value']=extractMetric(key, PING__COLUMNS, stat_json)
+            result.append(list_item)
+    return result
 
 def parse_latency_node_as_metric_items(stat_file_name: str, context:str) -> list:
     result = list()
@@ -178,10 +203,10 @@ def parse_latency_node_as_metric_items(stat_file_name: str, context:str) -> list
             #print('key',key)
             list_item = dict()
             list_item[K_CONTEXT]=context
-            list_item[K_TS]=extractLatency(K_TS,LAT_NODE__COLUMNS,stat_json)
-            list_item[K_SAMPLE_NUM]=extractLatency(K_SAMPLE_NUM,LAT_NODE__COLUMNS,stat_json)
+            list_item[K_TS]=extractMetric(K_TS, LAT_NODE__COLUMNS, stat_json)
+            list_item[K_SAMPLE_NUM]=extractMetric(K_SAMPLE_NUM, LAT_NODE__COLUMNS, stat_json)
             list_item['metric']=key
-            list_item['value']=extractLatency(key,LAT_NODE__COLUMNS,stat_json)
+            list_item['value']=extractMetric(key, LAT_NODE__COLUMNS, stat_json)
             result.append(list_item)
     return result
 
@@ -194,9 +219,9 @@ def parse_latency_broker_as_metric_items(stat_file_name: str, context:str) -> li
             #print('key',key)
             list_item = dict()
             list_item[K_CONTEXT]=context
-            list_item[K_TS]=extractLatency(K_TS,LAT_BROKER__COLUMNS,stat_json)
-            list_item[K_SAMPLE_NUM]=extractLatency(K_SAMPLE_NUM,LAT_BROKER__COLUMNS,stat_json)
+            list_item[K_TS]=extractMetric(K_TS, LAT_BROKER__COLUMNS, stat_json)
+            list_item[K_SAMPLE_NUM]=extractMetric(K_SAMPLE_NUM, LAT_BROKER__COLUMNS, stat_json)
             list_item['metric']=key
-            list_item['value']=extractLatency(key,LAT_BROKER__COLUMNS,stat_json)
+            list_item['value']=extractMetric(key, LAT_BROKER__COLUMNS, stat_json)
             result.append(list_item)
     return result
