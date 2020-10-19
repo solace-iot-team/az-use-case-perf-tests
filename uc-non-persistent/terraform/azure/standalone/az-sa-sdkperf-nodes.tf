@@ -94,8 +94,9 @@ resource "azurerm_public_ip" "sdkperf-nodes-pubip" {
   name                   = "${var.tag_name_prefix}-sdkperf-pubip-${count.index}"
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
-  allocation_method      = "Dynamic"
-  zones                  = [ var.zone ]
+  allocation_method      = "Static"
+  sku                    = "Standard"
+  zones                   = [var.zone]
 
   tags = {
     Name    = "${var.tag_name_prefix}-sdkperf-pubip-${count.index}"
