@@ -10,6 +10,20 @@
 #  - calculate number of consumers per consumer vm that was provisioned
 # run tests in parallel on all infrastructures?
 # - should organize runs by infrastructure id?
+
+    # matrix concept:
+    #   - infrastructure-id:
+    #     - {cloud-provider}.{config-id}
+    #   - for infrastructures
+    #     - cloud-provider: azure, aws
+    #     - config-id: infra1-standalone, infra2-standalone
+
+    #   strategy:
+    #     fail-fast: true
+    #     matrix:
+    #       cloud_provider_id: [azure, aws]
+    #       config_id: [infra1-standalone, infra2-standalone]
+
 ---
   test_spec:
     use_case: uc_non_persistent
