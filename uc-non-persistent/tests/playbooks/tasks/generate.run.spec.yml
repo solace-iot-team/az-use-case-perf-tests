@@ -1,0 +1,73 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  - name: "Generating Run Specs for Run: {{run_spec.name}}"
+    debug:
+      msg:
+        - "infrastructure_num={{infrastructure_num}}"
+        - "run_spec_num = {{ run_spec_num }}"
+        - "{{infrastructure}}"
+        - "{{run_spec}}"
+
+  - name: "Infrastructure Run Spec"
+    set_fact:
+      infrastructure_id: "{{infrastructure.cloud_provider}}.{{infrastructure.config}}"
+  - set_fact:
+      infrastructure_inventory_file: "{{SHARED_SETUP_DIR}}/{{infrastructure_id}}.inventory.json"
+      run_spec_id: "{{infrastructure_id}}.{{run_spec.name}}"
+
+  - name: "Check infrastructure exists: {{infrastructure_id}}"
+    local_action:
+      module: file
+      path: "{{infrastructure_inventory_file}}"
+      state: file
+
+  - name: "Run Spec: Load for {{run_spec_id}}"
+    set_fact:
+      run_load:
+        include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include)}}"
+        # pub_num_topics: "{{ run.load.pub_num_topics | default(test_spec.run_specs.run_defaults.load.pub_num_topics)}}"
+        # pub_msg_rate_per_second: "{{ run.load.pub_msg_rate_per_second | default(test_spec.run_specs.run_defaults.load.pub_msg_rate_per_second)}}"
+        # pub_msg_payload_size_bytes: "{{ run.load.pub_msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.load.pub_msg_payload_size_bytes)}}"
+        # pubs_to_subs_ratio: "{{ run.load.pubs_to_subs_ratio | default(test_spec.run_specs.run_defaults.load.pubs_to_subs_ratio)}}"
+        # pub_total_num_msgs: "calculate me..."
+
+  - name: "Run Spec: Monitors for {{run_spec_id}}"
+    set_fact:
+      run_monitors:
+        latency:
+          include: "{{ run_spec.monitors.latency.include | default(test_spec.run_specs.run_defaults.monitors.latency.include) }}"
+          topic_prefix: "{{ run_spec.monitors.latency.topic_prefix | default(test_spec.run_specs.run_defaults.monitors.latency.topic_prefix) }}"
+          warmup_secs: "{{ run_spec.monitors.latency.warmup_secs | default(test_spec.run_specs.run_defaults.monitors.latency.warmup_secs) }}"
+          msg_rate_per_second: "{{ run_spec.monitors.latency.msg_rate_per_second | default(test_spec.run_specs.run_defaults.monitors.latency.msg_rate_per_second) }}"
+          msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency.msg_payload_size_bytes) }}"
+          lg: "{{ run_spec.monitors.latency.lg | default(test_spec.run_specs.run_defaults.monitors.latency.lg) }}"
+          lb: "{{ run_spec.monitors.latency.lb | default(test_spec.run_specs.run_defaults.monitors.latency.lb) }}"
+        latency_brokernode:
+          include: "{{ run_spec.monitors.latency_brokernode.include | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.include) }}"
+          topic_prefix: "{{ run_spec.monitors.latency_brokernode.topic_prefix | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.topic_prefix) }}"
+          warmup_secs: "{{ run_spec.monitors.latency_brokernode.warmup_secs | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.warmup_secs) }}"
+          msg_rate_per_second: "{{ run_spec.monitors.latency_brokernode.msg_rate_per_second | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.msg_rate_per_second) }}"
+          msg_payload_size_bytes: "{{ run_spec.monitors.latency_brokernode.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.msg_payload_size_bytes) }}"
+          lg: "{{ run_spec.monitors.latency_brokernode.lg | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.lg) }}"
+          lb: "{{ run_spec.monitors.latency_brokernode.lb | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.lb) }}"
+        ping:
+          include: "{{ run_spec.monitors.ping.include | default(test_spec.run_specs.run_defaults.monitors.ping.include) }}"
+        vpn:
+          include: "{{ run_spec.monitors.vpn.include | default(test_spec.run_specs.run_defaults.monitors.vpn.include) }}"
+
+  - name: "Create Run Spec"
+    set_fact:
+      rs: "{{ lookup('template', './lib/run_spec.j2') | from_json}}"
+
+  - name: "Add Run Spec to Test Specs"
+    set_fact:
+      generated_test_specs: "{{generated_test_specs | combine(rs, recursive=True)}}"
+
+
+###
+# The End.

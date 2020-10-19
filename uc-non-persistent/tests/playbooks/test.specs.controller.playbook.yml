@@ -1,0 +1,60 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Test Spec Controller"
+  hosts: all
+  gather_facts: no
+  vars:
+    run_script: _run.sh
+
+  tasks:
+
+    - name: "Check Env Vars"
+      debug:
+        msg:
+          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+          - "LOG_DIR={{LOG_DIR}}"
+          - "RUN_SCRIPTS_DIR={{RUN_SCRIPTS_DIR}}"
+          - "RUN_SPECS_DIR={{RUN_SPECS_DIR}}"
+
+    - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{SHARED_SETUP_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ LOG_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{LOG_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ RUN_SCRIPTS_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{RUN_SCRIPTS_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ RUN_SPECS_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{RUN_SPECS_DIR}}"
+        state: directory
+
+    - name: "Settings"
+      set_fact:
+        infrastructure_id: "{{inventory_hostname}}"
+
+    - name: "Iterate over runs"
+      include_tasks: ./tasks/run.test.yml
+      loop: "{{ run_list | dict2items }}"
+      loop_control:
+        index_var: run_num
+        loop_var: run
+
+###
+# The End.

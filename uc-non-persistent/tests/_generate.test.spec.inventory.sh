@@ -7,9 +7,10 @@
 ##############################################################################################################################
 # Prepare
 scriptDir=$(cd $(dirname "$0") && pwd);
-source $scriptDir/../.lib/functions.sh
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/ansible/*}
+projectHome=${scriptDir%/uc-non-persistent/*}
+usecaseHome=$projectHome/uc-non-persistent
+source $projectHome/.lib/functions.sh
 
 ############################################################################################################################
 # Environment Variables
@@ -18,23 +19,25 @@ projectHome=${scriptDir%/ansible/*}
     echo ">>> ERROR: missing test-spec file. use: $scriptName {path}/{spec-id}.test.spec.yml"
     echo; exit 1
   else
-    export TEST_SPEC=$1
-    x=$(assertFile "$scriptDir/$TEST_SPEC") || exit
+    export TEST_SPEC_FILE=$scriptDir/$1
+    x=$(assertFile "$TEST_SPEC_FILE") || exit
   fi
 
-  if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
-
+  if [ -z "$TMP_DIR" ]; then export TMP_DIR=$scriptDir/tmp; mkdir $TMP_DIR > /dev/null 2>&1; fi
+  if [ -z "$TEST_SPEC_DIR" ]; then export TEST_SPEC_DIR=$TMP_DIR/test-specs; mkdir $TEST_SPEC_DIR > /dev/null 2>&1; fi
+  if [ -z "$SHARED_SETUP_DIR" ]; then export SHARED_SETUP_DIR=$usecaseHome/shared-setup; fi
 
 ############################################################################################################################
 # Generate Run Specs
 
 export ANSIBLE_VERBOSITY=3
 
-playbook="$scriptDir/playbooks/test.spec.controller.playbook.yml"
+playbook="$scriptDir/playbooks/generate.run.specs.playbook.yml"
 ansible-playbook \
                 $playbook \
-                --extra-vars "TEST_SPEC=$scriptDir/$TEST_SPEC" \
-                --extra-vars "RUN_LOG_DIR=$RUN_LOG_DIR"
+                --extra-vars "TEST_SPEC_FILE=$TEST_SPEC_FILE" \
+                --extra-vars "TEST_SPEC_DIR=$TEST_SPEC_DIR" \
+                --extra-vars "SHARED_SETUP_DIR=$SHARED_SETUP_DIR"
 
 if [[ $? != 0 ]]; then echo ">>> ERROR running: $scriptName"; echo; exit 1; fi
 

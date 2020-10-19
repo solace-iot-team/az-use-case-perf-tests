@@ -1,0 +1,59 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  - name: "Run Test"
+    debug:
+      msg:
+        - "run_num={{run_num}}"
+        - "run="
+        - "{{run}}"
+
+  - name: "Run Settings"
+    set_fact:
+      run_name: "{{run.key}}"
+      run_spec: "{{run.value}}"
+  - set_fact:
+      run_spec_file: "{{RUN_SPECS_DIR}}/{{infrastructure_id}}.{{run_name}}.yml"
+
+  - name: "Write Run Spec to File"
+    copy:
+      content: "{{run_spec | to_nice_yaml }}"
+      dest: "{{run_spec_file}}"
+    delegate_to: localhost
+
+# nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn={{hostvars[inventory_hostname].boxname}}-3 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-debug-2.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.consumer_log_filename}}-2.log 2>&1 &
+
+# nohup {{MONITOR_PING_SCRIPT}} > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
+
+
+# TODO
+# RUN_ID_PREFIX=?
+
+  - name: "Run Test"
+    shell: >
+      export UC_NON_PERSISTENT_INFRASTRUCTURE={{infrastructure_id}};
+
+      export RUN_SPEC_FILE={{run_spec_file}}
+
+      export RUN_LOG_DIR={{LOG_DIR}};
+
+      D=$(date -u +"%Y-%m-%d-%H-%M-%S"); export RUN_ID=$RUN_ID_PREFIX$D;
+
+      export IS_RUN_MONITOR_PING={{'true' if run_spec.monitors.ping.include else ''}};
+
+      {{RUN_SCRIPTS_DIR}}/{{run_script}} > {{LOG_DIR}}/{{run_script}}.log 2>&1
+
+    delegate_to: localhost
+    register: run_script_result
+
+    # failed_when: "'Exception' in sdkperf_result.stderr or sdkperf_result.stdout == ''"
+
+  - meta: end_play
+
+###
+# The End.

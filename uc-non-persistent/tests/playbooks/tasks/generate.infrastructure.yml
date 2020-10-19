@@ -1,0 +1,33 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+
+  - name: "Generating Run Specs for Infrastructure"
+    debug:
+      msg:
+        - "infrastructure_num={{infrastructure_num}}"
+        - "{{infrastructure}}"
+
+  - name: "Set Infrastructure Id"
+    set_fact:
+      infrastructure_id: "{{infrastructure.cloud_provider}}.{{infrastructure.config}}"
+
+  - name: "Add Infrastructure Id to Generated Test Spec"
+    set_fact:
+      generated_test_specs: "{{generated_test_specs | combine( {infrastructure_id:{'run_list': {} } } ) }}"
+
+  - name: "Iterate over runs"
+    include_tasks: ./tasks/generate.run.spec.yml
+    loop: "{{ test_spec.run_specs.runs }}"
+    loop_control:
+      index_var: run_spec_num
+      loop_var: run_spec
+
+
+###
+# The End.
