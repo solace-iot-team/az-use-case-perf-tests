@@ -8,7 +8,7 @@
 
     Define the spec for running a series of tests.
 
-    - test-specs/{spec-id}.test.spec.yml
+    - test-specs/{test-spec-id}.test.spec.yml
 
 2. Generate run specs 
 
@@ -17,12 +17,12 @@
     - script: _generate.run.specs.sh {test-spec-yml}
         - uses playbooks/generate.run.specs.playbook.yml
         - generates: 
-            - tmp/run-specs/{spec-id}.run.spec.yml
+            - tmp/run-specs/{run-spec-id}.run.spec.yml
             - contains all the info for a single run
 
 3. Run the run specs
 
-    
+
 
 
 ---
