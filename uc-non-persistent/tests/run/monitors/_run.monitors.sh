@@ -29,10 +29,10 @@ source $projectHome/.lib/functions.sh
 
 ############################################################################################################################
 # Set monitor scripts
-  if [ "$IS_RUN_MONITOR_VPN_STATS" ]; then runMonitorScript_VpnStats="run.monitor.vpn-stats.sh"; fi
-  if [ "$IS_RUN_MONITOR_LATENCY" ]; then runMonitorScript_Latency="run.monitor.latency.sh"; fi
-  if [ "$IS_RUN_MONITOR_BROKERNODE_LATENCY" ]; then runMonitorScript_BrokerNodeLatency="run.monitor.brokernode.latency.sh"; fi
-  if [ "$IS_RUN_MONITOR_PING" ]; then runMonitorScript_Ping="run.monitor.ping.sh"; fi
+  if [ "$IS_RUN_MONITOR_VPN_STATS" ]; then runMonitorScript_VpnStats="_run.monitor.vpn-stats.sh"; fi
+  if [ "$IS_RUN_MONITOR_LATENCY" ]; then runMonitorScript_Latency="_run.monitor.latency.sh"; fi
+  if [ "$IS_RUN_MONITOR_BROKERNODE_LATENCY" ]; then runMonitorScript_BrokerNodeLatency="_run.monitor.brokernode.latency.sh"; fi
+  if [ "$IS_RUN_MONITOR_PING" ]; then runMonitorScript_Ping="_run.monitor.ping.sh"; fi
   monitorScripts=(
     "$runMonitorScript_VpnStats"
     "$runMonitorScript_Latency"
@@ -45,7 +45,7 @@ source $projectHome/.lib/functions.sh
 
 ##############################################################################################################################
 # Prepare
-resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
+resultDirBase="$usecaseHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
 resultDirLatest="$resultDirBase/run.latest"
 # Set for all monitors
@@ -53,6 +53,8 @@ export runStartTsEpochSecs=$(date -u +%s)
 
 if [ -z "$auto" ]; then rm -f $RUN_LOG_DIR/*.log; fi
 
+mkdir $resultDirBase > /dev/null 2>&1
+mkdir $resultDir > /dev/null 2>&1
 rm -f $resultDir/*
 
 echo;
@@ -63,7 +65,6 @@ echo ">>> utc start time   : "$(date -u +"%Y-%m-%d %H:%M:%S")""
 echo ">>> local start time : "$(date +"%Y-%m-%d %H:%M:%S")""
 echo
 if [ -z "$auto" ]; then x=$(wait4Key); fi
-echo
 
 ##############################################################################################################################
 # Call monitor scripts
@@ -90,7 +91,9 @@ while true; do
   wait -n || {
     code="$?"
     if [ $code = "127" ]; then
-      # 127: last background job has exited successfully
+      # 127:
+      # last background job has exited successfully
+      # or: command was not found
       echo ">>> SUCCESS: all monitors finished successfully"
       FAILED=0
     else
@@ -123,9 +126,6 @@ fi
 echo ">>> utc end time   : "$(date -u +"%Y-%m-%d %H:%M:%S")""
 echo ">>> local end time : "$(date +"%Y-%m-%d %H:%M:%S")""
 
-
-exit 888
-
 ##############################################################################################################################
 # Post Processing of Results
 if [ -z "$auto" ]; then
@@ -142,12 +142,6 @@ fi
 if [ "$FAILED" -gt 0 ]; then
   echo ">>> ERROR: running monitors. see log files for details";
   ls -la $RUN_LOG_FILE_BASE*.log
-  if [ "$killCount" -eq 0 ]; then echo ">>> WARNING: found failed monitors but not killed any child processes. they may still be running."; fi
-  # wait for playbooks to end
-  sleep 2
-  echo ">>> INFO: checking if any monitors & playbooks still running:"
-  ps -ef | grep run.monitor || true
-  ps -ef | grep ansible-playbook || true
   exit 1
 else
   echo ">>> SUCCESS: $scriptName"

@@ -19,6 +19,7 @@
       run_spec: "{{run.value}}"
   - set_fact:
       run_spec_file: "{{RUN_SPECS_DIR}}/{{infrastructure_id}}.{{run_name}}.yml"
+      run_log_file_base: "{{LOG_DIR}}/{{infrastructure_id}}.{{run_name}}"
 
   - name: "Write Run Spec to File"
     copy:
@@ -26,9 +27,13 @@
       dest: "{{run_spec_file}}"
     delegate_to: localhost
 
+
+
 # nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn={{hostvars[inventory_hostname].boxname}}-3 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-debug-2.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.consumer_log_filename}}-2.log 2>&1 &
 
 # nohup {{MONITOR_PING_SCRIPT}} > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
+
+      # export RUN_LOG_DIR={{LOG_DIR}};
 
 
 # TODO
@@ -40,13 +45,17 @@
 
       export RUN_SPEC_FILE={{run_spec_file}}
 
-      export RUN_LOG_DIR={{LOG_DIR}};
+      export RUN_LOG_FILE_BASE={{run_log_file_base}};
 
-      D=$(date -u +"%Y-%m-%d-%H-%M-%S"); export RUN_ID=$RUN_ID_PREFIX$D;
+      D=$(date -u +"%Y-%m-%d-%H-%M-%S");
+      export RUN_ID=$RUN_ID_PREFIX$D;
 
+      export IS_RUN_MONITOR_VPN_STATS={{'true' if run_spec.monitors.vpn_stats.include else ''}};
+      export IS_RUN_MONITOR_LATENCY={{'true' if run_spec.monitors.latency.include else ''}};
+      export IS_RUN_MONITOR_BROKERNODE_LATENCY={{'true' if run_spec.monitors.latency_brokernode.include else ''}};
       export IS_RUN_MONITOR_PING={{'true' if run_spec.monitors.ping.include else ''}};
 
-      {{RUN_SCRIPTS_DIR}}/{{run_script}} > {{LOG_DIR}}/{{run_script}}.log 2>&1
+      {{RUN_SCRIPTS_DIR}}/{{run_script}} > {{run_log_file_base}}.{{run_script}}.log 2>&1
 
     delegate_to: localhost
     register: run_script_result
