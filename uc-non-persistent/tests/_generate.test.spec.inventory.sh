@@ -27,6 +27,11 @@ source $projectHome/.lib/functions.sh
   if [ -z "$TEST_SPEC_DIR" ]; then export TEST_SPEC_DIR=$TMP_DIR/test-specs; mkdir $TEST_SPEC_DIR > /dev/null 2>&1; fi
   if [ -z "$SHARED_SETUP_DIR" ]; then export SHARED_SETUP_DIR=$usecaseHome/shared-setup; fi
 
+##############################################################################################################################
+# Prepare
+
+  rm -f $LOG_DIR/*.log
+  
 ############################################################################################################################
 # Generate Run Specs
 

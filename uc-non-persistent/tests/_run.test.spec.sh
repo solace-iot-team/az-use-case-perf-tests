@@ -27,12 +27,17 @@ source $projectHome/.lib/functions.sh
   if [ -z "$SHARED_SETUP_DIR" ]; then export SHARED_SETUP_DIR=$usecaseHome/shared-setup; fi
   if [ -z "$RUN_SCRIPTS_DIR" ]; then export RUN_SCRIPTS_DIR=$scriptDir/run; fi
   if [ -z "$RUN_SPECS_DIR" ]; then export RUN_SPECS_DIR=$scriptDir/tmp/run-specs; mkdir $RUN_SPECS_DIR > /dev/null 2>&1; fi
+  if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=3; fi
 
+
+##############################################################################################################################
+# Prepare
+
+  rm -f $LOG_DIR/*.log
+  rm -f $RUN_SPECS_DIR/*
 
 ############################################################################################################################
 # Generate Run Specs
-
-export ANSIBLE_VERBOSITY=3
 
 playbook="$scriptDir/playbooks/test.specs.controller.playbook.yml"
 ansible-playbook \

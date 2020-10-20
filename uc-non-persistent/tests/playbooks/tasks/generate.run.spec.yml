@@ -57,8 +57,8 @@
           lb: "{{ run_spec.monitors.latency_brokernode.lb | default(test_spec.run_specs.run_defaults.monitors.latency_brokernode.lb) }}"
         ping:
           include: "{{ run_spec.monitors.ping.include | default(test_spec.run_specs.run_defaults.monitors.ping.include) }}"
-        vpn:
-          include: "{{ run_spec.monitors.vpn.include | default(test_spec.run_specs.run_defaults.monitors.vpn.include) }}"
+        vpn_stats:
+          include: "{{ run_spec.monitors.vpn_stats.include | default(test_spec.run_specs.run_defaults.monitors.vpn_stats.include) }}"
 
   - name: "Create Run Spec"
     set_fact:

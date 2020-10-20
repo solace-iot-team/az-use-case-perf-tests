@@ -9,6 +9,7 @@
   "{{infrastructure_id}}": {
     "run_list": {
       "{{run_spec.name}}":{
+        "params": {{run_params | to_nice_json}},
         "load": {{run_load | to_nice_json}},
         "monitors": {{run_monitors | to_nice_json}}
       }
