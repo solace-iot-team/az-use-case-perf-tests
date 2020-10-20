@@ -15,36 +15,24 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Environment Variables
 
-  if [ -z "$1" ]; then
-    echo ">>> ERROR: missing test-spec file. use: $scriptName {path}/{spec-id}.test.spec.yml"
-    echo; exit 1
-  else
-    export TEST_SPEC_FILE=$scriptDir/$1
+  if [ -z "$TEST_SPEC_FILE" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_FILE"; exit 1; fi
     x=$(assertFile "$TEST_SPEC_FILE") || exit
-  fi
 
-  if [ -z "$TMP_DIR" ]; then export TMP_DIR=$scriptDir/tmp; mkdir $TMP_DIR > /dev/null 2>&1; fi
-  if [ -z "$TEST_SPEC_DIR" ]; then export TEST_SPEC_DIR=$TMP_DIR/test-specs; mkdir $TEST_SPEC_DIR > /dev/null 2>&1; fi
-  if [ -z "$SHARED_SETUP_DIR" ]; then export SHARED_SETUP_DIR=$usecaseHome/shared-setup; fi
+  if [ -z "$TMP_DIR" ]; then echo ">>> ERROR: missing env var:TMP_DIR"; exit 1; fi
+  if [ -z "$TEST_SPEC_DIR" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_DIR"; exit 1; fi
+  if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var:SHARED_SETUP_DIR"; exit 1; fi
 
-##############################################################################################################################
-# Prepare
-
-  rm -f $LOG_DIR/*.log
-  
 ############################################################################################################################
 # Generate Run Specs
 
-export ANSIBLE_VERBOSITY=3
+  playbook="$scriptDir/playbooks/generate.run.specs.playbook.yml"
+  ansible-playbook \
+                  $playbook \
+                  --extra-vars "TEST_SPEC_FILE=$TEST_SPEC_FILE" \
+                  --extra-vars "TEST_SPEC_DIR=$TEST_SPEC_DIR" \
+                  --extra-vars "SHARED_SETUP_DIR=$SHARED_SETUP_DIR"
 
-playbook="$scriptDir/playbooks/generate.run.specs.playbook.yml"
-ansible-playbook \
-                $playbook \
-                --extra-vars "TEST_SPEC_FILE=$TEST_SPEC_FILE" \
-                --extra-vars "TEST_SPEC_DIR=$TEST_SPEC_DIR" \
-                --extra-vars "SHARED_SETUP_DIR=$SHARED_SETUP_DIR"
-
-if [[ $? != 0 ]]; then echo ">>> ERROR running: $scriptName"; echo; exit 1; fi
+  if [[ $? != 0 ]]; then echo ">>> ERROR running: $scriptName"; echo; exit 1; fi
 
 
 

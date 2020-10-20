@@ -15,16 +15,7 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Environment Variables
 
-    if [ -z "$1" ]; then
-      if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then
-          echo ">>> ERROR: missing infrastructure info. pass either as env-var: UC_NON_PERSISTENT_INFRASTRUCTURE or as argument"
-          echo "    for example: $scriptName azure.infra1-standalone"
-          echo; exit 1
-      fi
-    else
-      export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
-    fi
-
+    if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then echo ">>> ERROR: missing env var:UC_NON_PERSISTENT_INFRASTRUCTURE"; exit 1; fi
     if [ -z "$RUN_SPEC_FILE" ]; then echo ">>> ERROR: missing env var:RUN_SPEC_FILE"; exit 1; fi
     if [ -z "$RUN_LOG_DIR" ]; then export RUN_LOG_DIR=$scriptDir/tmp; mkdir $RUN_LOG_DIR > /dev/null 2>&1; fi
     if [ -z "$RUN_ID" ]; then D=$(date -u +"%Y-%m-%d-%H-%M-%S"); export RUN_ID=$RUN_ID_PREFIX$D; fi
