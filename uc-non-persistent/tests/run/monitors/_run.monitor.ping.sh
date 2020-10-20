@@ -39,7 +39,7 @@ source $projectHome/.lib/functions.sh
 ##############################################################################################################################
 # Prepare
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
-resultDirBase="$projectHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
+resultDirBase="$usecaseHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
 statsName="ping_stats"
 rm -f "$resultDir/$statsName".*.json
@@ -60,7 +60,7 @@ rm -f "$resultDir/$statsName".*.json
                   --extra-vars "RUN_ID=$RUN_ID" \
                   --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
                   --extra-vars "STATS_NAME=$statsName" \
-                  --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE" \                  
+                  --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

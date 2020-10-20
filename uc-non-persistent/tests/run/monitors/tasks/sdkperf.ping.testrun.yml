@@ -75,7 +75,7 @@
     dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
   delegate_to: localhost
   when: is_warm_up_run == False
-  failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1
+  # failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1
 
 - name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
   block:
@@ -94,7 +94,7 @@
       # note: waits for 1 second if parameter is negative
       pause:
         seconds: "{{wait_secs}}"
-  when: sample_num|int < (monitor.general.total_num_samples-1)
+  when: sample_num|int < (run_spec.params.total_num_samples-1)
 
 # # TEST & DEBUG
 # - name: "summarize timings"
