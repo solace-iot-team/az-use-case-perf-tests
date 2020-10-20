@@ -15,25 +15,18 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Environment Variables
 
-  if [ -z "$1" ]; then
-    echo ">>> ERROR: missing test-spec inventory file. use: $scriptName {path}/{spec-id}.test.spec.inventory.json"
-    echo; exit 1
-  else
-    export TEST_SPEC_INVENTORY_FILE=$scriptDir/$1
+  if [ -z "$TEST_SPEC_INVENTORY_FILE" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_INVENTORY_FILE"; exit 1; fi
     x=$(assertFile "$TEST_SPEC_INVENTORY_FILE") || exit
-  fi
 
-  if [ -z "$LOG_DIR" ]; then export LOG_DIR=$scriptDir/tmp; mkdir $LOG_DIR > /dev/null 2>&1; fi
-  if [ -z "$SHARED_SETUP_DIR" ]; then export SHARED_SETUP_DIR=$usecaseHome/shared-setup; fi
-  if [ -z "$RUN_SCRIPTS_DIR" ]; then export RUN_SCRIPTS_DIR=$scriptDir/run; fi
-  if [ -z "$RUN_SPECS_DIR" ]; then export RUN_SPECS_DIR=$scriptDir/tmp/run-specs; mkdir $RUN_SPECS_DIR > /dev/null 2>&1; fi
-  if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=3; fi
-
+  if [ -z "$TMP_DIR" ]; then echo ">>> ERROR: missing env var:TMP_DIR"; exit 1; fi
+  if [ -z "$TEST_SPEC_DIR" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_DIR"; exit 1; fi
+  if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var:SHARED_SETUP_DIR"; exit 1; fi
 
 ##############################################################################################################################
 # Prepare
 
-  rm -f $LOG_DIR/*.log
+  export RUN_SCRIPTS_DIR=$scriptDir/run
+  export RUN_SPECS_DIR=$TMP_DIR/run-specs; mkdir $RUN_SPECS_DIR > /dev/null 2>&1
   rm -f $RUN_SPECS_DIR/*
 
 ############################################################################################################################
@@ -44,7 +37,7 @@ ansible-playbook \
                 -i $TEST_SPEC_INVENTORY_FILE  \
                 $playbook \
                 --extra-vars "SHARED_SETUP_DIR=$SHARED_SETUP_DIR" \
-                --extra-vars "LOG_DIR=$LOG_DIR" \
+                --extra-vars "LOG_DIR=$TMP_DIR" \
                 --extra-vars "RUN_SCRIPTS_DIR=$RUN_SCRIPTS_DIR" \
                 --extra-vars "RUN_SPECS_DIR=$RUN_SPECS_DIR"
 
