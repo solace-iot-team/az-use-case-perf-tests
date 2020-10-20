@@ -1,0 +1,79 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+# cloud_provider + infrastructure_id - required
+# add fanout ratio?
+#  - yes
+#  - dynamic publiser assignment to vms
+#  - calculate number of consumers per consumer vm that was provisioned
+# run tests in parallel on all infrastructures?
+# - should organize runs by infrastructure id?
+
+    # matrix concept:
+    #   - infrastructure-id:
+    #     - {cloud-provider}.{config-id}
+    #   - for infrastructures
+    #     - cloud-provider: azure, aws
+    #     - config-id: infra1-standalone, infra2-standalone
+
+    #   strategy:
+    #     fail-fast: true
+    #     matrix:
+    #       cloud_provider_id: [azure, aws]
+    #       config_id: [infra1-standalone, infra2-standalone]
+
+---
+  test_spec:
+    name: 1_devel_test
+    use_case: uc_non_persistent
+    total_num_samples: 3
+    sample_duration_secs: 45
+    infrastructure_list:
+      - cloud_provider: azure
+        config: rjgu-standalone
+      - cloud_provider: aws
+        config: rjgu-standalone
+    run_specs:
+      run_defaults:
+        load:
+          include: true
+        monitors:
+          latency:
+            include: true
+            topic_prefix: "private/direct/latency"
+            warmup_secs: 10
+            msg_rate_per_second: 1000 # 0=max
+            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+            lg: 15
+            lb: 4096
+            lpm: true
+          latency_brokernode:
+            include: true
+            topic_prefix: "private/direct/latency-brokernode"
+            warmup_secs: 10
+            msg_rate_per_second: 1000 # 0=max
+            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+            lg: 15
+            lb: 4096
+            lpm: true
+          ping:
+            include: true
+          vpn_stats:
+            include: true
+      runs:
+        - name: devel_run_1
+          load:
+            include: false
+          monitors:
+            latency:
+              include: false
+            latency_brokernode:
+              include: false
+            vpn_stats:
+              include: false
+            ping:
+              include: true
+###
+# The End.

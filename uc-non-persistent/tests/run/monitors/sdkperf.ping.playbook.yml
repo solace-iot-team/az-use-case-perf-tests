@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "PING broker node from latency node"
+  hosts: sdkperf_latency
+  gather_facts: yes
+  pre_tasks:
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        stats_name: "{{ STATS_NAME }}"
+
+    - name: "Settings"
+      set_fact:
+        min_collection_period_secs: 15
+        sampling_overhead_secs: 15
+        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs }}"
+        ping_post_process_exe: "./lib/post-process.ping.sh"
+        ping_post_process_template_file: "./lib/ping.template.json"
+
+    - name: "Calculate Parameters"
+      set_fact:
+        ping_msg_number: "{{(sample_run_time_secs | int) - sampling_overhead_secs }}"
+
+    - name: "Check Local Files Exist"
+      stat:
+        path: "{{item}}"
+      register: stat_result
+      failed_when: not stat_result.stat.exists
+      with_items:
+        - "{{ping_post_process_exe}}"
+        - "{{ping_post_process_template_file}}"
+
+    - name: "Check input"
+      fail:
+        msg:
+          - "ping collection period too short, must be at least {{min_collection_period_secs}} seconds"
+          - "sample_run_time_secs={{ sample_run_time_secs }}"
+          - "sampling_overhead_secs={{sampling_overhead_secs}}"
+          - "collection period = {{sample_run_time_secs - sampling_overhead_secs}}"
+      when: (sample_run_time_secs - sampling_overhead_secs) < min_collection_period_secs
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    # # TEST & DEBUG
+    # - name: "TEST: Simulate delay in startup"
+    #   pause:
+    #     seconds: 15
+
+    - name: "Warmup Sample Runs"
+      include_tasks: ./tasks/sdkperf.ping.testrun.yml
+      vars:
+        warm_up_run: true
+      with_sequence: "end=0 start=0"
+
+    - name: "Starting Sample Runs"
+      include_tasks: ./tasks/sdkperf.ping.testrun.yml
+      with_sequence: "end={{run_spec.params.total_num_samples-1}} start=0"
+
+###
+# The End.
