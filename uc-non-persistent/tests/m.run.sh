@@ -10,7 +10,8 @@ export TEST_SPEC_FILE="$scriptDir/specs/.test/1_test.test.spec.yml"
 
 export ANSIBLE_VERBOSITY=3
 
-./_run.sh
+# nohup ./_run.sh > ./_run.sh.log 2>&1 &
+nohup ./_run.sh &
 
 ###
 # The End.
