@@ -28,14 +28,6 @@
     delegate_to: localhost
 
 
-
-# nohup taskset -c 2 {{sdkperf_nodes.sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh -cn={{hostvars[inventory_hostname].boxname}}-3 -log=info -logf={{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-debug-2.log -epl="{{ sdkperf.epl }}" -rc="{{ sdkperf.rc }}" -nagle -cip="{{ sdkperf.broker_uri }}":"{{ sdkperf.broker_port }}" -cu="{{ sdkperf.client_consumer_username }}"@"{{ sdkperf.broker_msg_vpn }}" -cp="{{ sdkperf.client_consumer_password }}" -stl="{{ sdkperf.topics_consumer_group_2 }}" -pea=0 </dev/null > {{sdkperf_nodes.sdkperf_log_root}}/{{sdkperf_datetimeprefix}}-{{sdkperf.consumer_log_filename}}-2.log 2>&1 &
-
-# nohup {{MONITOR_PING_SCRIPT}} > $RUN_LOG_DIR/$monitorScript.log  2>&1 &
-
-      # export RUN_LOG_DIR={{LOG_DIR}};
-
-
 # TODO
 # RUN_ID_PREFIX=?
 
@@ -60,9 +52,9 @@
     delegate_to: localhost
     register: run_script_result
 
+    # TODO: 
     # failed_when: "'Exception' in sdkperf_result.stderr or sdkperf_result.stdout == ''"
 
-  - meta: end_play
 
 ###
 # The End.

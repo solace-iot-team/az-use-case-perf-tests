@@ -26,7 +26,7 @@
 
 ---
   test_spec:
-    name: 1_devel_test
+    name: 1_test
     use_case: uc_non_persistent
     infrastructure_list:
       - cloud_provider: azure
@@ -41,14 +41,15 @@
         load:
           include: true
         monitors:
+          # only 1 latency for both ==> otherwise, what's the point
           latency:
             include: true
-            topic_prefix: "private/direct/latency"
-            warmup_secs: 10
-            msg_rate_per_second: 1000 # 0=max
-            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-            lg: 15
-            lb: 4096
+            topic_prefix: "private/direct/latency" # out
+            warmup_secs: 10 # out
+            msg_rate_per_second: 1000 # define a max of 10000
+            msg_payload_size_bytes: 100 # define a max of 10K
+            lg: 15 # out
+            lb: 4096 # out
             lpm: true
           latency_brokernode:
             include: true
@@ -77,17 +78,18 @@
               include: false
             ping:
               include: true
-        - name: 2_variation
-          load:
-            include: false
-          monitors:
-            latency:
-              include: false
-            latency_brokernode:
-              include: false
-            vpn_stats:
-              include: false
-            ping:
-              include: true
+        # - name: 2_variation
+        #   load:
+        #     include: false
+        #   monitors:
+        #     latency:
+        #       include: false
+        #     latency_brokernode:
+        #       include: false
+        #     vpn_stats:
+        #       include: false
+        #     ping:
+        #       include: true
+
 ###
 # The End.
