@@ -6,7 +6,7 @@
 ---
 - name: "PING broker node from latency node"
   hosts: sdkperf_latency
-  gather_facts: yes
+  gather_facts: no
   pre_tasks:
     - include_vars:
         file: "{{RUN_SPEC_FILE}}"
@@ -25,7 +25,7 @@
       set_fact:
         min_collection_period_secs: 15
         sampling_overhead_secs: 15
-        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs }}"
+        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs | int }}"
         ping_post_process_exe: "./lib/post-process.ping.sh"
         ping_post_process_template_file: "./lib/ping.template.json"
 
@@ -37,6 +37,7 @@
       stat:
         path: "{{item}}"
       register: stat_result
+      delegate_to: localhost
       failed_when: not stat_result.stat.exists
       with_items:
         - "{{ping_post_process_exe}}"
@@ -49,7 +50,7 @@
           - "sample_run_time_secs={{ sample_run_time_secs }}"
           - "sampling_overhead_secs={{sampling_overhead_secs}}"
           - "collection period = {{sample_run_time_secs - sampling_overhead_secs}}"
-      when: (sample_run_time_secs - sampling_overhead_secs) < min_collection_period_secs
+      when: ( (sample_run_time_secs|int) - sampling_overhead_secs) < min_collection_period_secs
 
     - name: "Ensure {{ result_dir }} exists"
       local_action:

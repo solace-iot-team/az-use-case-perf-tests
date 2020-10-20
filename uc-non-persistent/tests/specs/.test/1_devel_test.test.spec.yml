@@ -28,14 +28,15 @@
   test_spec:
     name: 1_devel_test
     use_case: uc_non_persistent
-    total_num_samples: 3
-    sample_duration_secs: 45
     infrastructure_list:
       - cloud_provider: azure
-        config: rjgu-standalone
-      - cloud_provider: aws
-        config: rjgu-standalone
+        config: test1-standalone
+      # - cloud_provider: aws
+      #   config: test1-standalone
     run_specs:
+      run_params:
+        total_num_samples: 1
+        sample_duration_secs: 45
       run_defaults:
         load:
           include: true
@@ -63,7 +64,8 @@
           vpn_stats:
             include: true
       runs:
-        - name: devel_run_1
+        # - name: 0_variation
+        - name: 1_variation
           load:
             include: false
           monitors:
