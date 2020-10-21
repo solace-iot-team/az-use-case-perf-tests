@@ -60,7 +60,7 @@
       uri:
         # method: "PUT"
         # uri: "http://51.136.121.254:8080/SEMP/v2/__private_action__/msgVpns/sdkperf/clearStats"
-       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ vpn_name }}/clearStats"
+       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ broker_pubsub.vpn_name }}/clearStats"
        method: PUT
        user: "{{ sempv2_username }}"
        password: "{{ sempv2_password }}"
