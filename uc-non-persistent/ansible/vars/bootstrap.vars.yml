@@ -51,10 +51,11 @@ broker:
     docker_compose_file_dest_local: "{{use_case_root_dir}}/ansible/docker-image/PubSub.docker-compose.deployed.yml"
   pubsub:
     max_spool_usage: 100000
-    vpn_name: "sdkperf"
     client_profile_name: "testCP"
-    client_user_name: "testUsr"
-    client_user_name_pwd: "solace123"
+    # moved to terraform inventory template
+    # vpn_name: "sdkperf"
+    # client_user_name: "testUsr"
+    # client_user_name_pwd: "solace123"
 sdkperf_nodes:
   sdkperf_group: sdkperf
   sdkperf_user: centos

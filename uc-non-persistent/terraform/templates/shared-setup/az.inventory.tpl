@@ -25,7 +25,10 @@
         "sempv2_username": "admin",
         "sempv2_password": "admin",
         "sempv2_timeout": "60",
-        "virtual_router": "primary"
+        "virtual_router": "primary",
+        "vpn_name": "sdkperf",
+        "client_user_name": "testUsr",
+        "client_user_name_pwd": "solace123"
       }
     }
   },
