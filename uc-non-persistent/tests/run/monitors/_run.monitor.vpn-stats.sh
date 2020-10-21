@@ -27,7 +27,7 @@ source $projectHome/.lib/functions.sh
   if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var: SHARED_SETUP_DIR"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:RUN_LOG_FILE_BASE"; exit 1; fi
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var:RUN_ID"; exit 1; fi
-  if [ -z "$runStartTsEpochSecs" ]; then echo ">>> ERROR: missing env var:runStartTsEpochSecs"; exit 1; fi
+  if [ -z "$RUN_START_TS_EPOCH_SECS" ]; then echo ">>> ERROR: missing env var:RUN_START_TS_EPOCH_SECS"; exit 1; fi
 
 ##############################################################################################################################
 # Prepare
@@ -51,7 +51,7 @@ rm -f "$resultDir/$statsName".*.json
                   $playbook \
                   --extra-vars "RESULT_DIR=$resultDir" \
                   --extra-vars "RUN_ID=$RUN_ID" \
-                  --extra-vars "RUN_START_TS_EPOCH_SECS=$runStartTsEpochSecs" \
+                  --extra-vars "RUN_START_TS_EPOCH_SECS=$RUN_START_TS_EPOCH_SECS" \
                   --extra-vars "STATS_NAME=$statsName" \
                   --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE"
 
