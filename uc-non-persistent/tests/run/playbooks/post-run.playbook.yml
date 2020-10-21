@@ -12,37 +12,23 @@
     - include_vars:
         file: run.vars.yml
         name: run
-    - include_vars: "{{TEST_SPEC_FILE}}"
-    - include_vars:
-        file: "{{RUN_SPEC_FILE}}"
-        name: run_spec
-    - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.broker-nodes.json"
-        name: test_broker_nodes
-    - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.sdkperf-nodes.json"
-        name: test_sdkperf_nodes
-    - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.env.json"
-        name: test_env
 
   tasks:
 
     - name: "Read & Check Environment vars"
       set_fact:
         result_dir: "{{ RESULT_DIR }}"
-        run_id: "{{ RUN_ID }}"
-        run_name: "{{ RUN_NAME }}"
-        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
-
-    - set_fact:
-        run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_start_ts_epoch_secs) }}"
 
     - name: "Settings"
       set_fact:
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
         meta_result_file: "{{ result_dir }}/{{ run.meta_file_name }}"
-        meta_j2_template_file: "./lib/run.pre.meta.j2"
+        meta_j2_template_file: "./lib/run.post.meta.j2"
+
+    - name: "Read meta from pre-run"
+      include_vars:
+        file: "{{meta_result_file}}"
+        name: pre_run_meta
 
     - name: "Ensure {{ result_dir }} exists"
       local_action:
@@ -50,7 +36,7 @@
         path: "{{result_dir}}"
         state: directory
 
-    - name: "Get Client Connections: Start"
+    - name: "Get Client Connections: End"
       uri:
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
         # GET /msgVpns/{msgVpnName}/clients
@@ -64,13 +50,27 @@
       register: result
 
     - set_fact:
-        number_connected_clients_start: "{{ result.json.data | length }}"
-        connected_client_list_start: "{{ result.json.data }}"
+        number_connected_clients_end: "{{ result.json.data | length }}"
+        connected_client_list_end: "{{ result.json.data }}"
+        run_end_ts_epoch_secs: "{{lookup('pipe','date -u +%s')}}"
+    - set_fact:
+        run_end_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_end_ts_epoch_secs) }}"
 
-    - name: "Write Pre-Run Meta Data to Results"
-      template:
-        src: "{{ meta_j2_template_file }}"
+    - name: "Create Meta Content Additions"
+      set_fact:
+        meta_content_add: "{{ lookup('template', meta_j2_template_file ) | from_json}}"
+
+    - name: "Add Meta Content Additions"
+      set_fact:
+        final_meta:
+          meta: "{{ pre_run_meta.meta | combine(meta_content_add.meta, recursive=True)}}"
+
+    - name: "Write Test Meta Data to Results"
+      copy:
+        content: "{{ final_meta | to_nice_json(indent=2) }}"
         dest: "{{ meta_result_file }}"
+      delegate_to: localhost
+
 
 ###
 # The End.

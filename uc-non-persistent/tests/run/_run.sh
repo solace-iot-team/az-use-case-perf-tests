@@ -42,7 +42,7 @@ echo ">>> Pre-Run processing ..."
   logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
   runScript="$scriptDir/$runScriptName"
   nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
 # echo ">>> Starting Load ..."
 #   runScript="$scriptDir/load/start.load.sh"
@@ -54,12 +54,20 @@ echo ">>> Running Monitors ..."
   logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
   runScript="$scriptDir/monitors/$runScriptName"
   nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
 # echo ">>> Stop Load ..."
 #   runScript="$scriptDir/load/stop.load.sh"
 #   nohup $runScript > $RUN_LOG_DIR/stop.load.sh.log 2>&1 &
 #   pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $runScript"; exit 1; fi
+
+
+echo ">>> Post-Run processing ..."
+  runScriptName="_run.post-run.sh"
+  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+  runScript="$scriptDir/$runScriptName"
+  nohup $runScript > $logFileName 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
 ##############################################################################################################################
 # Post Processing of Results
