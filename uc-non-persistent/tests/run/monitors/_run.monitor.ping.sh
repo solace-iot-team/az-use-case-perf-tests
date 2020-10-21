@@ -48,7 +48,7 @@ rm -f "$resultDir/$statsName".*.json
 # Run
 
   inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/sdkperf.ping.playbook.yml"
+  playbook="$scriptDir/playbooks/sdkperf.ping.playbook.yml"
   privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 
   ansible-playbook \
