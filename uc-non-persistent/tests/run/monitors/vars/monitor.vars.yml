@@ -1,0 +1,47 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+vpn_stats:
+    select_vpn_stats: >-
+      dataRxByteCount,
+      dataTxByteCount,
+      dataRxMsgCount,
+      dataTxMsgCount,
+      discardedRxMsgCount,
+      discardedTxMsgCount,
+      averageRxByteRate,
+      averageRxMsgRate,
+      averageTxByteRate,
+      averageTxMsgRate,
+      rate
+    select_client_connection_stats: >-
+      rxDiscardedMsgCount,
+      rxMsgCount,
+      rxMsgRate,
+      rxByteRate,
+      rxByteCount,
+      txDiscardedMsgCount,
+      txMsgCount,
+      txMsgRate,
+      txByteRate,
+      txByteCount,
+      clientAddress,
+      clientName,
+      uptime
+latency:
+    topic_prefix: "private/direct/latency"
+    warmup_secs: 10
+    msg_rate_per_second: 1000 # 1000
+    msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+    lb: 4096
+    lg: 15
+    lpm: true
+ping:
+    # placeholder, no additional settings required
+
+###
+# The End.
