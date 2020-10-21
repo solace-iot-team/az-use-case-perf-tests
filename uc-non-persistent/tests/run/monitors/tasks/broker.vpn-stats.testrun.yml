@@ -1,0 +1,89 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  - set_fact:
+      sample_num: "{{item}}"
+      is_warm_up_run: "{{warm_up_run | default(False)}}"
+
+  - name: "Determine Sampling Start Time"
+    block:
+      - name: "get time from local host"
+        shell: "date -u +%s"
+        register: t_result
+        delegate_to: localhost
+      - set_fact:
+          sample_start_ts_epoch_secs: "{{t_result.stdout}}"
+    when: is_warm_up_run == False
+
+  - name: "Set Initial Sampling Start Time"
+    set_fact:
+      sample_start_ts_epoch_secs: "{{run_start_ts_epoch_secs}}"
+    when: is_warm_up_run == True
+
+  - set_fact:
+      sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
+      sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+      sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+
+
+  # TEST & DEBUG
+  # - debug:
+  #     msg:
+  #       - "sample_start_ts_epoch_secs={{sample_start_ts_epoch_secs}}"
+  #       - "sample_start_ts_str={{sample_start_ts_str}}"
+  #       - "sample_end_ts_epoch_secs={{sample_end_ts_epoch_secs}}"
+  #       - "sdkperf_msg_number={{sdkperf_msg_number}}"
+  # - pause:
+  #     seconds: 5
+
+  - name: "Retrieve VPN Stats for sample={{sample_num}} (warmup={{is_warm_up_run}})"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/msgVpn/getMsgVpn
+      # GET /SEMP/v2/monitor/msgVpns/{msgVpnName}?select=
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ vpn_name }}?select={{monitor.vpn_stats.select_vpn_stats|trim|replace(' ','')}}"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: vpn_stats_result
+
+    # artificial pause for timing calculations - call is too fast
+  - pause:
+      seconds: "{{min_collection_period_secs}}"
+
+  - set_fact:
+      vpn_stats_output_json: "{{vpn_stats_result.json.data}}"
+
+  - name: "Post-process vpn results"
+    template:
+      src: "{{ vpn_pp_j2_template_file }}"
+      dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
+    delegate_to: localhost
+    when: is_warm_up_run == False
+
+  - name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
+    block:
+      - name: "get time from local host"
+        shell: "date -u +%s"
+        register: t_result
+        delegate_to: localhost
+      - set_fact:
+          # -1: ensures that there is at least 1 sample in every minute
+          wait_secs: "{{(sample_end_ts_epoch_secs | int) - (t_result.stdout | int) - 1 }}"
+      - name: "Check playbook execution time is within time span"
+        fail:
+          msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
+        when: is_warm_up_run == False and wait_secs|int < 0
+      - name: "Wait for sample cycle to complete, sample={{sample_num}} (warmup={{is_warm_up_run}})"
+        pause:
+          seconds: "{{wait_secs}}"
+    when: sample_num|int < (run_spec.params.total_num_samples-1)
+
+###
+# The End.
