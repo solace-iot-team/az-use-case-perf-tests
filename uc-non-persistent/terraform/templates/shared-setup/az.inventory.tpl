@@ -6,7 +6,10 @@
       "cloud_provider": "${cloud_provider}",
       "broker_pubsub": {
         "public_ip_address": "${solace_broker_nodes[0].public_ip_address}",
-        "private_ip_address": "${solace_broker_nodes[0].private_ip_address}"
+        "private_ip_address": "${solace_broker_nodes[0].private_ip_address}",
+        "vpn_name": "sdkperf",
+        "client_user_name": "testUsr",
+        "client_user_name_pwd": "solace123"
       }
     },
     "hosts": {
@@ -25,10 +28,7 @@
         "sempv2_username": "admin",
         "sempv2_password": "admin",
         "sempv2_timeout": "60",
-        "virtual_router": "primary",
-        "vpn_name": "sdkperf",
-        "client_user_name": "testUsr",
-        "client_user_name_pwd": "solace123"
+        "virtual_router": "primary"
       }
     }
   },
