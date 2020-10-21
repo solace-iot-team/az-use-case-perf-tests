@@ -1,0 +1,37 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+{
+  "meta": {
+    "run_start_time": "{{ run_start_ts_str }}",
+    "run_end_time": "end-time",
+    "run_id": "{{ run_id }}",
+    "run_name": "{{ run_name }}",
+    "cloud_provider": "{{ cloud_provider }}",
+    "infrastructure": "{{ infrastructure }}",
+    "use_case": "{{ test_spec.use_case }}",
+
+    "env": {{test_env.env | to_nice_json }},
+
+    "run_spec": {{ run_spec | to_nice_json }},
+
+    "nodes": {
+      "broker_nodes": {{ test_broker_nodes.broker_nodes | to_nice_json }},
+      "sdkperf_nodes": {{ test_sdkperf_nodes.sdkperf_nodes | to_nice_json }}
+    },
+    "client_connections": {
+      "start_test": {
+        "number": {{ number_connected_clients_start }},
+        "list": {{ connected_client_list_start | to_nice_json }}
+      },
+      "end_test": {
+        "number": -1,
+        "list": -1
+      }
+    }
+  }
+}
