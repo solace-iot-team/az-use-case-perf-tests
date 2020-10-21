@@ -87,7 +87,7 @@
 
     - name: "Create the VPN"
       solace_vpn:
-        name: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        name: "{{ vpn_name }}"
         settings:
           enabled: true
           authenticationBasicType: "none" # none, internal
@@ -98,7 +98,7 @@
     - name: "Create the Client Profile"
       solace_client_profile:
         name: "{{ bootstrap.broker.pubsub.client_profile_name }}"
-        msg_vpn: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        msg_vpn: "{{ vpn_name }}"
         settings:
           allowBridgeConnectionsEnabled: false
           allowGuaranteedMsgSendEnabled: false
@@ -118,12 +118,12 @@
 
     - name: "Create Client Username"
       solace_client_username:
-        name: "{{ bootstrap.broker.pubsub.client_user_name }}"
-        msg_vpn: "{{ bootstrap.broker.pubsub.vpn_name }}"
+        name: "{{ client_user_name }}"
+        msg_vpn: "{{ vpn_name }}"
         settings:
           clientProfileName: "{{ bootstrap.broker.pubsub.client_profile_name }}"
           aclProfileName: "default"
-          password: "{{ bootstrap.broker.pubsub.client_user_name_pwd }}"
+          password: "{{ client_user_name_pwd }}"
           enabled: true
         state: present
 
@@ -135,7 +135,7 @@
           - "   {{admin_protocol}}://{{sempv2_host}}:{{sempv2_port}}"
           - "   user: {{ sempv2_username }}"
           - "   pass: {{ sempv2_password }}"
-          - "   vpn: {{bootstrap.broker.pubsub.vpn_name}}"
+          - "   vpn: {{vpn_name}}"
       when: is_solace_cloud == False
 
 ###
