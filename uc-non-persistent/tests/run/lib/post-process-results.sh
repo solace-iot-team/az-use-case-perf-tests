@@ -16,7 +16,6 @@ source $projectHome/.lib/functions.sh
 # Check env vars
 
   if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then echo ">>> ERROR: missing env var 'UC_NON_PERSISTENT_INFRASTRUCTURE'"; exit 1; fi
-  if [ -z "$RUN_LOG_DIR" ]; then echo ">>> ERROR: missing env var 'RUN_LOG_DIR'"; exit 1; fi
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var 'RUN_ID'"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:'RUN_LOG_FILE_BASE'"; exit 1; fi
 
