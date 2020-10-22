@@ -23,12 +23,21 @@ source $projectHome/.lib/functions.sh
   if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var: SHARED_SETUP_DIR"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:RUN_LOG_FILE_BASE"; exit 1; fi
 
+
+############################################################################################################################
+# Included?
+
+  if [ -z "$IS_RUN_LOAD" ]; then
+    echo ">>> NOT INCLUDED in run"
+    exit
+  fi
+
 ############################################################################################################################
 # Settings
 
-    export ANSIBLE_LOG_PATH="$RUN_LOG_FILE_BASE.$scriptName.ansible.log"
-    export ANSIBLE_DEBUG=False
-    export ANSIBLE_HOST_KEY_CHECKING=False
+  export ANSIBLE_LOG_PATH="$RUN_LOG_FILE_BASE.$scriptName.ansible.log"
+  export ANSIBLE_DEBUG=False
+  export ANSIBLE_HOST_KEY_CHECKING=False
 
 ##############################################################################################################################
 # General for all playbooks
