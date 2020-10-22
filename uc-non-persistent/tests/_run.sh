@@ -32,7 +32,7 @@ source $projectHome/.lib/functions.sh
 ##############################################################################################################################
 # Call scripts
 
-runScriptName="_generate.test.spec.inventory.sh"
+runScriptName="_generate.test-spec.sh"
   echo ">>> Run: $runScriptName"
   logFileName="$TMP_DIR/$runScriptName.log"
   runScript="$scriptDir/$runScriptName"
@@ -40,7 +40,7 @@ runScriptName="_generate.test.spec.inventory.sh"
   pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
 
-runScriptName="_run.test.spec.sh"
+runScriptName="_run.test-spec.sh"
   echo ">>> Run: $runScriptName"
   logFileName="$TMP_DIR/$runScriptName.log"
   runScript="$scriptDir/$runScriptName"

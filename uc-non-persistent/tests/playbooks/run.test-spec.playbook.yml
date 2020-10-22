@@ -20,6 +20,7 @@
           - "LOG_DIR={{LOG_DIR}}"
           - "RUN_SCRIPTS_DIR={{RUN_SCRIPTS_DIR}}"
           - "RUN_SPECS_DIR={{RUN_SPECS_DIR}}"
+          - "GENERATE_ONLY={{GENERATE_ONLY}}"
 
     - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
       local_action:
@@ -48,6 +49,7 @@
     - name: "Settings"
       set_fact:
         infrastructure_id: "{{inventory_hostname}}"
+        is_run_tests: "{{ False if GENERATE_ONLY else True }}"
 
     - name: "Iterate over runs"
       include_tasks: ./tasks/run.test.yml

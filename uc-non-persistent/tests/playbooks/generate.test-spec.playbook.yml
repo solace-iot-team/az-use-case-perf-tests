@@ -62,7 +62,7 @@
       set_fact:
         test_spec_inventory: "{{ lookup('template', test_specs_j2_template_file) | from_json}}"
 
-    - name: "Write Generted Test Spec Inventory"
+    - name: "Write Generated Test Spec Inventory"
       copy:
         content: "{{test_spec_inventory | to_nice_yaml(indent=2) }}"
         dest: "{{generated_test_specs_file}}"
