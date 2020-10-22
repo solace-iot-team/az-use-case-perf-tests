@@ -49,7 +49,7 @@
     - name: "Settings"
       set_fact:
         infrastructure_id: "{{inventory_hostname}}"
-        is_run_tests: "{{ False if GENERATE_ONLY else True }}"
+        is_run_tests: "{{ False if GENERATE_ONLY=='True' else True }}"
 
     - name: "Iterate over runs"
       include_tasks: ./tasks/run.test.yml

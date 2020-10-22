@@ -12,9 +12,13 @@
   "sample_num": "{{sample_num}}",
   "metrics_type": "{{stats_name}}",
   "meta": {
-    "description": "Broker VPN stats",
+    "description": "Round-trip latency from host to broker node",
     "stats_name": "{{stats_name}}",
+    "host": "{{inventory_hostname}}",
+    "sdkperf": {
+      "command": {{sdkperf_result.cmd | to_json(ensure_ascii=False)}}
+    },
     "log_file": "--omitted--"
   },
-  "metrics": {{ vpn_stats_output_json | to_nice_json}}
+  "metrics": {{ sdkperf_output_json | to_nice_json}}
 }

@@ -24,7 +24,7 @@ export ANSIBLE_VERBOSITY=3
 testSpecJson=$(cat $TEST_SPEC_FILE | yq . )
 testSpecName=$(echo $testSpecJson | jq -r '.test_spec.name')
 export TEST_SPEC_INVENTORY_FILE="$TEST_SPEC_DIR/$testSpecName.test.spec.inventory.yml"
-export GENERATE_ONLY=true
+export GENERATE_ONLY="True"
 
 ../_run.test-spec.sh
 
