@@ -35,41 +35,44 @@ echo "##########################################################################
 echo "# Script: $scriptName"
 echo "# Running tests: start load, run monitors, stop load ..."
 
-echo ">>> Starting Load ..."
-  runScriptName="_start.load.sh"
-  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
-  runScript="$scriptDir/load/$runScriptName"
-  nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+FAILED=0
 
-echo ">>> Pre-Run processing ..."
-  runScriptName="_run.pre-run.sh"
-  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
-  runScript="$scriptDir/$runScriptName"
-  nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  echo ">>> Starting Load ..."
+    runScriptName="_start.load.sh"
+    logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+    runScript="$scriptDir/load/$runScriptName"
+    nohup $runScript > $logFileName 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
-echo ">>> Running Monitors ..."
-  runScriptName="_run.monitors.sh"
-  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
-  runScript="$scriptDir/monitors/$runScriptName"
-  nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  echo ">>> Pre-Run processing ..."
+    runScriptName="_run.pre-run.sh"
+    logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+    runScript="$scriptDir/$runScriptName"
+    nohup $runScript > $logFileName 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
-echo ">>> Post-Run processing ..."
-  runScriptName="_run.post-run.sh"
-  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
-  runScript="$scriptDir/$runScriptName"
-  nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+if [ "$FAILED" -eq 0 ]; then
+  echo ">>> Running Monitors ..."
+    runScriptName="_run.monitors.sh"
+    logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+    runScript="$scriptDir/monitors/$runScriptName"
+    nohup $runScript > $logFileName 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
+fi
 
-echo ">>> Stop Load ..."
-  runScriptName="_stop.load.sh"
-  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
-  runScript="$scriptDir/load/$runScriptName"
-  nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  echo ">>> Post-Run processing ..."
+    runScriptName="_run.post-run.sh"
+    logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+    runScript="$scriptDir/$runScriptName"
+    nohup $runScript > $logFileName 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
+  echo ">>> Stop Load ..."
+    runScriptName="_stop.load.sh"
+    logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+    runScript="$scriptDir/load/$runScriptName"
+    nohup $runScript > $logFileName 2>&1 &
+    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
 ##############################################################################################################################
 # Post Processing of Results
@@ -78,7 +81,7 @@ echo ">>> Post processing results ..."
   runScript="$scriptDir/lib/$runScriptName"
   logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
   nohup $runScript > $logFileName 2>&1 &
-  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; fi
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
 echo ">>> DONE."
 if [ -f "$RUN_LOG_FILE_BASE*ERROR.log" ]; then
