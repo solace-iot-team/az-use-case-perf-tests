@@ -18,7 +18,8 @@
         "ansible_user": "${admin_username}",
         "ansible_become": true,
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"broker-1"
+        "boxname":"broker-1",
+        "sdkperf_root": "/opt/sdkperf"
       },
       "broker_pubsub": {
         "ansible_connection": "local",
@@ -38,7 +39,8 @@
         "ansible_host": "${sdk_perf_nodes[0].public_ip}",
         "ansible_user": "${admin_username}",
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"publisher-1"
+        "boxname":"publisher-1",
+        "sdkperf_root": "/opt/sdkperf"
       }
     }
   },
@@ -48,13 +50,15 @@
         "ansible_host": "${sdk_perf_nodes[1].public_ip}",
         "ansible_user": "${admin_username}",
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"consumer-1"
+        "boxname":"consumer-1",
+        "sdkperf_root": "/opt/sdkperf"
       },
       "sdkperf_consumer_vm_2": {
         "ansible_host": "${sdk_perf_nodes[2].public_ip}",
         "ansible_user": "${admin_username}",
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"consumer-2"
+        "boxname":"consumer-2",
+        "sdkperf_root": "/opt/sdkperf"
       }
     }
   },
@@ -64,7 +68,8 @@
         "ansible_host": "${sdk_perf_nodes[3].public_ip}",
         "ansible_user": "${admin_username}",
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"latency-1"
+        "boxname":"latency-1",
+        "sdkperf_root": "/opt/sdkperf"
       }
     }
   }
