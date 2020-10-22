@@ -11,7 +11,7 @@ usecaseHome=$projectHome/uc-non-persistent
 
 export TEST_SPEC_FILE="$usecaseHome/tests/specs/.test/1_test.test.spec.yml"
 
-export ANSIBLE_VERBOSITY=3
+export ANSIBLE_VERBOSITY=0
 
 nohup ../_run.sh > nohup.out 2>&1 &
 
