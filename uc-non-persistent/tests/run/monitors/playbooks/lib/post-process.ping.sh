@@ -16,7 +16,6 @@ pingJson=$( cat $TEMPLATE_FILE | jq -r .) || exit
 pingJson=$( echo $pingJson | jq -r '.sample_start_timestamp=env.START_TIMESTAMP_STR' )
 pingJson=$( echo $pingJson | jq -r '.run_id=env.RUN_ID')
 pingJson=$( echo $pingJson | jq -r '.sample_num=env.SAMPLE_NUM')
-pingJson=$( echo $pingJson | jq -r '.sample_corr_id=env.RUN_ID + "." + env.SAMPLE_NUM')
 
 lineCount=0
 while IFS= read line; do
@@ -36,24 +35,24 @@ while IFS= read line; do
         export unit=$(expr "$rtt_values" : '.*\([a-z].*[a-z]\)')
       # min_val
         export val=$(expr "$rtt_values" : '\(.[0-9]*\..[0-9]*\)')
-        pingJson=$( echo $pingJson | jq -r '.metrics.ping.rtt_min={"value":env.val|tonumber, "unit":env.unit}')
+        pingJson=$( echo $pingJson | jq -r '.metrics.rtt_min={"value":env.val|tonumber, "unit":env.unit}')
         # delete min_val
         export rtt_values=${rtt_values#$val/}
       # pingJson=$( echo $pingJson | jq -r '.metrics.rtt_values_no_min=env.rtt_values')
       # avg_val
         export val=$(expr "$rtt_values" : '\(.[0-9]*\..[0-9]*\)')
-        pingJson=$( echo $pingJson | jq -r '.metrics.ping.rtt_avg={"value":env.val|tonumber, "unit":env.unit}')
+        pingJson=$( echo $pingJson | jq -r '.metrics.rtt_avg={"value":env.val|tonumber, "unit":env.unit}')
         # delete avg_val
         export rtt_values=${rtt_values#$val/}
       # pingJson=$( echo $pingJson | jq -r '.metrics.rtt_values_no_avg=env.rtt_values')
       # max_val
         export val=$(expr "$rtt_values" : '\(.[0-9]*\..[0-9]*\)')
-        pingJson=$( echo $pingJson | jq -r '.metrics.ping.rtt_max={"value":env.val|tonumber, "unit":env.unit}')
+        pingJson=$( echo $pingJson | jq -r '.metrics.rtt_max={"value":env.val|tonumber, "unit":env.unit}')
         # delete max_val
         export rtt_values=${rtt_values#$val/}
       # mdev_val
         export val=$(expr "$rtt_values" : '\(.[0-9]*\..[0-9]*\)')
-        pingJson=$( echo $pingJson | jq -r '.metrics.ping.rtt_mdev={"value":env.val|tonumber, "unit":env.unit}')
+        pingJson=$( echo $pingJson | jq -r '.metrics.rtt_mdev={"value":env.val|tonumber, "unit":env.unit}')
         # delete max_val
         # export rtt_values=${rtt_values#$val/}
   fi

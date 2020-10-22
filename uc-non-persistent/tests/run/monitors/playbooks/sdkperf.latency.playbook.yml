@@ -1,0 +1,101 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "SDKPerf latency node to broker node"
+  hosts: "{{HOSTS}}"
+  gather_facts: no
+  pre_tasks:
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+    - include_vars:
+        file: "monitor.vars.yml"
+        name: monitors
+  vars:
+    remote_broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
+    local_broker_uri: "localhost"
+    broker_smf_port: 55555
+
+  tasks:
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        stats_name: "{{ STATS_NAME }}"
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - name: "Settings"
+      set_fact:
+        max_sample_duration_secs: 120
+        sampling_overhead_secs: 10
+        min_collection_period_secs: 15
+        sample_duration_secs: "{{ run_spec.params.sample_duration_secs | int }}"
+        total_num_samples: "{{ run_spec.params.total_num_samples }}"
+        latency_pp_j2_template_file: "./lib/latency.pp.j2"
+        broker_uri: "{{local_broker_uri if RUN_LOCALLY=='True' else remote_broker_uri}}"
+    - set_fact:
+        collection_period: "{{((sample_duration_secs | int) - monitors.latency.warmup_secs - sampling_overhead_secs)}}"
+
+    - name: "Set & Calculate SDKPerf Parameters"
+      set_fact:
+        # don't use taskset, same runs on broker node.
+        # sdkperf_exe: "taskset -c 1,2 {{sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh"
+        sdkperf_exe: "{{sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh"
+        sdkperf_connection: "{{ broker_uri }}:{{ broker_smf_port }}"
+        sdkperf_user: "{{ broker_pubsub.client_user_name }}@{{ broker_pubsub.vpn_name }}"
+        sdkperf_pwd: "{{ broker_pubsub.client_user_name_pwd }}"
+        sdkperf_topic_list: "{{ monitors.latency.topic_prefix }}/{{stats_name}}"
+        sdkperf_msg_number: "{{((sample_duration_secs | int) - monitors.latency.warmup_secs - sampling_overhead_secs ) * run_spec.monitors.latency.msg_rate_per_second | int }}"
+        sdkperf_msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes }}"
+        sdkperf_msg_rate_per_second: "{{ run_spec.monitors.latency.msg_rate_per_second }}"
+        sdkperf_is_lpm: "{{ run_spec.monitors.latency.lpm }}"
+        sdkperf_warmup_secs: "{{ monitors.latency.warmup_secs }}"
+        sdkperf_lb: "{{ monitors.latency.lb }}"
+        sdkperf_lg: "{{ monitors.latency.lg }}"
+
+    - name: "Check input: sample_duration_secs"
+      fail:
+        msg:
+          - "CONFIGURATION ERROR"
+          - "maximum allowed sample_duration_secs: {{ max_sample_duration_secs}}"
+          - "configured: {{run_spec.params.sample_duration_secs}}"
+      when: run_spec.params.sample_duration_secs > max_sample_duration_secs
+
+    - name: "Check input"
+      fail:
+        msg:
+          - "CONFIGURATION ERROR"
+          - "latency collection period too short, must be at least {{min_collection_period_secs}} seconds"
+          - "run_spec.params.sample_duration_secs={{sample_duration_secs}}"
+          - "monitors.latency.warmup_secs={{monitors.latency.warmup_secs}}"
+          - "sampling_overhead_secs={{sampling_overhead_secs}}"
+          - "collection period = {{collection_period}}"
+      when: collection_period | int < min_collection_period_secs
+
+    # # TEST & DEBUG
+    # - name: "TEST: Simulate delay in startup"
+    #   pause:
+    #     seconds: 15
+
+    - name: "Warmup Sample Runs"
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
+      vars:
+        warm_up_run: true
+      with_sequence: "end=0 start=0"
+
+    - name: "Starting Sample Runs"
+      include_tasks: ./tasks/sdkperf.latency.testrun.yml
+      with_sequence: "end={{ total_num_samples|int - 1 }} start=0"
+
+
+###
+# The End.

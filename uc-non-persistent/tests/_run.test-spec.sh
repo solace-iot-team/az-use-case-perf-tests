@@ -21,7 +21,7 @@ source $projectHome/.lib/functions.sh
   if [ -z "$TMP_DIR" ]; then echo ">>> ERROR: missing env var:TMP_DIR"; exit 1; fi
   if [ -z "$TEST_SPEC_DIR" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_DIR"; exit 1; fi
   if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var:SHARED_SETUP_DIR"; exit 1; fi
-  if [ -z "$GENERATE_ONLY" ]; then GENERATE_ONLY="false"; fi
+  if [ -z "$GENERATE_ONLY" ]; then GENERATE_ONLY="False"; fi
 
 ##############################################################################################################################
 # Prepare
