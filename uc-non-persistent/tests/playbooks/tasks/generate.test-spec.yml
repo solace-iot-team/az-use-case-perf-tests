@@ -29,12 +29,14 @@
   - name: "Compose Run Spec: Load for {{run_spec_id}}"
     set_fact:
       run_load:
-        include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include)}}"
-        # pub_num_topics: "{{ run.load.pub_num_topics | default(test_spec.run_specs.run_defaults.load.pub_num_topics)}}"
-        # pub_msg_rate_per_second: "{{ run.load.pub_msg_rate_per_second | default(test_spec.run_specs.run_defaults.load.pub_msg_rate_per_second)}}"
-        # pub_msg_payload_size_bytes: "{{ run.load.pub_msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.load.pub_msg_payload_size_bytes)}}"
-        # pubs_to_subs_ratio: "{{ run.load.pubs_to_subs_ratio | default(test_spec.run_specs.run_defaults.load.pubs_to_subs_ratio)}}"
-        # pub_total_num_msgs: "calculate me..."
+        include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include) }}"
+        consumers:
+          consumer_groups: "{{ run_spec.load.consumers.consumer_groups | default(test_spec.run_specs.run_defaults.load.consumers.consumer_groups) }}"
+        publishers:
+          publisher_groups: "{{ run_spec.load.publishers.publisher_groups | default(test_spec.run_specs.run_defaults.load.publishers.publisher_groups) }}"
+          client_connection_count: "{{ run_spec.load.publishers.client_connection_count | default(test_spec.run_specs.run_defaults.load.publishers.client_connection_count) }}"
+          msg_payload_size_bytes: "{{ run_spec.load.publishers.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.load.publishers.msg_payload_size_bytes) }}"
+          msg_rate_per_second: "{{ run_spec.load.publishers.msg_rate_per_second | default(test_spec.run_specs.run_defaults.load.publishers.msg_rate_per_second) }}"
 
   - name: "Compose Run Spec: Monitors for {{run_spec_id}}"
     set_fact:
