@@ -42,7 +42,7 @@
                 topic_list: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
             client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
             msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-            msg_rate_per_second: 50000
+            msg_rate_per_second: 15000
         monitors:
           latency:
             sdkperf_node_to_broker:
@@ -57,7 +57,7 @@
           vpn_stats:
             include: true
       runs:
-        - name: 0_variation
+        - name: 0_base
           load:
             include: false
           monitors:

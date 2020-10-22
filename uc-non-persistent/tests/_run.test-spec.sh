@@ -43,7 +43,7 @@ ansible-playbook \
                 --extra-vars "RUN_SPECS_DIR=$RUN_SPECS_DIR" \
                 --extra-vars "GENERATE_ONLY=$GENERATE_ONLY"
 
-if [[ $? != 0 ]]; then echo ">>> ERROR running: $scriptName"; echo; exit 1; fi
+code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
 
 

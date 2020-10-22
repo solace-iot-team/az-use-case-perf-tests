@@ -12,7 +12,6 @@ usecaseHome=$projectHome/uc-non-persistent
 export TEST_SPEC_FILE="$scriptDir/../specs/.test/1_test.test.spec.yml"
 
 
-export TMP_DIR=$scriptDir/../tmp
 export TEST_SPEC_DIR=$TMP_DIR/test-specs
 export SHARED_SETUP_DIR=$usecaseHome/shared-setup;
 export ANSIBLE_VERBOSITY=3
