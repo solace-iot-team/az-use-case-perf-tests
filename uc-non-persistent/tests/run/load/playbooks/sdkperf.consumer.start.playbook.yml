@@ -1,0 +1,76 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "SDKPerf Consumer Start"
+  hosts: sdkperf_consumers
+  gather_facts: no
+  pre_tasks:
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+    - include_vars:
+        file: "load.vars.yml"
+        name: load
+  vars:
+    broker_uri: "tcp://{{ broker_pubsub.private_ip_address }}"
+    broker_smf_port: 55555
+
+  tasks:
+
+    - name: "Set SDKPerf Parameters"
+      set_fact:
+        sdkperf_exe: "{{sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh"
+        sdkperf_connection: "{{ broker_uri }}:{{ broker_smf_port }}"
+        sdkperf_user: "{{ broker_pubsub.client_user_name }}@{{ broker_pubsub.vpn_name }}"
+        sdkperf_pwd: "{{ broker_pubsub.client_user_name_pwd }}"
+        sdkperf_rc: "{{ load.sdkperf.rc }}"
+        sdkperf_epl: "{{ load.sdkperf.epl }}"
+
+    - name: "Ensure no SDKPerf exes are running"
+      become: true
+      command: pkill --signal 2 -f sdkperf
+      ignore_errors: true
+
+    - pause:
+        seconds: 3
+        prompt: "Waiting 3 seconds ...."
+
+    # - debug:
+    #     msg:
+    #       - "consumer_group_num={{ consumer_group_num }}"
+    #       - "consumer_group.group_id={{ consumer_group.group_id }}"
+    #       - "consumer_group.topic_list={{ consumer_group.topic_list }}"
+    #   loop: "{{ load.sdkperf.consumer_groups }}"
+    #   loop_control:
+    #     index_var: consumer_group_num
+    #     loop_var: consumer_group
+
+    - name: "Run 'sdkperf' ..."
+      shell: >
+        nohup taskset -c {{ group_num }}
+        {{ sdkperf_exe }}
+        -cip={{ sdkperf_connection }}
+        -cn=sdkperf-node-{{ boxname }}-{{ group.group_id }}-
+        -cu={{ sdkperf_user }}
+        -cp={{ sdkperf_pwd }}
+        -nagle
+        -rc={{ sdkperf_rc }}
+        -pea=0
+        -epl={{ sdkperf_epl }}
+        -stl="{{ group.topic_list }}"
+        </dev/null
+        > sdkperf_{{ group.group_id }}.out 2>&1
+        &
+      register: sdkperf_result
+      loop: "{{ run_spec.load.consumers.consumer_groups }}"
+      loop_control:
+        index_var: group_num
+        loop_var: group
+    # TODO:
+    #   to check correct start: download log files and check for ERROR string
+
+###
+# The End.
