@@ -22,7 +22,7 @@
       generated_test_specs: "{{generated_test_specs | combine( {infrastructure_id:{'run_list': {} } } ) }}"
 
   - name: "Iterate over runs"
-    include_tasks: ./tasks/generate.run.spec.yml
+    include_tasks: ./tasks/generate.test-spec.yml
     loop: "{{ test_spec.run_specs.runs }}"
     loop_control:
       index_var: run_spec_num

@@ -23,7 +23,7 @@
 
   - name: "Write Run Spec to File"
     copy:
-      content: "{{run_spec | to_nice_yaml }}"
+      content: "{{ run_spec | to_nice_yaml }}"
       dest: "{{run_spec_file}}"
     delegate_to: localhost
 
@@ -55,6 +55,7 @@
 
     delegate_to: localhost
     register: run_script_result
+    when: is_run_tests
 
     # TODO:
     # failed_when: "'Exception' in sdkperf_result.stderr or sdkperf_result.stdout == ''"
