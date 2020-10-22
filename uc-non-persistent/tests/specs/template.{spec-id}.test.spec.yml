@@ -1,3 +1,76 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
 
+---
+  test_spec:
+    name: {test-spec-name}
+    use_case: uc_non_persistent
+    infrastructure_list:
+      - cloud_provider: {cloud_provider}
+        config: {prefix}-standalone
+      - cloud_provider: {cloud_provider}
+        config: {prefix}-standalone
+    run_specs:
+      run_params:
+        total_num_samples: {number of samples}
+        # sample_duration_secs: min: 45 secs, max: 120 secs
+        sample_duration_secs: 60
+      run_defaults:
+        load:
+          include: true
+          consumers:
+            consumer_groups:
+              - group_id: group_0
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB"
+              - group_id: group_1
+                topic_list: "market/exch2/tickerC,market/exch2/tickerD"
+              - group_id: group_2
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB"
+              - group_id: group_3
+                topic_list: "market/exch2/tickerC,market/exch2/tickerD"
+          publishers:
+            publisher_groups:
+              - group_id: group_0
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
+              - group_id: group_1
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
+              - group_id: group_2
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
+              - group_id: group_3
+                topic_list: "market/exch1/tickerA,market/exch1/tickerB,market/exch2/tickerC,market/exch2/tickerD"
+            client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
+            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+            msg_rate_per_second: 50000
+        monitors:
+          latency:
+            sdkperf_node_to_broker:
+              include: true
+            broker_node_to_broker:
+              include: true
+            msg_rate_per_second: 1000 # define a max of 10000
+            msg_payload_size_bytes: 100 # define a max of 10K
+            lpm: true
+          ping:
+            include: true
+          vpn_stats:
+            include: true
+      runs:
+        - name: {run-name-0}
+          load:
+            include: false
+          monitors:
+            latency:
+              msg_payload_size_bytes: 100
+        - name: {run-name-1}
+          monitors:
+            latency:
+              msg_payload_size_bytes: 100
+        - name: {run-name-2}
+          monitors:
+            latency:
+              msg_payload_size_bytes: 200
 
-copy the spec and create the template
+###
+# The End.
