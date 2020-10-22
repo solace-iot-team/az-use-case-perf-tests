@@ -1,0 +1,78 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  - name: "Aborting Tests for Infrastructure"
+    debug:
+      msg:
+        - "infrastructure_num={{infrastructure_num}}"
+        - "{{infrastructure}}"
+
+  - name: "Set Infrastructure Id"
+    set_fact:
+      infrastructure_id: "{{infrastructure.cloud_provider}}.{{infrastructure.config}}"
+
+  - name: "Set Infrastructure Inventory Filename"
+    set_fact:
+      inventory_file: "{{SHARED_SETUP_DIR}}/{{infrastructure.cloud_provider}}.{{infrastructure.config}}.inventory.json"
+
+  - name: "Get Infrastructure Inventory"
+    set_fact:
+      infrastructure_inventory: "{{ lookup('file', inventory_file) | from_json }}"
+  - set_fact:
+      broker_pubsub: "{{ infrastructure_inventory.all.hosts.broker_pubsub }}"
+      client_user_name: "{{ infrastructure_inventory.all.vars.broker_pubsub.client_user_name }}"
+      vpn_name: "{{ infrastructure_inventory.all.vars.broker_pubsub.vpn_name }}"
+
+  - name: "Check Imports / Version / Interpreter"
+    solace_get_available:
+      host: "{{ broker_pubsub.sempv2_host }}"
+      port: "{{ broker_pubsub.sempv2_port }}"
+      secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+      username: "{{ broker_pubsub.sempv2_username }}"
+      password: "{{ broker_pubsub.sempv2_password }}"
+      timeout: "{{ broker_pubsub.sempv2_timeout }}"
+    register: result
+    # fail_when: "result.rc != 0 and not result.is_available"
+    until: "result.rc == 0 and result.is_available"
+    retries: 1
+    delay: 1
+
+  - name: "Disable Client Username"
+    solace_client_username:
+      host: "{{ broker_pubsub.sempv2_host }}"
+      port: "{{ broker_pubsub.sempv2_port }}"
+      secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+      username: "{{ broker_pubsub.sempv2_username }}"
+      password: "{{ broker_pubsub.sempv2_password }}"
+      timeout: "{{ broker_pubsub.sempv2_timeout }}"
+      name: "{{ client_user_name }}"
+      msg_vpn: "{{ vpn_name }}"
+      settings:
+        enabled: false
+      state: present
+
+  - name: "Wait for 2 x sample_duration_secs = {{ 2 * sample_duration_secs | int }}"
+    pause:
+      seconds: "{{ 2 * sample_duration_secs | int}}"
+
+  - name: "Enable Client Username"
+    solace_client_username:
+      host: "{{ broker_pubsub.sempv2_host }}"
+      port: "{{ broker_pubsub.sempv2_port }}"
+      secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+      username: "{{ broker_pubsub.sempv2_username }}"
+      password: "{{ broker_pubsub.sempv2_password }}"
+      timeout: "{{ broker_pubsub.sempv2_timeout }}"
+      name: "{{ client_user_name }}"
+      msg_vpn: "{{ vpn_name }}"
+      settings:
+        enabled: true
+      state: present
+
+###
+# The End.

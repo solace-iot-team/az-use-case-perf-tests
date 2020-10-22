@@ -1,0 +1,40 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Abort Tests on all Infrastructures"
+  hosts: localhost
+  gather_facts: no
+  pre_tasks:
+    - include_vars: "{{TEST_SPEC_FILE}}"
+
+  tasks:
+
+    - name: "Check Env Vars"
+      debug:
+        msg:
+          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+
+    - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{SHARED_SETUP_DIR}}"
+        state: directory
+
+    - name: "Settings"
+      set_fact:
+        infrastructure_list: "{{ test_spec.infrastructure_list }}"
+        sample_duration_secs: "{{test_spec.run_specs.run_params.sample_duration_secs }}"
+
+    - name: "Iterate over infrastructures"
+      include_tasks: ./tasks/abort.infrastructure.yml
+      loop: "{{ infrastructure_list }}"
+      loop_control:
+        index_var: infrastructure_num
+        loop_var: infrastructure
+
+###
+# The End.
