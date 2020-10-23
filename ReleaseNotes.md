@@ -1,5 +1,22 @@
 # Release Notes
 
+## Version: 0.5.0
+Release Purpose: Auto Multi-Test Runs
+
+**NEW FEATURES**
+  * **uc-non-persistent/tests**
+    - test spec based test run framework
+    - supports multiple runs based on variations across any number of provisioned infrastructures
+    - prep for workflow triggered runs
+
+**DEPRECATED:**
+  * **uc-non-persistent/ansible/tests**
+    - use the new test framework instead
+
+**FIXES:**
+  * **terraform**
+    - fixed sdkperf nodes dynamic ip address issue
+
 ## Version: 0.4.3
 Release Purpose: Introduce Latency per Message Metric
 
