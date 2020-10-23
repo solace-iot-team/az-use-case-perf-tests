@@ -12,7 +12,7 @@ variable "aws_region" {
   default = "eu-central-1"
 }
 variable "tag_name_prefix" {
-  default = "1_auto"
+  default = "1-auto"
 }
 variable "tag_owner" {
   default = "auto-test"
