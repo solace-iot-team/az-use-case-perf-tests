@@ -9,7 +9,7 @@ projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
 
-export TEST_SPEC_FILE="$scriptDir/../specs/.test/1_test.test.spec.yml"
+export TEST_SPEC_FILE="$scriptDir/1_test.test.spec.yml"
 
 
 export TEST_SPEC_DIR=$TMP_DIR/test-specs
