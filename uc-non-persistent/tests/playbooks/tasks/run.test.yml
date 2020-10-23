@@ -27,9 +27,39 @@
       dest: "{{run_spec_file}}"
     delegate_to: localhost
 
+  - name: "Scan Logs for errors"
+    shell: >
+      export LOG_DIR={{LOG_DIR}};
+      {{ scan_4_errors_script }} 
+    args:
+      executable: /bin/bash
+    delegate_to: localhost
+    register: err_scan_result
+    ignore_errors: yes
 
-# TODO
-# RUN_ID_PREFIX=?
+  - name: "Error Scan Result"
+    debug:
+      msg: "{{ err_scan_result }}"
+
+  - name: "Check if Test Aborted"
+    file:
+      path: "{{LOG_DIR}}/ABORT.log"
+      state: file
+    delegate_to: localhost
+    register: abort_file_stats
+    ignore_errors: yes
+
+  - set_fact:
+      is_errors_found: "{{ err_scan_result.rc > 0 }}"
+      is_tests_aborted: "{{ abort_file_stats.state == 'present' }}"
+
+  - name: "Decide Fail Strategy"
+    set_fact:
+      do_end_play: "{{ is_errors_found or is_tests_aborted }}"
+
+  - name: "Apply Fail Strategy"
+    meta: end_play
+    when: do_end_play
 
   - name: "Run Test"
     shell: >
@@ -37,10 +67,12 @@
 
       export RUN_SPEC_FILE={{run_spec_file}}
 
+      export LOG_DIR={{LOG_DIR}};
+
       export RUN_LOG_FILE_BASE={{run_log_file_base}};
 
       D=$(date -u +"%Y-%m-%d-%H-%M-%S");
-      export RUN_ID=$RUN_ID_PREFIX$D;
+      export RUN_ID=$D;
 
       export RUN_NAME={{run_name}};
 
@@ -57,9 +89,6 @@
     delegate_to: localhost
     register: run_script_result
     when: is_run_tests
-
-    # TODO:
-    # failed_when: "'Exception' in sdkperf_result.stderr or sdkperf_result.stdout == ''"
 
 
 ###

@@ -6,35 +6,86 @@
 
 ---
 - name: "Abort Tests on all Infrastructures"
-  hosts: localhost
+  hosts: all
   gather_facts: no
   pre_tasks:
-    - include_vars: "{{TEST_SPEC_FILE}}"
+    - include_vars: "{{ TEST_SPEC_FILE }}"
 
   tasks:
 
     - name: "Check Env Vars"
       debug:
         msg:
-          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+          - "SHARED_SETUP_DIR={{ SHARED_SETUP_DIR }}"
 
     - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
       local_action:
         module: file
-        path: "{{SHARED_SETUP_DIR}}"
+        path: "{{ SHARED_SETUP_DIR }}"
         state: directory
 
     - name: "Settings"
       set_fact:
-        infrastructure_list: "{{ test_spec.infrastructure_list }}"
-        sample_duration_secs: "{{test_spec.run_specs.run_params.sample_duration_secs }}"
+        infrastructure_id: "{{ inventory_hostname }}"
+        sample_duration_secs: "{{ test_spec.run_specs.run_params.sample_duration_secs }}"
 
-    - name: "Iterate over infrastructures"
-      include_tasks: ./tasks/abort.infrastructure.yml
-      loop: "{{ infrastructure_list }}"
-      loop_control:
-        index_var: infrastructure_num
-        loop_var: infrastructure
+    - name: "Get Infrastructure Inventory"
+      set_fact:
+        inventory_file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure_id }}.inventory.json"
+    - set_fact:
+        infrastructure_inventory: "{{ lookup('file', inventory_file) | from_json }}"
+
+    - name: "Extract Broker Info from Inventory"
+      set_fact:
+        broker_pubsub: "{{ infrastructure_inventory.all.hosts.broker_pubsub }}"
+        client_user_name: "{{ infrastructure_inventory.all.vars.broker_pubsub.client_user_name }}"
+        vpn_name: "{{ infrastructure_inventory.all.vars.broker_pubsub.vpn_name }}"
+
+    - name: "Check Imports / Version / Interpreter"
+      solace_get_available:
+        host: "{{ broker_pubsub.sempv2_host }}"
+        port: "{{ broker_pubsub.sempv2_port }}"
+        secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+        username: "{{ broker_pubsub.sempv2_username }}"
+        password: "{{ broker_pubsub.sempv2_password }}"
+        timeout: "{{ broker_pubsub.sempv2_timeout }}"
+      register: result
+      # fail_when: "result.rc != 0 and not result.is_available"
+      until: "result.rc == 0 and result.is_available"
+      retries: 1
+      delay: 1
+
+    - name: "Disable Client Username"
+      solace_client_username:
+        host: "{{ broker_pubsub.sempv2_host }}"
+        port: "{{ broker_pubsub.sempv2_port }}"
+        secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+        username: "{{ broker_pubsub.sempv2_username }}"
+        password: "{{ broker_pubsub.sempv2_password }}"
+        timeout: "{{ broker_pubsub.sempv2_timeout }}"
+        name: "{{ client_user_name }}"
+        msg_vpn: "{{ vpn_name }}"
+        settings:
+          enabled: false
+        state: present
+
+    - name: "Wait for 2 x sample_duration_secs = {{ 2 * sample_duration_secs | int }}"
+      pause:
+        seconds: "{{ 2 * sample_duration_secs | int}}"
+
+    - name: "Enable Client Username"
+      solace_client_username:
+        host: "{{ broker_pubsub.sempv2_host }}"
+        port: "{{ broker_pubsub.sempv2_port }}"
+        secure_connection: "{{ broker_pubsub.sempv2_is_secure_connection }}"
+        username: "{{ broker_pubsub.sempv2_username }}"
+        password: "{{ broker_pubsub.sempv2_password }}"
+        timeout: "{{ broker_pubsub.sempv2_timeout }}"
+        name: "{{ client_user_name }}"
+        msg_vpn: "{{ vpn_name }}"
+        settings:
+          enabled: true
+        state: present
 
 ###
 # The End.

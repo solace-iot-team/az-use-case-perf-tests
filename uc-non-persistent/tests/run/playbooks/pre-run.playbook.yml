@@ -50,6 +50,20 @@
         path: "{{result_dir}}"
         state: directory
 
+    - name: "Ensure Client Username is Enabled"
+      solace_client_username:
+        host: "{{ sempv2_host }}"
+        port: "{{ sempv2_port }}"
+        secure_connection: "{{ sempv2_is_secure_connection }}"
+        username: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        timeout: "{{ sempv2_timeout }}"
+        name: "{{ broker_pubsub.client_user_name }}"
+        msg_vpn: "{{ broker_pubsub.vpn_name }}"
+        settings:
+          enabled: true
+        state: present
+
     - name: "Get Client Connections: Start"
       uri:
         # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients

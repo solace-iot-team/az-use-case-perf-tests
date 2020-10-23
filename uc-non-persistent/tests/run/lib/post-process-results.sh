@@ -18,7 +18,7 @@ source $projectHome/.lib/functions.sh
   if [ -z "$UC_NON_PERSISTENT_INFRASTRUCTURE" ]; then echo ">>> ERROR: missing env var 'UC_NON_PERSISTENT_INFRASTRUCTURE'"; exit 1; fi
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var 'RUN_ID'"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:'RUN_LOG_FILE_BASE'"; exit 1; fi
-
+  if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: missing env var:'LOG_DIR'"; exit 1; fi
 
 ##############################################################################################################################
 # Check for errors in the logs
@@ -53,6 +53,7 @@ echo ">>> copy all log files to result dir"
 mkdir $resultDir/logs > /dev/null 2>&1
 cp $RUN_LOG_FILE_BASE*.log "$resultDir/logs"
 if [[ $? != 0 ]]; then echo ">>> ERROR copy log files to result dir"; echo; exit 1; fi
+cp $LOG_DIR/ABORT.log "$resultDir/logs" > /dev/null 2>&1
 
 echo ">>> move result dir to run id"
 finalResultDir="$resultDirBase/run.$RUN_ID"
