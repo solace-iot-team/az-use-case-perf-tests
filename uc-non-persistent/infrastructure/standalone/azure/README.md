@@ -26,7 +26,7 @@ cp az-variables.template az-variables.tf
 vi az-variables.tf
 
   # change settings
-  ...
+  ... 
 
 ````
 

@@ -58,7 +58,7 @@ resource "aws_instance" "sdkperf-nodes" {
 }
 
  resource "local_file" "sdkperf_nodes_file" {
-  content = templatefile("../../templates/shared-setup/aws.sdkperf-nodes.tpl",
+  content = templatefile("../templates/shared-setup/aws.sdkperf-nodes.tpl",
     {
       nodes = aws_instance.sdkperf-nodes.*
     }

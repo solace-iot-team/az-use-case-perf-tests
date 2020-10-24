@@ -11,7 +11,7 @@ provider "aws" {
 
 resource "local_file" "env_file" {
   content = templatefile(
-    "../../templates/shared-setup/aws.env.tpl",
+    "../templates/shared-setup/aws.env.tpl",
     {
       ppg_id = aws_placement_group.sdkperf_placement_grp.id
       ppg = "none"

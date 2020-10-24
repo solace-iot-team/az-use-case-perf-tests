@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 resource "local_file" "inventory_file" {
-  content = templatefile("../../templates/shared-setup/aws.inventory.tpl",
+  content = templatefile("../templates/shared-setup/aws.inventory.tpl",
     {
       admin_username = var.ssh_user
       sdk_perf_nodes = aws_instance.sdkperf-nodes.*

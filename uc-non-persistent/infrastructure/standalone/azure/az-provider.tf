@@ -50,7 +50,7 @@ data "azurerm_resource_group" "input_resgroup" {
 
 resource "local_file" "env_file" {
   content = templatefile(
-    "../../templates/shared-setup/az.env.tpl",
+    "../templates/shared-setup/az.env.tpl",
     {
       ppg_id = azurerm_proximity_placement_group.sdkperf_az_ppgrp.id
       ppg = azurerm_proximity_placement_group.sdkperf_az_ppgrp.*

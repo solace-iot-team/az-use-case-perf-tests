@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
 # ---------------------------------------------------------------------------------------------
 
 ---
@@ -41,27 +42,23 @@ broker:
     #aws_solace_mount_dev: /dev/sdc
     #aws_solace_storage_part: /dev/sdc1
   docker_image:
-    solace_image_file_src: "{{project_root_dir}}/bin/pubsub/solace-pubsub-docker.tar.gz"
+    solace_image_file_src: "{{PROJECT_DIR}}/bin/pubsub/solace-pubsub-docker.tar.gz"
     solace_image_file_dest: "/solace-pubsub-evaluation-docker.tar.gz"
-    docker_compose_file_src: "{{use_case_root_dir}}/ansible/docker-image/PubSub.docker-compose.template.yml"
+    docker_compose_file_src: "{{USE_CASE_DIR}}/infrastructure/standalone/templates/PubSub.docker-compose.template.yml"
     docker_compose_file_dest: "/PubSub.docker-compose.template.yml"
     file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
     file_mode: "0666"
     system_scaling_maxconnectioncount: 1000
-    docker_compose_file_dest_local: "{{use_case_root_dir}}/ansible/docker-image/PubSub.docker-compose.deployed.yml"
+    docker_compose_file_dest_local: "{{deployed_dir}}/PubSub.docker-compose.deployed.yml"
   pubsub:
     max_spool_usage: 100000
     client_profile_name: "testCP"
-    # moved to terraform inventory template
-    # vpn_name: "sdkperf"
-    # client_user_name: "testUsr"
-    # client_user_name_pwd: "solace123"
 sdkperf_nodes:
   sdkperf_group: sdkperf
   sdkperf_user: centos
   sdkperf_root: "/opt/sdkperf"
   sdkperf_log_root: "/opt/sdkperf/logs"
-  sdkperf_image_src_dir: "{{use_case_root_dir}}/ansible/sdk-perf-image/sdkperf-c-x64"
+  sdkperf_image_src_dir: "{{PROJECT_DIR}}/bin/sdkperf"
 
 
 ###

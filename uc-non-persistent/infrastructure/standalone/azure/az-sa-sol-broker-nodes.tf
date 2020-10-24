@@ -154,7 +154,7 @@ resource "azurerm_network_interface_security_group_association" "solacebroker-no
 }
 
 resource "local_file" "broker_nodes_file" {
-  content = templatefile("../../templates/shared-setup/az.broker-nodes.tpl",
+  content = templatefile("../templates/shared-setup/az.broker-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
     }
