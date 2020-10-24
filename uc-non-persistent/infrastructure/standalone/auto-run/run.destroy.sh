@@ -16,7 +16,7 @@ cloudProviders=(
   "aws"
 )
 
-export TF_LOG=TRACE
+export TF_LOG=INFO
 
 rm -f "$scriptDir/logs/$scriptName.out"
 touch "$scriptDir/logs/$scriptName.out"
