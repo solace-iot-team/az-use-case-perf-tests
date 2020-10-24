@@ -8,39 +8,41 @@
 # BEGIN CUSTOMIZATION
 #
 
-# the azure region
 variable "az_region" {
+  type = string
   # default = "West US"
   # default = "West US 2"
   # default = "Japan East"
-  # default = "West Europe"
-  default = "{azure-region}"
+  default = "West Europe"
 }
-# prefix for all resources
 variable "tag_name_prefix" {
-  default = "{unique_prefix}"
+  type = string
+  description = "unique prefix applied to all resources"
 }
-# the tag for all resources
 variable "tag_owner" {
-  default = "{owner}"
+  type = string
+  description = "owner used for tagging"
 }
-# the VM size for the solace broker node
 variable "solace_broker_node_vm_size" {
-  default = "{vm-size}"
+  type = string
+  description = "the VM size for the solace broker node"
+  default = "Standard_F16s_v2"
   # default = "Standard_F32s_v2"     # (32 Cores, 64GB RAM, 64000 max IOPS)
   # default = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 max IOPS)
   # default = "Standard_D8s_v3"      # (8 Cores, 32GB RAM, 12800 max IOPS)
 }
-# the VM size for the sdk perf nodes
 variable "sdk_perf_nodes_vm_size" {
-  default = "{vm-size}"
+  type = string
+  description = "the VM size for the sdk perf nodes"
+  default = "Standard_F4s_v2"
   # default = "Standard_F4s_v2" # (4 CPUs, 8 GB RAM, max IOPS: 6400)
   # default = "Standard_F4s" # (4 CPUs, 8 GB RAM, max IOPS: 12800)
   # default = "Standard_B1ms"
   # default = "Standard_B4ms" # (4 CPUs, 16 GB RAM, max IOPS: 2880)
 }
-# availability zone. should match the controller zone.
 variable "zone" {
+  type = string
+  description = "availability zone. should match the controller zone."
   default = "1"
 }
 #

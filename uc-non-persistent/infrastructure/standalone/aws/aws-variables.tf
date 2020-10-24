@@ -9,23 +9,29 @@
 #
 
 variable "aws_region" {
+  type = string
   default = "eu-central-1"
 }
 variable "tag_name_prefix" {
-  default = "{unique_prefix}"
+  type = string
+  description = "unique prefix applied to all resources"
 }
 variable "tag_owner" {
-  default = "{owner}"
+  type = string
+  description = "owner used for tagging"
 }
-# the VM size for the solace broker node
 variable "sol_messaging_vm_type" {
+  type = string
   # default = "m5a.4xlarge"    # (16 CPUs  64G RAM - AMD Powered General Purpose)
   default = "m5a.8xlarge"    # (32 CPUs  128G RAM - AMD Powered General Purpose)
+  description = "the VM size for the solace broker node"
 }
-# the VM size for the sdk perf nodes
+
 variable "sdkperf_vm_type" {
+  type = string
   default = "m5a.xlarge" # (4 CPUs, 16 GB RAM)
   # default = "m5a.xlarge"    # (2 CPUs  8G RAM - General Purpose)
+  description = "the VM size for the sdk perf nodes"
 }
 
 #
