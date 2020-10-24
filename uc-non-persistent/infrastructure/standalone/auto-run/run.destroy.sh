@@ -9,7 +9,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
-infrastructureId="test1"
+infrastructureId="1-auto"
 
 cloudProviders=(
   "azure"
@@ -21,9 +21,8 @@ export TF_LOG=TRACE
 rm -f "$scriptDir/logs/$scriptName.out"
 touch "$scriptDir/logs/$scriptName.out"
 
-scriptPids=""
 for cloudProvider in ${cloudProviders[@]}; do
-  echo ">>> Standup $infrastructureId on $cloudProvider ..." >> $scriptDir/logs/$scriptName.out
+  echo ">>> Destroy $infrastructureId on $cloudProvider ..." >> $scriptDir/logs/$scriptName.out
 
     export TERRAFORM_DIR="$scriptDir/../$cloudProvider"
     export TERRAFORM_VAR_FILE="$scriptDir/$infrastructureId.$cloudProvider.tfvars.json"
@@ -31,13 +30,12 @@ for cloudProvider in ${cloudProviders[@]}; do
     export TF_LOG_PATH="$scriptDir/logs/$infrastructureId.$cloudProvider.$scriptName.terraform.log"
     rm -f $TF_LOG_PATH
 
-    callScript=_run.apply.sh
+    callScript=_run.destroy.sh
     nohup ../$callScript > $scriptDir/logs/$infrastructureId.$cloudProvider.$callScript.out 2>&1 &
     scriptPids+=" $!"
-    # ../_run.apply.sh
+    # ../_run.destroy.sh
 
 done
-
 
 ##############################################################################################################################
 # monitor if 1 has failed
