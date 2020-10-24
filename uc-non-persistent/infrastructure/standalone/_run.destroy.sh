@@ -18,6 +18,7 @@ FAILED=0
 # Environment Variables
 
   if [ -z "$TERRAFORM_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_DIR"; FAILED=1; fi
+  if [ -z "$TERRAFORM_VAR_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:VARIABLES_FILE"; FAILED=1; fi
   if [ -z "$TERRAFORM_STATE_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_STATE_FILE"; FAILED=1; fi
 
 ##############################################################################################################################
@@ -33,7 +34,7 @@ if [ "$FAILED" -eq 0 ]; then
   echo ">>> Calling terraform destroy, vars=$TERRAFORM_VAR_FILE, state=$TERRAFORM_STATE_FILE"
   cd $TERRAFORM_DIR
 
-  terraform destroy -state=$TERRAFORM_STATE_FILE -auto-approve
+  terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - $scriptName - executing terraform"; FAILED=1; fi
 
   cd $scriptDir

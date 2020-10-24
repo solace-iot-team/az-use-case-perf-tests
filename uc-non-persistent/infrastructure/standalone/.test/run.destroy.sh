@@ -20,9 +20,11 @@ for cloudProvider in ${cloudProviders[@]}; do
   echo ">>> Destroy $infrastructureId on $cloudProvider ..."
 
     export TERRAFORM_DIR="$scriptDir/../$cloudProvider"
+    export TERRAFORM_VAR_FILE="$scriptDir/$infrastructureId.$cloudProvider.tfvars.json"
     export TERRAFORM_STATE_FILE="$infrastructureId.$cloudProvider.terraform.tfstate"
 
     nohup ../_run.destroy.sh > ./logs/$infrastructureId.$cloudProvider.$scriptName.out 2>&1 &
+    # ../_run.destroy.sh
 
 done
 

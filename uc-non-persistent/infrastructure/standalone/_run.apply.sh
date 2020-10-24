@@ -33,10 +33,8 @@ FAILED=0
 if [ "$FAILED" -eq 0 ]; then
   echo ">>> Calling terraform apply, vars=$TERRAFORM_VAR_FILE, state=$TERRAFORM_STATE_FILE"
   cd $TERRAFORM_DIR
-  cp $TERRAFORM_VAR_FILE .
 
-  # terraform apply -var-file=$TERRAFORM_VAR_FILE -state=$TERRAFORM_STATE_FILE
-  terraform apply -state=$TERRAFORM_STATE_FILE -auto-approve
+  terraform apply -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - $scriptName - executing terraform"; FAILED=1; fi
 
   cd $scriptDir
