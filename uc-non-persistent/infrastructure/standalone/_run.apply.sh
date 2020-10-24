@@ -17,48 +17,38 @@ FAILED=0
 ############################################################################################################################
 # Environment Variables
 
-  if [ -z "$TEST_SPEC_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TEST_SPEC_FILE"; FAILED=1; fi
+  if [ -z "$TERRAFORM_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_DIR"; FAILED=1; fi
+  if [ -z "$TERRAFORM_VAR_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:VARIABLES_FILE"; FAILED=1; fi
+  if [ -z "$TERRAFORM_STATE_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_STATE_FILE"; FAILED=1; fi
 
 ##############################################################################################################################
 # Prepare
   export TMP_DIR=$scriptDir/tmp;
     mkdir $TMP_DIR > /dev/null 2>&1;
     rm -rf $TMP_DIR/*;
-  export TEST_SPEC_DIR=$TMP_DIR/test-specs; mkdir $TEST_SPEC_DIR > /dev/null 2>&1;
-  export SHARED_SETUP_DIR=$usecaseHome/shared-setup;
-
-  testSpecJson=$(cat $TEST_SPEC_FILE | yq . )
-  testSpecName=$(echo $testSpecJson | jq -r '.test_spec.name')
-  export TEST_SPEC_INVENTORY_FILE="$TEST_SPEC_DIR/$testSpecName.test.spec.inventory.yml"
 
 ##############################################################################################################################
 # Call scripts
 
-
 if [ "$FAILED" -eq 0 ]; then
-  runScriptName="_generate.test-spec.sh"
-    echo ">>> Run: $runScriptName"
-    logFileName="$TMP_DIR/$runScriptName.log"
-    runScript="$scriptDir/$runScriptName"
-    nohup $runScript > $logFileName 2>&1 &
-    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
+  echo ">>> Calling terraform apply, vars=$TERRAFORM_VAR_FILE, state=$TERRAFORM_STATE_FILE"
+  cd $TERRAFORM_DIR
+  cp $TERRAFORM_VAR_FILE .
+
+  # terraform apply -var-file=$TERRAFORM_VAR_FILE -state=$TERRAFORM_STATE_FILE
+  terraform apply -state=$TERRAFORM_STATE_FILE -auto-approve
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - $scriptName - executing terraform"; FAILED=1; fi
+
+  cd $scriptDir
 fi
 
-if [ "$FAILED" -eq 0 ]; then
-  runScriptName="_run.test-spec.sh"
-    echo ">>> Run: $runScriptName"
-    logFileName="$TMP_DIR/$runScriptName.log"
-    runScript="$scriptDir/$runScriptName"
-    nohup $runScript > $logFileName 2>&1 &
-    pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
-fi
+
 
 ##############################################################################################################################
 # Workflow output
 
   if [ "$FAILED" -gt 0 ]; then
-    echo ">>> FINISHED:FAILED - $scriptName";
-    exit 1
+    echo ">>> FINISHED:FAILED - $scriptName"; exit 1
   else
     echo ">>> FINISHED:SUCCESS - $scriptName";
   fi

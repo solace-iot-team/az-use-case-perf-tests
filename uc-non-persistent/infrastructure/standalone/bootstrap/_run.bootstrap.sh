@@ -19,22 +19,22 @@ source $projectHome/.lib/functions.sh
       echo ">>> missing infrastructure info. pass as argument"
       echo "    for example: $scriptName azure.infra1-standalone"
       exit 1
-  else
-    export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
   fi
+  export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
 ############################################################################################################################
 # Settings
 
+  tmpDir=$scriptDir/tmp;
   sharedSetupDir="$usecaseHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
+  logFileNameBase="$tmpDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.$scriptName"
 
-  export TMP_DIR=$scriptDir/tmp;
-    mkdir $TMP_DIR > /dev/null 2>&1;
-    rm -rf $TMP_DIR/*;
+  mkdir $tmpDir > /dev/null 2>&1;
+  rm -rf "$tmpDir/$logFileNameBase"*;
 
-  export ANSIBLE_LOG_PATH="$TMP_DIR/$scriptName.ansible.log"
+  export ANSIBLE_LOG_PATH="$logFileNameBase.ansible.log"
   if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=0; fi
   export ANSIBLE_HOST_KEY_CHECKING=False
-  export ANSIBLE_SOLACE_LOG_PATH="$TMP_DIR/$scriptName.ansible-solace.log"
+  export ANSIBLE_SOLACE_LOG_PATH="$logFileNameBase.ansible-solace.log"
   if [ -z "$ANSIBLE_SOLACE_ENABLE_LOGGING" ]; then export ANSIBLE_SOLACE_ENABLE_LOGGING=False; fi
 
 

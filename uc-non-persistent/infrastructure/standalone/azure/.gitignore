@@ -1,2 +1,2 @@
 *.log
-az-variables.tf
+*.variables.tf

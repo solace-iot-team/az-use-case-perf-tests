@@ -26,8 +26,8 @@ resource "null_resource" "trigger_bootstrap" {
   }
   provisioner "local-exec" {
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
-    # command = "../../../ansible/bootstrap/run.bootstrap.sh azure.${var.tag_name_prefix}-standalone"
-    command = "echo 'now bootstrap ...'"
+    command = "../bootstrap/_run.bootstrap.sh azure.${var.tag_name_prefix}-standalone"
+    # command = "echo 'now bootstrap ...'"
   }
   depends_on = [
       local_file.inventory_file
