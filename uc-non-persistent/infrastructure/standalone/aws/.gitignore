@@ -1,2 +1,2 @@
 *.log
-aws-variables.tf
+*.variables.tf

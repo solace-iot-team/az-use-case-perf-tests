@@ -48,8 +48,8 @@
     - name: "Set & Calculate SDKPerf Parameters"
       set_fact:
         # don't use taskset, same runs on broker node.
-        # sdkperf_exe: "taskset -c 1,2 {{sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh"
-        sdkperf_exe: "{{sdkperf_root}}/sdkperf-c-x64/sdkperf_c.sh"
+        # sdkperf_exe: "taskset -c 1,2 {{sdkperf_root}}/sdkperf/sdkperf_c.sh"
+        sdkperf_exe: "{{sdkperf_root}}/sdkperf/sdkperf_c.sh"
         sdkperf_connection: "{{ broker_uri }}:{{ broker_smf_port }}"
         sdkperf_client_username: "sdkperf-latency@{{ boxname }}"
         sdkperf_user: "{{ broker_pubsub.client_user_name }}@{{ broker_pubsub.vpn_name }}"
