@@ -9,7 +9,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
-infrastructureId="test1"
+infrastructureId="1-auto"
 
 cloudProviders=(
   "azure"

@@ -16,18 +16,50 @@ cloudProviders=(
   "aws"
 )
 
+export TF_LOG=TRACE
+
+rm -f "$scriptDir/logs/$scriptName.out"
+touch "$scriptDir/logs/$scriptName.out"
+
 for cloudProvider in ${cloudProviders[@]}; do
-  echo ">>> Destroy $infrastructureId on $cloudProvider ..."
+  echo ">>> Destroy $infrastructureId on $cloudProvider ..." >> $scriptDir/logs/$scriptName.out
 
     export TERRAFORM_DIR="$scriptDir/../$cloudProvider"
     export TERRAFORM_VAR_FILE="$scriptDir/$infrastructureId.$cloudProvider.tfvars.json"
     export TERRAFORM_STATE_FILE="$infrastructureId.$cloudProvider.terraform.tfstate"
+    export TF_LOG_PATH="$scriptDir/logs/$infrastructureId.$cloudProvider.$scriptName.terraform.log"
+    rm -f $TF_LOG_PATH
 
-    nohup ../_run.destroy.sh > ./logs/$infrastructureId.$cloudProvider.$scriptName.out 2>&1 &
+    callScript=_run.destroy.sh
+    nohup ../$callScript > $scriptDir/logs/$infrastructureId.$cloudProvider.$callScript.out 2>&1 &
+    scriptPids+=" $!"
     # ../_run.destroy.sh
 
 done
 
+##############################################################################################################################
+# monitor if 1 has failed
+FAILED=0
+while true; do
+  wait -n || {
+    code="$?"
+    if [ $code = "127" ]; then
+      # 127:
+      # last background job has exited successfully
+      # or: command was not found
+      FAILED=0
+    else
+      FAILED=1
+    fi
+    break
+  }
+done;
+
+if [ "$FAILED" -gt 0 ]; then
+  echo ">>> FINISHED:FAILED - $scriptName" >> $scriptDir/logs/$scriptName.out
+else
+  echo ">>> FINISHED:SUCCESS - $scriptName" >> $scriptDir/logs/$scriptName.out
+fi
 
 ###
 # The End.
