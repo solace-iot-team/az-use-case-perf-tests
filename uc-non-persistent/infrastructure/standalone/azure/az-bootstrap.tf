@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 resource "local_file" "inventory_file" {
-  content = templatefile("../../templates/shared-setup/az.inventory.tpl",
+  content = templatefile("../templates/shared-setup/az.inventory.tpl",
     {
       sdk_perf_nodes = azurerm_linux_virtual_machine.sdkperf-nodes.*
       solace_broker_nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
@@ -26,8 +26,8 @@ resource "null_resource" "trigger_bootstrap" {
   }
   provisioner "local-exec" {
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
-    command = "../../../ansible/bootstrap/run.bootstrap.sh azure.${var.tag_name_prefix}-standalone"
-    # command = "echo 'now bootstrap ...'"
+    # command = "../../../ansible/bootstrap/run.bootstrap.sh azure.${var.tag_name_prefix}-standalone"
+    command = "echo 'now bootstrap ...'"
   }
   depends_on = [
       local_file.inventory_file

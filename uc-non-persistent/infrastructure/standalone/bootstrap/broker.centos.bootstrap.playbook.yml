@@ -2,22 +2,32 @@
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
 # ---------------------------------------------------------------------------------------------
 
 ---
 - name: "Broker Centos Bootstrap"
   hosts: broker_centos
-  vars:
-    project_root_dir: "../../../"
   pre_tasks:
     - include_vars:
-        file: "{{project_root_dir}}/uc-non-persistent/ansible/vars/bootstrap.vars.yml"
+        file: bootstrap.vars.yml
         name: bootstrap
+  vars:
+    deployed_dir: "{{USE_CASE_DIR}}/infrastructure/standalone/.deployed"
 
   tasks:
-    - name: "Set Vars"
-      set_fact:
-        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
+
+    - name: "Ensure {{ PROJECT_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{ PROJECT_DIR }}"
+        state: directory
+
+    - name: "Ensure {{ USE_CASE_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{ USE_CASE_DIR }}"
+        state: directory
 
     - name: "Check local docker image exists"
       local_action:
@@ -32,9 +42,9 @@
     - name: "Extract the manifest from docker tar"
       local_action:
         module: command
-        cmd: "tar -C ../docker-image --extract --file={{ bootstrap.broker.docker_image.solace_image_file_src }} manifest.json"
+        cmd: "tar -C {{deployed_dir}} --extract --file={{ bootstrap.broker.docker_image.solace_image_file_src }} manifest.json"
     - set_fact:
-        manifest: "{{lookup('file', '../docker-image/manifest.json')}}"
+        manifest: "{{lookup('file', '{{deployed_dir}}/manifest.json')}}"
     - set_fact:
         docker_image: "{{manifest[0].RepoTags[0]}}"
 

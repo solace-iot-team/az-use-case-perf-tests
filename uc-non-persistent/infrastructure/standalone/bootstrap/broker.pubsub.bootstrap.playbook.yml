@@ -2,15 +2,13 @@
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
 # ---------------------------------------------------------------------------------------------
 
 ---
 - name: "Broker PubSub Bootstrap"
   hosts: broker_pubsub
   gather_facts: no
-  vars:
-    project_root_dir: "../../../"
-
   module_defaults:
     solace_get_available:
       host: "{{ sempv2_host }}"
@@ -42,18 +40,16 @@
       username: "{{ sempv2_username }}"
       password: "{{ sempv2_password }}"
       timeout: "{{ sempv2_timeout }}"
-
   pre_tasks:
-    - set_fact:
-        use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
     - include_vars:
-        file: "{{use_case_root_dir}}/ansible/vars/bootstrap.vars.yml"
+        file: bootstrap.vars.yml
         name: bootstrap
+  vars:
+    deployed_dir: "{{USE_CASE_DIR}}/infrastructure/standalone/.deployed"
 
   tasks:
 
     - set_fact:
-        # use_case_root_dir: "{{project_root_dir}}/uc-non-persistent"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http' }}"
         is_solace_cloud: "{{ True if sempv2_is_secure_connection else False }}"
 

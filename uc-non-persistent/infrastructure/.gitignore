@@ -7,3 +7,5 @@
 
 #Mac files
 .DS_Store
+
+*.log

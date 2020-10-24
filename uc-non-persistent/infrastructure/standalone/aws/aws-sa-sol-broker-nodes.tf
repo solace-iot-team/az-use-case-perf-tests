@@ -64,7 +64,7 @@ resource "aws_instance" "solace-broker-nodes" {
 }
 
   resource "local_file" "broker_nodes_file" {
-  content = templatefile("../../templates/shared-setup/aws.broker-nodes.tpl",
+  content = templatefile("../templates/shared-setup/aws.broker-nodes.tpl",
     {
       nodes = aws_instance.solace-broker-nodes.*
     }
