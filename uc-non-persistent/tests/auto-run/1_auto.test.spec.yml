@@ -10,6 +10,8 @@
     infrastructure_list:
       - cloud_provider: azure
         config: 1-auto-standalone
+      - cloud_provider: azure
+        config: 2-auto-standalone
       - cloud_provider: aws
         config: 1-auto-standalone
     run_specs:
