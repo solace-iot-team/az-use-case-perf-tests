@@ -12,7 +12,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 export infrastructureIds=(
   "azure.test1"
   "azure.test2"
-  # "aws.test1"
+  "aws.test1"
 )
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"

@@ -10,6 +10,8 @@
     infrastructure_list:
       - cloud_provider: azure
         config: test1-standalone
+      - cloud_provider: azure
+        config: test2-standalone
       - cloud_provider: aws
         config: test1-standalone
     run_specs:

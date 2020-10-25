@@ -3,7 +3,7 @@
 Generated test results are stored here.
 
 ````bash
-./stats/{cloud-provider}.{infrastructure-id}/run.{run-id}
+./stats/{cloud-provider}.{infrastructure-config-id}/run.{run-id}
 ````
 
 ---
