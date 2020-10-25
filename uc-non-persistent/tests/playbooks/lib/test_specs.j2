@@ -1,0 +1,25 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+{
+  "all": {
+    "hosts": {
+      {% set num_infrastructure_ids = generated_test_specs.keys() | length %}
+      {% set f_index = {'index': 0 } %}
+      {% for infrastructure_id, run_specs in generated_test_specs.items() %}
+        {% if f_index.update({'index': f_index.index+1}) %} {% endif %}
+        "{{infrastructure_id}}": {
+          "ansible_connection": "local",
+          "run_list": {{run_specs.run_list | to_nice_json}}
+          }
+        {% if f_index.index < num_infrastructure_ids %}
+        ,
+        {% endif %}
+      {% endfor %}
+    }
+  }
+}

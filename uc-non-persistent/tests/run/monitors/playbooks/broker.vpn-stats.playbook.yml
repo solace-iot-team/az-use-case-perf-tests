@@ -1,0 +1,85 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Broker VPN Statistics"
+  hosts: broker_pubsub
+  gather_facts: no
+  pre_tasks:
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+    - include_vars:
+        file: "monitor.vars.yml"
+        name: monitor
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        stats_name: "{{ STATS_NAME }}"
+        # use_case: "{{monitor.general.use_case}}"
+        # cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
+        # infrastrucure_id: "{{ INFRASTRUCTURE_ID }}"
+
+    - name: "Settings"
+      set_fact:
+        min_collection_period_secs: 15
+        sampling_overhead_secs: 10
+        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs | int }}"
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
+        vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
+
+    - name: "Check Local Files Exist"
+      stat:
+        path: "{{item}}"
+      register: stat_result
+      delegate_to: localhost
+      failed_when: not stat_result.stat.exists
+      with_items:
+        - "{{vpn_pp_j2_template_file}}"
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    # # TEST & DEBUG
+    # - name: "TEST: Simulate delay in startup"
+    #   pause:
+    #     seconds: 15
+
+    - name: "Clear VPN Stats"
+      uri:
+        # method: "PUT"
+        # uri: "http://51.136.121.254:8080/SEMP/v2/__private_action__/msgVpns/sdkperf/clearStats"
+       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ broker_pubsub.vpn_name }}/clearStats"
+       method: PUT
+       user: "{{ sempv2_username }}"
+       password: "{{ sempv2_password }}"
+       force_basic_auth: yes
+       body: "{}"
+       body_format: json
+       status_code: "200"
+       return_content: yes
+      register: result
+
+    - name: "Warmup Sample Runs"
+      include_tasks: ./tasks/broker.vpn-stats.testrun.yml
+      vars:
+        warm_up_run: true
+      with_sequence: "end=0 start=0"
+
+    - name: "Starting Sample Runs"
+      include_tasks: ./tasks/broker.vpn-stats.testrun.yml
+      with_sequence: "end={{run_spec.params.total_num_samples-1}} start=0"
+
+###
+# The End.

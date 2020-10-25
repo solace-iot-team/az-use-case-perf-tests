@@ -1,0 +1,65 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+broker:
+  centos:
+    swap_file_size: 2048
+    swap_file_path: /swapfile  #aws
+    swappiness: "1" #aws
+  centos_docker:
+    docker_centos_users: ["centos"]
+    docker_centos_version: 19.03.5
+    docker_centos_state: started
+    docker_centos_enabled: true
+    docker_centos_daemon_config:
+      storage-driver: overlay2
+      selinux-enabled: true
+      live-restore: true
+      # log-driver: syslog
+      icc: false
+      userland-proxy: false
+  ext_storage:
+    solace_os_user: solace
+    solace_os_user_id: 4000
+
+    solace_mount_path: /var/opt/vmr
+
+    #Azure mounts
+    az_solace_mount_dev: /dev/sdc
+    az_solace_storage_part: /dev/sdc1
+
+    # AWS Nitro systems device names
+    # Change in case non Nitro systems are used
+    aws_solace_mount_dev: /dev/nvme1n1
+    aws_solace_storage_part: /dev/nvme1n1p1
+
+    # Non AWS Nitro systems
+    #aws_solace_mount_dev: /dev/sdc
+    #aws_solace_storage_part: /dev/sdc1
+  docker_image:
+    solace_image_file_src: "{{PROJECT_DIR}}/bin/pubsub/solace-pubsub-docker.tar.gz"
+    solace_image_file_dest: "/solace-pubsub-evaluation-docker.tar.gz"
+    docker_compose_file_src: "{{USE_CASE_DIR}}/infrastructure/standalone/templates/PubSub.docker-compose.template.yml"
+    docker_compose_file_dest: "/PubSub.docker-compose.template.yml"
+    file_owner: centos # NOTE: make sure this maps to one of the docker_centos_users!
+    file_mode: "0666"
+    system_scaling_maxconnectioncount: 1000
+    docker_compose_file_dest_local: "{{deployed_dir}}/PubSub.docker-compose.deployed.yml"
+  pubsub:
+    max_spool_usage: 100000
+    client_profile_name: "testCP"
+sdkperf_nodes:
+  sdkperf_group: sdkperf
+  sdkperf_user: centos
+  sdkperf_root: "/opt/sdkperf"
+  sdkperf_log_root: "/opt/sdkperf/logs"
+  sdkperf_image_src_dir: "{{PROJECT_DIR}}/bin/sdkperf"
+
+
+###
+# The End.

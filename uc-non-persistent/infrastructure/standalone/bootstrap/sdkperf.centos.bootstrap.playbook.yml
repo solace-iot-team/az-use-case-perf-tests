@@ -1,0 +1,101 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "SDKPerf Centos Bootstrap"
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  pre_tasks:
+    - include_vars:
+        file: bootstrap.vars.yml
+        name: bootstrap
+  vars:
+    deployed_dir: "{{USE_CASE_DIR}}/infrastructure/standalone/.deployed"
+
+  tasks:
+    - name: "Ensure {{ PROJECT_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{ PROJECT_DIR }}"
+        state: directory
+
+    - name: "Ensure {{ USE_CASE_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{ USE_CASE_DIR }}"
+        state: directory
+
+    - name: sdkperf | create sdkperf_group
+      group:
+        name: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+      become: true
+
+    - name: sdkperf | create sdkperf_user
+      user:
+        name: "{{bootstrap.sdkperf_nodes.sdkperf_user}}"
+        group: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+        system: yes
+      become: true
+
+    - name: sdkperf | create directories
+      file:
+        path: "/opt"
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+        recurse: false
+      become: true
+
+    - name: sdkperf | create base folder
+      file:
+          path: "{{bootstrap.sdkperf_nodes.sdkperf_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+          #user and group share same name by convention in here
+          recurse: false
+      become: true
+
+    - name: sdkperf | create log folder
+      file:
+          path: "{{bootstrap.sdkperf_nodes.sdkperf_log_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+          #user and group share same name by convention in here
+          recurse: false
+      become: true
+
+    - name: sdkperf | debug
+      debug:
+        msg: "root: {{bootstrap.sdkperf_nodes.sdkperf_root}}"
+    # update permissions of sdkperf folder and subfolders
+
+    - name: sdkperf | upload sdkperf tool
+      copy:
+        src: "{{bootstrap.sdkperf_nodes.sdkperf_image_src_dir}}"
+        dest: "{{bootstrap.sdkperf_nodes.sdkperf_root}}"
+        owner: root
+        group: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+        mode: 0775
+      become: true
+
+
+    - name: sdkperf | adjust permissions in file system
+      file:
+          path: "{{bootstrap.sdkperf_nodes.sdkperf_root}}"
+          state: directory
+          mode: 0775
+          owner: root
+          group: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
+          recurse: true
+      become: true
+
+###
+# The End.
