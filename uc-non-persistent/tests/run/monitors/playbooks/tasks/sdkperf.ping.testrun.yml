@@ -1,0 +1,108 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+- set_fact:
+    sample_num: "{{item}}"
+    is_warm_up_run: "{{warm_up_run | default(False)}}"
+
+- name: "Determine Sampling Start Time"
+  block:
+    - name: "get time from local host"
+      shell: "date -u +%s"
+      register: t_result
+      delegate_to: localhost
+    - set_fact:
+        sample_start_ts_epoch_secs: "{{t_result.stdout}}"
+  when: is_warm_up_run == False
+
+- name: "Set Initial Sampling Start Time"
+  set_fact:
+    sample_start_ts_epoch_secs: "{{run_start_ts_epoch_secs}}"
+  when: is_warm_up_run == True
+
+- set_fact:
+    sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
+    sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+    sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
+
+
+# # TEST & DEBUG
+# - debug:
+#     msg:
+#       - "sample_start_ts_epoch_secs={{sample_start_ts_epoch_secs}}"
+#       - "sample_start_ts_str={{sample_start_ts_str}}"
+#       - "sample_end_ts_epoch_secs={{sample_end_ts_epoch_secs}}"
+#       - "ping_msg_number={{ping_msg_number}}"
+# - pause:
+#     seconds: 19
+
+- name: "Run 'ping' to broker node for sample={{sample_num}} (warmup={{is_warm_up_run}})"
+  command:
+    argv:
+      - ping
+      - "-c {{ping_msg_number}}"
+      - "-q"
+      - "{{broker_pubsub.private_ip_address}}"
+  register: ping_result
+
+- name: "Post-process ping results"
+  command: "{{ping_post_process_exe}}"
+  environment:
+    RUN_ID: "{{run_id}}"
+    SAMPLE_NUM: "{{sample_num}}"
+    TEMPLATE_FILE: "{{ping_post_process_template_file}}"
+    START_TIMESTAMP_STR: "{{sample_start_ts_str}}"
+    PING_OUTPUT: "{{ping_result.stdout}}"
+  delegate_to: localhost
+  register: pp_result
+  failed_when: pp_result.rc > 0 or pp_result.stderr != ''
+
+- set_fact:
+    pp_ping_json: "{{pp_result.stdout | from_json}}"
+
+# # TEST & DEBUG
+# - name: "Display Post-Processed Ping Result"
+#   debug:
+#     msg: "{{pp_ping_json}}"
+
+- name: "Copy Ping Json to {{ result_dir }}"
+  copy:
+    content: "{{pp_ping_json | to_nice_json }}"
+    dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
+  delegate_to: localhost
+  when: is_warm_up_run == False
+  # failed_when: pp_ping_json.metrics.ping.rtt_avg.value == -1
+
+- name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
+  block:
+    - name: "get time from local host"
+      shell: "date -u +%s"
+      register: t_result
+      delegate_to: localhost
+    - set_fact:
+        # -1: ensures that there is at least 1 sample in every minute
+        wait_secs: "{{(sample_end_ts_epoch_secs | int) - (t_result.stdout | int) - 1 }}"
+    - name: "Check playbook execution time is within time span"
+      fail:
+        msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
+      when: is_warm_up_run == False and wait_secs|int < 0
+    - name: "Wait for sample cycle to complete sample={{sample_num}} (warmup={{is_warm_up_run}})"
+      # note: waits for 1 second if parameter is negative
+      pause:
+        seconds: "{{wait_secs}}"
+  when: sample_num|int < (run_spec.params.total_num_samples-1)
+
+# # TEST & DEBUG
+# - name: "summarize timings"
+#   debug:
+#     msg:
+#       - "timings summary:"
+#       - "sample_start_ts_epoch_secs={{sample_start_ts_epoch_secs}}"
+#       - "TARGET: sample_end_ts_epoch_secs={{sample_end_ts_epoch_secs}}"
+
+###
+# The End.

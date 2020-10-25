@@ -1,0 +1,72 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Generate Run Specs"
+  hosts: localhost
+  gather_facts: no
+  pre_tasks:
+    - include_vars: "{{TEST_SPEC_FILE}}"
+  vars:
+    test_specs_j2_template_file: "./lib/test_specs.j2"
+
+  tasks:
+
+    - name: "Check Env Vars"
+      debug:
+        msg:
+          - "TEST_SPEC_DIR={{TEST_SPEC_DIR}}"
+          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+
+    - name: "Ensure {{ TEST_SPEC_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{TEST_SPEC_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{SHARED_SETUP_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ test_specs_j2_template_file }} exists"
+      local_action:
+        module: file
+        path: "{{test_specs_j2_template_file}}"
+        state: file
+
+    - name: "Settings"
+      set_fact:
+        generated_test_specs_file: "{{ TEST_SPEC_DIR }}/{{test_spec.name}}.test.spec.inventory.yml"
+        run_params: "{{test_spec.run_specs.run_params}}"
+
+    - name: "Initialize Test Spec Data Structure"
+      set_fact:
+        generated_test_specs: {}
+
+    - name: "Iterate over infrastructures"
+      include_tasks: ./tasks/generate.infrastructure.yml
+      loop: "{{ test_spec.infrastructure_list }}"
+      loop_control:
+        index_var: infrastructure_num
+        loop_var: infrastructure
+
+    # - debug:
+    #     msg: "{{generated_test_specs}}"
+
+    - name: "Create Test Spec Inventory"
+      set_fact:
+        test_spec_inventory: "{{ lookup('template', test_specs_j2_template_file) | from_json}}"
+
+    - name: "Write Generated Test Spec Inventory"
+      copy:
+        content: "{{test_spec_inventory | to_nice_yaml(indent=2) }}"
+        dest: "{{generated_test_specs_file}}"
+      delegate_to: localhost
+
+###
+# The End.

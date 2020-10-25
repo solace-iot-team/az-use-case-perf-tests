@@ -1,0 +1,76 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Pre-Run Processing"
+  hosts: broker_pubsub
+  gather_facts: no
+  pre_tasks:
+    - include_vars:
+        file: run.vars.yml
+        name: run
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+
+    - name: "Settings"
+      set_fact:
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
+        meta_result_file: "{{ result_dir }}/{{ run.meta_file_name }}"
+        meta_j2_template_file: "./lib/run.post.meta.j2"
+
+    - name: "Read meta from pre-run"
+      include_vars:
+        file: "{{meta_result_file}}"
+        name: pre_run_meta
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - name: "Get Client Connections: End"
+      uri:
+        # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+        # GET /msgVpns/{msgVpnName}/clients
+        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{broker_pubsub.client_user_name}}&select={{run.select_client_connection_stats|trim|replace(' ','')}}"
+        method: GET
+        user: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        force_basic_auth: yes
+        status_code: "200"
+        return_content: yes
+      register: result
+
+    - set_fact:
+        number_connected_clients_end: "{{ result.json.data | length }}"
+        connected_client_list_end: "{{ result.json.data }}"
+        run_end_ts_epoch_secs: "{{lookup('pipe','date -u +%s')}}"
+    - set_fact:
+        run_end_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_end_ts_epoch_secs) }}"
+
+    - name: "Create Meta Content Additions"
+      set_fact:
+        meta_content_add: "{{ lookup('template', meta_j2_template_file ) | from_json}}"
+
+    - name: "Add Meta Content Additions"
+      set_fact:
+        final_meta:
+          meta: "{{ pre_run_meta.meta | combine(meta_content_add.meta, recursive=True)}}"
+
+    - name: "Write Test Meta Data to Results"
+      copy:
+        content: "{{ final_meta | to_nice_json(indent=2) }}"
+        dest: "{{ meta_result_file }}"
+      delegate_to: localhost
+
+
+###
+# The End.
