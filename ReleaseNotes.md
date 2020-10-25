@@ -1,17 +1,26 @@
 # Release Notes
 
 ## Version: 0.5.0
-Release Purpose: Auto Multi-Test Runs
+Release Purpose: Auto Runs: Multi-Test & Infrastructure
+
+**RESTRUCTURED REPOSITORY**
+  * **created**
+    - uc-non-persistent/infrastructure
+      - contains all infrastructure related code
+    - uc-non-persistent/tests
+      - contains all testing related code
+  * **removed:**
+    - uc-non-persistent/ansible
+    - uc-non-persistent/terraform
 
 **NEW FEATURES**
   * **uc-non-persistent/tests**
     - test spec based test run framework
     - supports multiple runs based on variations across any number of provisioned infrastructures
-    - prep for workflow triggered runs
-
-**DEPRECATED:**
-  * **uc-non-persistent/ansible/tests**
-    - use the new test framework instead
+  * **uc-non-persistent/tests/auto-run**
+    - sample scripts and test specs for workflow triggered testing
+  * **uc-non-persistent/infrastructure/standalone/auto-run**
+    - sample scripts and infrastructure specs for workflow triggered standup/destroy
 
 **FIXES:**
   * **terraform**
