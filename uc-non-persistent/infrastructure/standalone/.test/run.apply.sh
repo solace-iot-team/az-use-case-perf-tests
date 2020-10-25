@@ -6,62 +6,24 @@
 
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/uc-non-persistent/*}
-usecaseHome=$projectHome/uc-non-persistent
 
-infrastructureId="test1"
 
-cloudProviders=(
-  "azure"
-  "aws"
+#  format: {cloud_provider}.{config}
+export infrastructureIds=(
+  "azure.test1"
+  "azure.test2"
+  # "aws.test1"
 )
 
-export TF_LOG=TRACE
+export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
-rm -f "$scriptDir/logs/$scriptName.out"
-touch "$scriptDir/logs/$scriptName.out"
+export LOG_DIR=$scriptDir/logs
+rm -f $LOG_DIR/*
 
-scriptPids=""
-for cloudProvider in ${cloudProviders[@]}; do
-  echo ">>> Standup $infrastructureId on $cloudProvider ..." >> $scriptDir/logs/$scriptName.out
+export TF_VARIABLES_DIR=$scriptDir
 
-    export TERRAFORM_DIR="$scriptDir/../$cloudProvider"
-    export TERRAFORM_VAR_FILE="$scriptDir/$infrastructureId.$cloudProvider.tfvars.json"
-    export TERRAFORM_STATE_FILE="$infrastructureId.$cloudProvider.terraform.tfstate"
-    export TF_LOG_PATH="$scriptDir/logs/$infrastructureId.$cloudProvider.$scriptName.terraform.log"
-    rm -f $TF_LOG_PATH
-
-    callScript=_run.apply.sh
-    nohup ../$callScript > $scriptDir/logs/$infrastructureId.$cloudProvider.$callScript.out 2>&1 &
-    scriptPids+=" $!"
-    # ../_run.apply.sh
-
-done
-
-
-##############################################################################################################################
-# monitor if 1 has failed
-FAILED=0
-while true; do
-  wait -n || {
-    code="$?"
-    if [ $code = "127" ]; then
-      # 127:
-      # last background job has exited successfully
-      # or: command was not found
-      FAILED=0
-    else
-      FAILED=1
-    fi
-    break
-  }
-done;
-
-if [ "$FAILED" -gt 0 ]; then
-  echo ">>> FINISHED:FAILED - $scriptName" >> $scriptDir/logs/$scriptName.out
-else
-  echo ">>> FINISHED:SUCCESS - $scriptName" >> $scriptDir/logs/$scriptName.out
-fi
+nohup ../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
+# ../_run.apply-all.sh
 
 ###
 # The End.
