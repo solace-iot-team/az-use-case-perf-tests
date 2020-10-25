@@ -4,17 +4,17 @@
 
 ### Structure
 
-Follow the links to see installation & setup requirements.
-
 - [Generate Keys](./keys)
 
-- [Create Infrastructure Resources using Terraform & Ansible](./terraform)
+- [Create Infrastructure Resources](./infrastructure/standalone)
 
-- [Check Output](./shared-setup)
+- [Check Output in shared-setup](./shared-setup)
 
-- [Run Tests using Ansible](./ansible/tests)
+- [Run Tests](./tests)
 
-- [Check Results](./test-results)
+- [Check Test Results](./test-results)
+
+- [Destroy Infrastructure Resources](./infrastructure/standalone)
 
 
 ---
