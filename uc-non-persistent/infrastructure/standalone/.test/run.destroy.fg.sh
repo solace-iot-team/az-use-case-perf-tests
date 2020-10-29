@@ -11,8 +11,8 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 #  format: {cloud_provider}.{config}
 export infrastructureIds=(
   "azure.test1"
-  # "azure.test2"
-  # "aws.test1"
+  "azure.test2"
+  "aws.test1"
 )
 
 
