@@ -24,7 +24,6 @@ rm -f $LOG_DIR/**destroy**
 export TF_VARIABLES_DIR=$scriptDir
 
 nohup ../_run.destroy-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
-# ../_run.destroy-all.sh
 
 ###
 # The End.
