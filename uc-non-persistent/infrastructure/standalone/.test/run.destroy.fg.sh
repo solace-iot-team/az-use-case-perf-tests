@@ -15,7 +15,6 @@ export infrastructureIds=(
   # "aws.test1"
 )
 
-
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
 export LOG_DIR=$scriptDir/logs

@@ -1,5 +1,20 @@
 # Release Notes
 
+## Version: 0.5.1
+Release Purpose: Automated Testing
+
+**Github Workflow**
+  * **.github/workflows**
+    - test-uc-non-persistent.yml
+      - runs on: pull_request, release, weekly schedule
+      - bootstraps external controller vm in azure
+      - runs
+        - **uc-non-persistent/infrastructure/standalone/.test/run.apply.fg.sh**
+        - **uc-non-persistent/tests/.test/run.fg.sh**
+        - **uc-non-persistent/infrastructure/standalone/.test/run.destroy.fg.sh**
+      - archives results
+  * [see here for pre-requisites](.github/WorkflowsReadme.md)
+
 ## Version: 0.5.0
 Release Purpose: Auto Runs: Multi-Test & Infrastructure
 
