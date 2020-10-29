@@ -33,8 +33,6 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Generate Run Specs
 
-exit 1
-
 playbook="$scriptDir/playbooks/run.test-spec.playbook.yml"
 ansible-playbook \
                 -i $TEST_SPEC_INVENTORY_FILE  \
