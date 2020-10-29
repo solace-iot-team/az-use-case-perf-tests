@@ -396,10 +396,18 @@ jobs:
         with:
           filename: .github/failed-test-template.md
 
-      - name: Teardown Controller
-        if: always()
-        run: |
-          echo "TODO: teardown controller"
+      - name: TODO - Switch me on - Teardown Controller
+        run: echo "TODO - Switch me on - Teardown Controller "
+
+
+        
+      # - name: Teardown Controller - Delete Azure Resource Group
+      #   if: always()
+      #   run: |
+      #     AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+      #     az group delete \
+      #       --name $AZURE_RESOURCE_GROUP \
+      #       --verbose
 
 
 ###
