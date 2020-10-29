@@ -31,9 +31,8 @@ env:
   TEST_AZURE_KEY_FILE: azure_key
   TEST_AWS_KEY_FILE: aws_key
   TEST_BIN_PUBSUB_DIR: bin/pubsub
-  TEST_REPO_INFRA_SA_AZURE: uc-non-persistent/infrastructure/standalone/azure
-  TEST_REPO_INFRA_SA_AWS: uc-non-persistent/infrastructure/standalone/aws
-
+  TEST_REPO_INFRA_SA_AZURE_DIR: uc-non-persistent/infrastructure/standalone/azure
+  TEST_REPO_INFRA_SA_AWS_DIR: uc-non-persistent/infrastructure/standalone/aws
   TEST_REPO_INFRA_DIR: uc-non-persistent/infrastructure/standalone/.test
   TEST_REPO_INFRA_LOGS_DIR: logs
   TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
@@ -94,7 +93,7 @@ jobs:
             --tags project=$AZURE_PROJECT_TAG \
             --verbose
 
-      - name: Run ARM Deploy
+      - name: Standup Controller
         id: azure_deploy
         # https://github.com/marketplace/actions/deploy-azure-resource-manager-arm-template
         uses: azure/arm-deploy@v1.0.1
@@ -178,28 +177,25 @@ jobs:
       - name: Controller - Bootstrap - Terraform
         run: |
           ssh controller "\
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE}" && \
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE_DIR}" && \
               terraform init && \
               ls -la && \
-              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS}" && \
+              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS_DIR}" && \
               terraform init && \
               ls -la && \
               echo "terraform initialized"
           "
 
-      - name: Controller - Bootstrap - Azure login
-        run: |
-          ssh controller "\
-              az login --service-principal \
-                --username ${{ secrets.AZURE_CLIENT_ID }} \
-                --password ${{ secrets.AZURE_CLIENT_SECRET }} \
-                --tenant ${{ secrets.AZURE_TENANT_ID }}
-
-              echo "azure login succeeded"
-          "
-
-# cd {project-root}/az-use-case-perf-tests/bin/pubsub
-# ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+      # - name: Controller - Bootstrap - Azure login
+      #   run: |
+      #     ssh controller "\
+      #         az login --service-principal \
+      #           --username ${{ secrets.AZURE_CLIENT_ID }} \
+      #           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
+      #           --tenant ${{ secrets.AZURE_TENANT_ID }}
+      #
+      #         echo "azure login succeeded"
+      #     "
 
       - name: Controller - Infra Apply - Link Docker Image into Repo
         run: |
@@ -213,11 +209,19 @@ jobs:
 
           "
 
-      - name: Controller - Infra Apply - Run
+      - name: Controller - Infra Apply
         run: |
           ssh controller "
 
               source .bash_profile
+
+              export ARM_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"
+
+              export ARM_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"
+
+              export ARM_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+
+              export ARM_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"
 
               export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
 
@@ -229,7 +233,47 @@ jobs:
 
           "
 
-      - name: Controller - Infra Apply - Download Logs
+      - name: Controller - Test Runs
+        run: |
+          echo "TODO: do the test run in foreground"
+
+      - name: Controller - Download Test Results
+        if: always()
+        run: |
+          echo "TODO: download the test results"
+
+      - name: Archive Test Results
+        if: always()
+        run: |
+          echo "TODO: archive the test results"
+
+
+      - name: Controller - Infra Destroy
+        if: always()
+        run: |
+          ssh controller "
+
+              source .bash_profile
+
+              export ARM_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"
+
+              export ARM_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"
+
+              export ARM_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+
+              export ARM_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"
+
+              export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
+
+              export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_DIR}"
+
+              ./${TEST_REPO_INFRA_DESTROY_SCRIPT}
+
+          "
+
+      - name: Controller - Infra - Download Logs
         if: always()
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
@@ -250,7 +294,7 @@ jobs:
       #     echo "RUNNER_ASSET_DIR=${RUNNER_ASSET_DIR}"
       #     ls -la ${RUNNER_ASSET_DIR}
 
-      - name: Archive Infra Apply logs
+      - name: Archive Infra logs
         if: always()
         env:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
@@ -260,7 +304,7 @@ jobs:
           path: ${{ env.RUNNER_ASSET_DIR }}
           if-no-files-found: error
 
-      - name: Check - Infra Apply - FAILED - Create Issue
+      - name: Check - Test - FAILED - Create Issue
       # https://github.com/JasonEtco/create-an-issue
         if: failure()
         uses: JasonEtco/create-an-issue@v2
@@ -274,15 +318,11 @@ jobs:
         with:
           filename: .github/failed-test-template.md
 
-      # - name:
-  # https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/adding-a-workflow-status-badge#using-the-event-parameter
+      - name: Teardown Controller
+        if: always()
+        run: |
+          echo "TODO: teardown controller"
 
-
-      # start the test runs
-      # download test-results
-      # teardown infra - always - no stopping on error
-      # teardown azure controller
-      # if not, clean it up
 
 ###
 # The End.
