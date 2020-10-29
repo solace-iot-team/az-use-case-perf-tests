@@ -280,7 +280,7 @@ jobs:
 
       # start the test runs
       # download test-results
-      # teardown infra
+      # teardown infra - always - no stopping on error
       # teardown azure controller
       # if not, clean it up
 
