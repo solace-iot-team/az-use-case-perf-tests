@@ -229,9 +229,6 @@ jobs:
 
           "
 
-      - name: DEBUG - EXIT 1
-        run: exit 1
-
       - name: Controller - Infra Apply - Download Logs
         if: always()
         env:
