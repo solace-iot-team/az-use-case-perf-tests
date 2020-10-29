@@ -7,7 +7,7 @@ Infrastructure standup and destroy for standalone Solace PubSub+ Broker.
 ### General
 #### Keys
 
-[See here](../../kesy).
+[See here](../../keys).
 
 #### Terraform Init
 
@@ -40,7 +40,6 @@ export ARM_TENANT_ID={tenant-id}
 ````bash
 export AWS_ACCESS_KEY_ID={aws-access-key}
 export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
-export AWS_DEFAULT_REGION={aws-default-region}
 ````
 
 ## Run
