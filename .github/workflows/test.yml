@@ -1,0 +1,231 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+name: test
+on:
+  push:
+    branches:
+      - 'feature-wf-test**'
+      - 'mtn-wf-test**'
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - master
+  release:
+    types: [published]
+env:
+
+  TEST_CONTROLLER_ID: "wft-azperf"
+  TEST_LOCATION: "westeurope"
+  TEST_ZONE: "1"
+  TEST_VM_ADMIN_USERNAME: "controller"
+  TEST_AZURE_PROJECT: "solace-ctrlr"
+  TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
+  TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
+  TEST_RUNNER_ASSETS_DIR: remote-assets
+  TEST_RUNNER_ASSETS_INFRA_DIR: infra
+  TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}/${{ github.ref }}
+  TEST_REPO_INFRA_DIR: uc-non-persistent/infrastructure/standalone/.test
+  TEST_REPO_INFRA_LOGS_DIR: logs
+  TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
+  TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-18.04
+    outputs:
+      publicIpAddress: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+      resourceGroupName: ${{ steps.azure_deploy.outputs.resourceGroupName }}
+
+    steps:
+
+      - name: Print test env
+        run: |
+          env | grep TEST
+
+      - name: Dump GitHub context
+        run: |
+          echo "entire 'github' object"
+          echo "${{ toJson(github) }}"
+
+      - name: Print github env before checkout
+        run: |
+          pwd
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
+          echo "github.token=${{ github.token }}"
+
+      - name: DEBUG - EXIT 1
+        run: exit 1
+
+      - name: Checkout Current Branch
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+
+      - name: List Workspace
+        run: |
+          cd $GITHUB_WORKSPACE
+          ls -la
+          cd
+
+      - name: Azure Login
+        # https://github.com/marketplace/actions/azure-login
+        uses: azure/login@v1.1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+
+      - name: Create Azure Resource Group
+        run: |
+          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+          AZURE_PROJECT_TAG="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}"
+          az group create \
+            --name $AZURE_RESOURCE_GROUP \
+            --location ${TEST_LOCATION} \
+            --tags project=$AZURE_PROJECT_TAG \
+            --verbose
+
+      - name: Run ARM Deploy
+        id: azure_deploy
+        # https://github.com/marketplace/actions/deploy-azure-resource-manager-arm-template
+        uses: azure/arm-deploy@v1.0.1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.TEST_CONTROLLER_ID }}-${{ env.TEST_AZURE_PROJECT }}-rg
+          template: ${{ env.TEST_AZURE_DEPLOY_ARM_TEMPLATE }}
+          parameters: vm_admin_public_key="${{ secrets.CONTROLLER_VM_PUBLIC_KEY }}" project_prefix=${{ env.TEST_CONTROLLER_ID }}-${{ env.TEST_AZURE_PROJECT }} zone=${{ env.TEST_ZONE }} vm_admin_username=${{ env.TEST_VM_ADMIN_USERNAME }}
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${SSH_KEY}" > ~/.ssh/controller_key
+          chmod 600 ~/.ssh/controller_key
+          cat >>~/.ssh/config <<END
+          Host controller
+            HostName ${SSH_HOST}
+            User ${SSH_USER}
+            IdentityFile ~/.ssh/controller_key
+            StrictHostKeyChecking no
+          END
+          chmod 600 ~/.ssh/config
+          # cat ~/.ssh/config
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
+          SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+
+      - name: Controller - Copy bootstrap script
+        # https://github.com/garygrossgarten/github-action-scp
+        # no error handling: workflow will not fail on error
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ${{ env.TEST_BOOTSTRAP_SH }}
+          remote: bootstrap.sh
+          host: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+          username: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          privateKey: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
+
+      - name: Controller - Set Bootstrap to Executable
+        run: |
+          ssh controller "chmod u+x bootstrap.sh"
+
+      - name: Controller - Run Bootstrap
+        run: |
+          ssh controller "./bootstrap.sh > ./bootstrap.sh.log"
+
+      # - name: Show Job Outputs
+      #   run: |
+      #     echo "outputs:"
+      #     echo "${{toJson(jobs.create_vm.outputs)}}"
+
+      # - name: "Show azure deploy outputs"
+      #   run: |
+      #     echo "${{toJson(steps.azure_deploy.outputs)}}"
+
+      - name: Controller - Get Repo Ref
+        env:
+          CLONE_URL: ${{ github.event.repository.clone_url }}
+        run: |
+          ssh controller "\
+              rm -rf "${TEST_CONTROLLER_REPO_DIR}" && \
+              mkdir -p "${TEST_CONTROLLER_REPO_DIR}" && \
+              cd "${TEST_CONTROLLER_REPO_DIR}" && \
+              git init && \
+              git remote add origin "${CLONE_URL}" && \
+              git fetch origin "${GITHUB_SHA}" && \
+              git reset --hard FETCH_HEAD
+          "
+
+      - name: TODO - Controller - Bootstrap Tests
+        run: |
+          echo "run a script which does all the prep, like keys, link solace, etc."
+
+      - name: Controller - Infra Apply - Run
+        run: |
+          ssh controller "\
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_DIR}" && \
+              ./${TEST_REPO_INFRA_APPLY_SCRIPT}
+          "
+
+      - name: Controller - Infra Apply - Download Logs
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+
+      # - name: Check Runner Directory
+      #   env:
+      #     RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
+      #   run: |
+      #     echo "where am i and what is here"
+      #     pwd
+      #     ls -la
+      #     echo "what is in the runner asset dir?"
+      #     echo "RUNNER_ASSET_DIR=${RUNNER_ASSET_DIR}"
+      #     ls -la ${RUNNER_ASSET_DIR}
+
+      - name: Archive Infra Apply logs
+        if: always()
+        env:
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: infra-apply-logs
+          path: ${{ env.RUNNER_ASSET_DIR }}
+          if-no-files-found: error
+
+      - name: Check - Infra Apply - FAILED - Create Issue
+      # https://github.com/JasonEtco/create-an-issue
+        if: failure()
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ github.repository }}/${{ github.ref }}
+          WORKFLOW: ${{ github.workflow }}
+          JOB: ${{ github.job }}
+          EVENT_NAME: ${{ github.event_name }}
+          VIEW_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
+        with:
+          filename: .github/failed-test-template.md
+
+      # - name:
+  # https://docs.github.com/en/free-pro-team@latest/actions/managing-workflow-runs/adding-a-workflow-status-badge#using-the-event-parameter
+
+
+      # start the test runs
+      # download test-results
+      # teardown infra
+      # teardown azure controller
+      # if not, clean it up
+
+###
+# The End.
