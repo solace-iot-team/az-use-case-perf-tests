@@ -2,6 +2,7 @@
 
 > :warning: **Under Construction**
 
+[![Actions Status](https://github.com/solace-iot-team/solace-ci-controller/workflows/tests/badge.svg)](https://github.com/solace-iot-team/solace-ci-controller/actions)
 
 Performance tests for Solace PubSub+ Brokers in Azure based on use case specific setup.
 
