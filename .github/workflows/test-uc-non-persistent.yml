@@ -37,6 +37,7 @@ env:
   TEST_REPO_INFRA_LOGS_DIR: logs
   TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
   TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
+  TEST_ARCHIVE_INFRA_LOGS_NAME: infra-logs
 
 jobs:
   run_tests:
@@ -300,7 +301,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
         uses: actions/upload-artifact@v2
         with:
-          name: infra-apply-logs
+          name: ${{ env.TEST_ARCHIVE_INFRA_LOGS_NAME }}
           path: ${{ env.RUNNER_ASSET_DIR }}
           if-no-files-found: error
 
