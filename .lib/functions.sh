@@ -12,8 +12,7 @@ function assertFile() {
   fi
   local file=$1
   if [[ ! -f "$file" ]]; then
-    echo ">>> ERROR: file='$file' does not exist. aborting." > /dev/tty
-    echo > /dev/tty
+    echo ">>> ERROR: file='$file' does not exist. aborting." 1>&2
     return 1;
   fi
   echo $file

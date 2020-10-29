@@ -1,0 +1,20 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+
+{
+  "sample_start_timestamp": "{{sample_start_ts_str}}",
+  "run_id": "{{run_id}}",
+  "sample_num": "{{sample_num}}",
+  "metrics_type": "{{stats_name}}",
+  "meta": {
+    "description": "Broker VPN stats",
+    "stats_name": "{{stats_name}}",
+    "log_file": "--omitted--"
+  },
+  "metrics": {{ vpn_stats_output_json | to_nice_json}}
+}

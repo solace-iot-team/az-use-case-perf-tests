@@ -1,0 +1,90 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Pre-Run Processing"
+  hosts: broker_pubsub
+  gather_facts: no
+  pre_tasks:
+    - include_vars:
+        file: run.vars.yml
+        name: run
+    - include_vars: "{{TEST_SPEC_FILE}}"
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+    - include_vars:
+        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.broker-nodes.json"
+        name: test_broker_nodes
+    - include_vars:
+        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.sdkperf-nodes.json"
+        name: test_sdkperf_nodes
+    - include_vars:
+        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.env.json"
+        name: test_env
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        run_name: "{{ RUN_NAME }}"
+        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+
+    - set_fact:
+        run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_start_ts_epoch_secs) }}"
+
+    - name: "Settings"
+      set_fact:
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
+        meta_result_file: "{{ result_dir }}/{{ run.meta_file_name }}"
+        meta_j2_template_file: "./lib/run.pre.meta.j2"
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - name: "Ensure Client Username is Enabled"
+      solace_client_username:
+        host: "{{ sempv2_host }}"
+        port: "{{ sempv2_port }}"
+        secure_connection: "{{ sempv2_is_secure_connection }}"
+        username: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        timeout: "{{ sempv2_timeout }}"
+        name: "{{ broker_pubsub.client_user_name }}"
+        msg_vpn: "{{ broker_pubsub.vpn_name }}"
+        settings:
+          enabled: true
+        state: present
+
+    - name: "Get Client Connections: Start"
+      uri:
+        # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+        # GET /msgVpns/{msgVpnName}/clients
+        url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{broker_pubsub.client_user_name}}&select={{run.select_client_connection_stats|trim|replace(' ','')}}"
+        method: GET
+        user: "{{ sempv2_username }}"
+        password: "{{ sempv2_password }}"
+        force_basic_auth: yes
+        status_code: "200"
+        return_content: yes
+      register: result
+
+    - set_fact:
+        number_connected_clients_start: "{{ result.json.data | length }}"
+        connected_client_list_start: "{{ result.json.data }}"
+
+    - name: "Write Pre-Run Meta Data to Results"
+      template:
+        src: "{{ meta_j2_template_file }}"
+        dest: "{{ meta_result_file }}"
+
+###
+# The End.

@@ -1,0 +1,70 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Test Spec Controller"
+  hosts: all
+  gather_facts: no
+  vars:
+    run_script: _run.sh
+    scan_4_errors_script: "./lib/scan-4-errors.sh"
+
+  tasks:
+
+    - name: "Check Env Vars"
+      debug:
+        msg:
+          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+          - "LOG_DIR={{LOG_DIR}}"
+          - "RUN_SCRIPTS_DIR={{RUN_SCRIPTS_DIR}}"
+          - "RUN_SPECS_DIR={{RUN_SPECS_DIR}}"
+          - "GENERATE_ONLY={{GENERATE_ONLY}}"
+
+    # - name: "Ensure {{ scan_4_errors_script }} exists"
+    #   stat:
+    #     path: "{{scan_4_errors_script}}"
+    #   register: stat_result
+    #   delegate_to: localhost
+    #   failed_when: not stat_result.stat.exists
+
+    - name: "Ensure {{ SHARED_SETUP_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{SHARED_SETUP_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ LOG_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{LOG_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ RUN_SCRIPTS_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{RUN_SCRIPTS_DIR}}"
+        state: directory
+
+    - name: "Ensure {{ RUN_SPECS_DIR }} exists"
+      local_action:
+        module: file
+        path: "{{RUN_SPECS_DIR}}"
+        state: directory
+
+    - name: "Settings"
+      set_fact:
+        infrastructure_id: "{{inventory_hostname}}"
+        is_run_tests: "{{ False if GENERATE_ONLY=='True' else True }}"
+
+    - name: "Iterate over runs"
+      include_tasks: ./tasks/run.test.yml
+      loop: "{{ run_list | dict2items }}"
+      loop_control:
+        index_var: run_num
+        loop_var: run
+
+###
+# The End.

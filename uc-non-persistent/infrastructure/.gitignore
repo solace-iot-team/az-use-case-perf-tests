@@ -1,0 +1,11 @@
+# Local .terraform directories
+.terraform
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+#Mac files
+.DS_Store
+
+*.log
