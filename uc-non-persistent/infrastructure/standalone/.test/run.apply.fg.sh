@@ -23,8 +23,6 @@ rm -f $LOG_DIR/*
 export TF_VARIABLES_DIR=$scriptDir
 
 
-echo "script: $scriptName ==> you found the right one"
-exit 1
 ../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1
 
 ###
