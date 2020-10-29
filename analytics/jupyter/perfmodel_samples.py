@@ -1,8 +1,7 @@
 import perfmodel
 
 #define run result location
-location = perfmodel.RunResultLocation("<path/to/analytics>/analytics/testresults/azure.1-auto-standalone")
-# location = perfmodel.RunResultLocation("/Users/jt/myproject/solace/azure-performance/solace-azure-performance/github/az-use-case-perf-tests/analytics/testresults/azure.1-auto-standalone")
+location = perfmodel.RunResultLocation("../testresults/azure.1-auto-standalone")
 
 #configure RunDefinition
 runDefinition = perfmodel.RunDefinition(location)
@@ -11,8 +10,8 @@ runDefinition = perfmodel.RunDefinition(location)
 runDefinition.process_run_samples(process_distinct_latency_samples=True)
 
 #retrieve all Runs
-for item in runDefinition.all_runs():
-    print(str(item))
+for run in runDefinition.all_runs():
+    print(str(run))
 
 #get the first run
 run_item = runDefinition.all_runs()[0]
