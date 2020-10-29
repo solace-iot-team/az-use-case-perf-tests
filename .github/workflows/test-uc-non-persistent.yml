@@ -77,9 +77,6 @@ jobs:
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
 
-      - name: DEBUG - EXIT 1
-        run: exit 1
-
       - name: Create Azure Resource Group
         run: |
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
@@ -160,6 +157,10 @@ jobs:
               git fetch origin "${GITHUB_SHA}" && \
               git reset --hard FETCH_HEAD
           "
+
+      - name: DEBUG - EXIT 1
+        run: exit 1
+
 
       - name: TODO - Controller - Bootstrap Tests
         run: |
