@@ -1,5 +1,31 @@
 # Release Notes
 
+## Version: 0.5.0
+Release Purpose: Auto Runs: Multi-Test & Infrastructure
+
+**RESTRUCTURED REPOSITORY**
+  * **created**
+    - uc-non-persistent/infrastructure
+      - contains all infrastructure related code
+    - uc-non-persistent/tests
+      - contains all testing related code
+  * **removed:**
+    - uc-non-persistent/ansible
+    - uc-non-persistent/terraform
+
+**NEW FEATURES**
+  * **uc-non-persistent/tests**
+    - test spec based test run framework
+    - supports multiple runs based on variations across any number of provisioned infrastructures
+  * **uc-non-persistent/tests/auto-run**
+    - sample scripts and test specs for workflow triggered testing
+  * **uc-non-persistent/infrastructure/standalone/auto-run**
+    - sample scripts and infrastructure specs for workflow triggered standup/destroy
+
+**FIXES:**
+  * **terraform**
+    - fixed sdkperf nodes dynamic ip address issue
+
 ## Version: 0.4.3
 Release Purpose: Introduce Latency per Message Metric
 

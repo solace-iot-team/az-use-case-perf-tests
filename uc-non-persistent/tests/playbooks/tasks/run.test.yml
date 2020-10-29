@@ -1,0 +1,95 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  - name: "Run Test"
+    debug:
+      msg:
+        - "run_num={{run_num}}"
+        - "run="
+        - "{{run}}"
+
+  - name: "Run Settings"
+    set_fact:
+      run_name: "{{run.key}}"
+      run_spec: "{{run.value}}"
+  - set_fact:
+      run_spec_file: "{{RUN_SPECS_DIR}}/{{infrastructure_id}}.{{run_name}}.yml"
+      run_log_file_base: "{{LOG_DIR}}/{{infrastructure_id}}.{{run_name}}"
+
+  - name: "Write Run Spec to File"
+    copy:
+      content: "{{ run_spec | to_nice_yaml }}"
+      dest: "{{run_spec_file}}"
+    delegate_to: localhost
+
+  - name: "Scan Logs for errors"
+    shell: >
+      export LOG_DIR={{LOG_DIR}};
+      {{ scan_4_errors_script }} 
+    args:
+      executable: /bin/bash
+    delegate_to: localhost
+    register: err_scan_result
+    ignore_errors: yes
+
+  - name: "Error Scan Result"
+    debug:
+      msg: "{{ err_scan_result }}"
+
+  - name: "Check if Test Aborted"
+    file:
+      path: "{{LOG_DIR}}/ABORT.log"
+      state: file
+    delegate_to: localhost
+    register: abort_file_stats
+    ignore_errors: yes
+
+  - set_fact:
+      is_errors_found: "{{ err_scan_result.rc > 0 }}"
+      is_tests_aborted: "{{ abort_file_stats.state == 'present' }}"
+
+  - name: "Decide Fail Strategy"
+    set_fact:
+      do_end_play: "{{ is_errors_found or is_tests_aborted }}"
+
+  - name: "Apply Fail Strategy"
+    meta: end_play
+    when: do_end_play
+
+  - name: "Run Test"
+    shell: >
+      export UC_NON_PERSISTENT_INFRASTRUCTURE={{infrastructure_id}};
+
+      export RUN_SPEC_FILE={{run_spec_file}}
+
+      export LOG_DIR={{LOG_DIR}};
+
+      export RUN_LOG_FILE_BASE={{run_log_file_base}};
+
+      D=$(date -u +"%Y-%m-%d-%H-%M-%S");
+      export RUN_ID=$D;
+
+      export RUN_NAME={{run_name}};
+
+      export IS_RUN_MONITOR_VPN_STATS={{'true' if run_spec.monitors.vpn_stats.include else ''}};
+      export IS_RUN_MONITOR_LATENCY={{'true' if run_spec.monitors.latency.sdkperf_node_to_broker.include else ''}};
+      export IS_RUN_MONITOR_BROKERNODE_LATENCY={{'true' if run_spec.monitors.latency.broker_node_to_broker.include else ''}};
+      export IS_RUN_MONITOR_PING={{'true' if run_spec.monitors.ping.include else ''}};
+      export IS_RUN_LOAD={{'true' if run_spec.load.include else ''}};
+
+      export RUN_START_TS_EPOCH_SECS=$(date -u +%s);
+
+      {{RUN_SCRIPTS_DIR}}/{{run_script}} > {{run_log_file_base}}.{{run_script}}.log 2>&1
+
+    delegate_to: localhost
+    register: run_script_result
+    when: is_run_tests
+
+
+###
+# The End.
