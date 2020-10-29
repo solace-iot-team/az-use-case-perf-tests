@@ -9,6 +9,16 @@ Infrastructure standup and destroy for standalone Solace PubSub+ Broker.
 
 [See here](../../kesy).
 
+#### Terraform Init
+
+````bash
+cd azure
+terraform init
+cd ..
+cd aws
+terraform init
+````
+
 #### Ansible Python Interpreter
 
 ````bash
