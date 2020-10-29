@@ -27,13 +27,16 @@ env:
   TEST_RUNNER_ASSETS_DIR: remote-assets
   TEST_RUNNER_ASSETS_INFRA_DIR: infra
   TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}/${{ github.ref }}
+  TEST_REPO_KEYS_DIR: uc-non-persistent/keys
+  TEST_AZURE_KEY_FILE: azure_key
+  TEST_AWS_KEY_FILE: aws_key
+  TEST_REPO_INFRA_SA_AZURE: uc-non-persistent/infrastructure/standalone/azure
+  TEST_REPO_INFRA_SA_AWS: uc-non-persistent/infrastructure/standalone/aws
+
   TEST_REPO_INFRA_DIR: uc-non-persistent/infrastructure/standalone/.test
   TEST_REPO_INFRA_LOGS_DIR: logs
   TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
   TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
-  TEST_REPO_KEYS_DIR: uc-non-persistent/keys
-  TEST_AZURE_KEY_FILE: azure_key
-  TEST_AWS_KEY_FILE: aws_key
 
 jobs:
   run_tests:
@@ -169,8 +172,14 @@ jobs:
               ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AWS_KEY_FILE} <<< y && \
               echo "keys generated:" && \
               ls -la && \
-              echo "next: terraform init?"
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE}" && \
+              terraform init && \
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS}" && \
+              terraform init && \
+              echo "terraform initialized"
+
           "
+
 
       - name: DEBUG - EXIT 1
         run: exit 1
