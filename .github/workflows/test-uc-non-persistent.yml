@@ -197,6 +197,17 @@ jobs:
               echo "azure login succeeded"
           "
 
+      - name: Controller - Check Env
+        run: |
+          ssh controller "\
+
+              env | grep ANSIBLE
+
+          "
+
+      - name: DEBUG - EXIT 1
+        run: exit 1
+
       - name: Controller - Infra Apply - Run
         run: |
           ssh controller "\
