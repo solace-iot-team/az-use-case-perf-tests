@@ -42,6 +42,13 @@ export AWS_ACCESS_KEY_ID={aws-access-key}
 export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
 ````
 
+### Link Docker Image into Project
+````bash
+
+cd {project-root}/az-use-case-perf-tests/bin/pubsub
+ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+````
+
 ## Run
 
 [Auto-Run Examples](./auto-run).

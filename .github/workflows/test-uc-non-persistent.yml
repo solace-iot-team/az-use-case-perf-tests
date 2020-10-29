@@ -30,6 +30,7 @@ env:
   TEST_REPO_KEYS_DIR: uc-non-persistent/keys
   TEST_AZURE_KEY_FILE: azure_key
   TEST_AWS_KEY_FILE: aws_key
+  TEST_BIN_PUBSUB_DIR: bin/pubsub
   TEST_REPO_INFRA_SA_AZURE: uc-non-persistent/infrastructure/standalone/azure
   TEST_REPO_INFRA_SA_AWS: uc-non-persistent/infrastructure/standalone/aws
 
@@ -197,11 +198,19 @@ jobs:
               echo "azure login succeeded"
           "
 
-      - name: Controller - Check Env
+# cd {project-root}/az-use-case-perf-tests/bin/pubsub
+# ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+
+      - name: Controller - Infra Apply - Link Docker Image into Repo
         run: |
-          ssh controller "\
-              source .bash_profile && \
-              env | grep ANSIBLE
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_BIN_PUBSUB_DIR}"
+
+              ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+
+              ls -la
+
           "
 
       - name: DEBUG - EXIT 1
@@ -210,6 +219,7 @@ jobs:
       - name: Controller - Infra Apply - Run
         run: |
           ssh controller "\
+              source .bash_profile && \
               export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" && \
               export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" && \
               cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_DIR}" && \
