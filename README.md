@@ -2,12 +2,12 @@
 
 > :warning: **Under Construction**
 
-[![Actions Status](https://github.com/solace-iot-team/solace-ci-controller/workflows/tests/badge.svg)](https://github.com/solace-iot-team/solace-ci-controller/actions)
+[![Actions Status](https://github.com/solace-iot-team/az-use-case-perf-tests/workflows/tests/badge.svg)](https://github.com/solace-iot-team/az-use-case-perf-tests/actions)
 
 Performance tests for Solace PubSub+ Brokers in Azure based on use case specific setup.
 
-[Release Notes](./ReleaseNotes.md)
-| [Report Issues](https://github.com/solace-iot-team/az-use-case-perf-tests/issues).
+[Release Notes](./ReleaseNotes.md)|
+[Report Issues](https://github.com/solace-iot-team/az-use-case-perf-tests/issues).
 
 
 ## Setup Controller
