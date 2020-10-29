@@ -200,9 +200,8 @@ jobs:
       - name: Controller - Check Env
         run: |
           ssh controller "\
-
+              source .bash_profile && \
               env | grep ANSIBLE
-
           "
 
       - name: DEBUG - EXIT 1
