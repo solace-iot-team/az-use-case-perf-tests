@@ -1,6 +1,6 @@
 ---
 title: FAILED: test
-assignees: ricardojosegomezulmke
+assignees: {{ payload.sender.login }}
 labels: bug
 ---
 

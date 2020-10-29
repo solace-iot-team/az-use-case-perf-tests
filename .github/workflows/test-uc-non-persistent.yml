@@ -3,7 +3,7 @@
 # Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
-name: test
+name: test-uc-non-persistent
 on:
   push:
     branches:
@@ -60,9 +60,6 @@ jobs:
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           echo "github.token=${{ github.token }}"
 
-      - name: DEBUG - EXIT 1
-        run: exit 1
-
       - name: Checkout Current Branch
         uses: actions/checkout@master
         with:
@@ -73,6 +70,9 @@ jobs:
           cd $GITHUB_WORKSPACE
           ls -la
           cd
+
+      - name: DEBUG - EXIT 1
+        run: exit 1
 
       - name: Azure Login
         # https://github.com/marketplace/actions/azure-login
