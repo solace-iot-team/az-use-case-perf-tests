@@ -13,7 +13,7 @@ Solace PubSub+ Performance Analytics is based on [Jupyter Notebooks](https://jup
   * matplotlib
   * seaborn
   * plotly
-
+  
 
 ````bash
 pip3 install jupyter
@@ -23,6 +23,14 @@ pip3 install matplotlib
 pip3 install seaborn
 pip3 install plotly
 ````
+* Install Jupyter extensions [Jupyter extensions](https://github.com/ipython-contrib/jupyter_contrib_nbextensions)
+````bash
+pip3 install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
+jupyter nbextension enable python-markdown/main
+
+````
+
 
 ## Starting Jupyter Notebook Server
 
