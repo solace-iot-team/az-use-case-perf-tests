@@ -39,6 +39,16 @@ env:
   TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
   TEST_ARCHIVE_INFRA_LOGS_NAME: infra-logs
 
+  TEST_REPO_TESTS_DIR: uc-non-persistent/tests/.test
+  TEST_REPO_TESTS_LOGS_DIR: logs
+  TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
+  TEST_REPO_TEST_RESULTS_DIR: test-results/stats
+  TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
+  TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
+  TEST_ARCHIVE_TEST_LOGS_NAME: test-logs
+  TEST_ARCHIVE_TEST_RESULTS_NAME: test-results
+
+
 jobs:
   run_tests:
     runs-on: ubuntu-18.04
@@ -236,18 +246,66 @@ jobs:
 
       - name: Controller - Test Runs
         run: |
-          echo "TODO: do the test run in foreground"
+          ssh controller "
+
+              source .bash_profile
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_TESTS_DIR}"
+
+              ./${TEST_REPO_TESTS_RUN_SCRIPT}
+
+          "
+
+  # TEST_REPO_TESTS_DIR: uc-non-persistent/tests/.test
+  # TEST_REPO_TESTS_LOGS_DIR: logs
+  # TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
+  # TEST_REPO_TEST_RESULTS_DIR: test-results/stats
+  # TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
+  # TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
+  # TEST_ARCHIVE_TEST_LOGS_NAME: test-logs
+  # TEST_ARCHIVE_TEST_RESULTS_NAME: test-results
+
+
+
+      - name: Controller - Download Test Logs
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TESTS_DIR }}/${{ env.TEST_REPO_TESTS_LOGS_DIR }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+
+      - name: Archive Test logs
+        if: always()
+        env:
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.TEST_ARCHIVE_TEST_LOGS_NAME }}
+          path: ${{ env.RUNNER_ASSET_DIR }}
+          if-no-files-found: error
 
       - name: Controller - Download Test Results
         if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TEST_RESULTS_DIR }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TEST_RESULTS_DIR }}
         run: |
-          echo "TODO: download the test results"
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
 
-      - name: Archive Test Results
+      - name: Archive Test logs
         if: always()
-        run: |
-          echo "TODO: archive the test results"
-
+        env:
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TEST_RESULTS_DIR }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.TEST_ARCHIVE_TEST_RESULTS_NAME }}
+          path: ${{ env.RUNNER_ASSET_DIR }}
+          if-no-files-found: error
 
       - name: Controller - Infra Destroy
         if: always()
