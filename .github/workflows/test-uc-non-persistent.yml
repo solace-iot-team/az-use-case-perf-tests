@@ -164,20 +164,26 @@ jobs:
               git reset --hard FETCH_HEAD
           "
 
-      - name: Controller - Bootstrap Tests
+      - name: Controller - Bootstrap - SSH Keys
         run: |
           ssh controller "\
               cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_KEYS_DIR}" && \
               ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AZURE_KEY_FILE} <<< y && \
               ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AWS_KEY_FILE} <<< y && \
               echo "keys generated:" && \
-              ls -la && \
+              ls -la
+          "
+
+      - name: Controller - Bootstrap - Terraform
+        run: |
+          ssh controller "\
               cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE}" && \
               terraform init && \
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS}" && \
+              ls -la && \
+              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS}" && \
               terraform init && \
+              ls -la && \
               echo "terraform initialized"
-
           "
 
 
