@@ -10,8 +10,10 @@
 
 ````bash
 #  for example:
-az ad sp create-for-rbac
+az ad sp create-for-rbac --sdk-auth
 ````
+
+
 
 #### Github Secrets
 
