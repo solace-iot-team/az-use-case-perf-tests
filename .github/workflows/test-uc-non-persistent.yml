@@ -71,14 +71,14 @@ jobs:
           ls -la
           cd
 
-      - name: DEBUG - EXIT 1
-        run: exit 1
-
       - name: Azure Login
         # https://github.com/marketplace/actions/azure-login
         uses: azure/login@v1.1
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
+
+      - name: DEBUG - EXIT 1
+        run: exit 1
 
       - name: Create Azure Resource Group
         run: |
