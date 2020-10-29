@@ -1,5 +1,5 @@
 ---
-title: FAILED: test
+title: FAILED test
 assignees: {{ payload.sender.login }}
 labels: bug
 ---
@@ -7,7 +7,7 @@ labels: bug
 FAILED: test
 
 
-[view]({{ env.VIEW_URL }})
+[view workflow]({{ env.VIEW_URL }})
 
 
 - who dunnit: {{ payload.sender.login }}
