@@ -8,6 +8,11 @@
 
 [See: Generate the Service Principal](https://docs.microsoft.com/en-gb/cli/azure/ad/sp?view=azure-cli-latest#az_ad_sp_create_for_rbac).
 
+````bash
+#  for example:
+az ad sp create-for-rbac
+````
+
 #### Github Secrets
 
 AZURE_CREDENTIALS = {copy service principal output}
