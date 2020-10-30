@@ -32,6 +32,9 @@ source $projectHome/.lib/functions.sh
 
   cd $TERRAFORM_DIR
 
+  # ignore errors
+  terraform taint -state=$TERRAFORM_STATE_FILE null_resource.trigger_bootstrap || true
+
   terraform apply -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - $scriptName - executing terraform"; exit 1; fi
 
