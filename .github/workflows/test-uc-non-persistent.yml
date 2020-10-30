@@ -354,7 +354,16 @@ jobs:
           path: ${{ env.RUNNER_ASSET_DIR }}
           if-no-files-found: error
 
-      - name: Check - Test - FAILED - Create Issue
+      - name: Teardown Controller
+        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
+        run: |
+          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+          az group delete \
+            --name $AZURE_RESOURCE_GROUP \
+            --yes \
+            --verbose
+
+      - name: Check - Test - Create Issue if FAILED
       # https://github.com/JasonEtco/create-an-issue
         if: failure()
         uses: JasonEtco/create-an-issue@v2
@@ -367,16 +376,6 @@ jobs:
           VIEW_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
         with:
           filename: .github/failed-test-template.md
-
-      - name: Teardown Controller
-        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
-        run: |
-          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
-          az group delete \
-            --name $AZURE_RESOURCE_GROUP \
-            --yes \
-            --verbose
-
 
 ###
 # The End.
