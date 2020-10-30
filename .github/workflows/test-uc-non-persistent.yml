@@ -19,7 +19,7 @@ on:
     - cron: "10 4 * * SUN"
 env:
 
-  DEBUG_FLAG: ${{ false }}
+  DEBUG_FLAG: ${{ true }}
 
   TEST_CONTROLLER_ID: "wft-azperf"
   TEST_LOCATION: "westeurope"
@@ -64,22 +64,19 @@ jobs:
 
     steps:
 
-      - name: EXIT if DEBUG_FLAG
-        if: ${{ env.DEBUG_FLAG == true }}
-        run: |
-          echo "DEBUG_FLAG=${DEBUG_FLAG}"
-          exit 1
-
       - name: Print test env
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           env | grep TEST
 
       - name: Dump GitHub context
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           echo "entire 'github' object"
           echo "${{ toJson(github) }}"
 
       - name: Print github env before checkout
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           pwd
           echo "GITHUB_SHA=$GITHUB_SHA"
@@ -95,6 +92,7 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: List Workspace
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           cd $GITHUB_WORKSPACE
           ls -la
@@ -147,7 +145,7 @@ jobs:
 
 
       - name: Controller - Set Bash Profile
-        if: ${{ env.DEBUG_FLAG }}
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           ssh controller "
 
@@ -424,18 +422,16 @@ jobs:
         with:
           filename: .github/failed-test-template.md
 
-      - name: TODO - Switch me on - Teardown Controller
-        run: echo "TODO - Switch me on - Teardown Controller "
-
-
-
-      # - name: Teardown Controller - Delete Azure Resource Group
-      #   if: always()
-      #   run: |
-      #     AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
-      #     az group delete \
-      #       --name $AZURE_RESOURCE_GROUP \
-      #       --verbose
+      - name: Teardown Controller - Delete Azure Resource Group
+        if: ${{ always() && env.DEBUG_FLAG == false }}
+        run: |
+          echo "Teardown Controller - Delete Azure Resource Group"
+          echo "has triggered"
+          exit 1
+          # AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+          # az group delete \
+          #   --name $AZURE_RESOURCE_GROUP \
+          #   --verbose
 
 
 ###

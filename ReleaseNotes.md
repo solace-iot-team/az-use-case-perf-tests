@@ -15,6 +15,16 @@ Release Purpose: Automated Testing
       - archives results
   * [see here for pre-requisites](.github/WorkflowsReadme.md)
 
+**FIXES**
+  * fixes to log file directory for infrastructure bootstrap
+    - bootstrap scripts now logs into same directory as other _run.apply_ scripts
+  * tainting of trigger_bootstrap resource
+    - added to __run.apply.sh_
+  * terrform: azure/az-sa-sdkperf-nodes and az-sa-sol-broker-nodes
+    - resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-secgrp_association"
+      - added dependency on nic interfaces - should resolve error of nic not being ready 
+
+
 ## Version: 0.5.0
 Release Purpose: Auto Runs: Multi-Test & Infrastructure
 
