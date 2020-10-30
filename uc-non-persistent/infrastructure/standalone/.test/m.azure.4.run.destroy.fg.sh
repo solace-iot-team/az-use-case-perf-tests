@@ -12,9 +12,9 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 export infrastructureIds=(
   "azure.test1"
   "azure.test2"
-  "aws.test1"
+  "azure.test3"
+  "azure.test4"
 )
-
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
@@ -23,8 +23,7 @@ rm -f $LOG_DIR/**destroy**
 
 export TF_VARIABLES_DIR=$scriptDir
 
-nohup ../_run.destroy-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
-# ../_run.destroy-all.sh
+../_run.destroy-all.sh > $LOG_DIR/$scriptName.out 2>&1
 
 ###
 # The End.

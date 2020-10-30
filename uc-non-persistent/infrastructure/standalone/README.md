@@ -7,7 +7,17 @@ Infrastructure standup and destroy for standalone Solace PubSub+ Broker.
 ### General
 #### Keys
 
-[See here](../../kesy).
+[See here](../../keys).
+
+#### Terraform Init
+
+````bash
+cd azure
+terraform init
+cd ..
+cd aws
+terraform init
+````
 
 #### Ansible Python Interpreter
 
@@ -30,7 +40,13 @@ export ARM_TENANT_ID={tenant-id}
 ````bash
 export AWS_ACCESS_KEY_ID={aws-access-key}
 export AWS_SECRET_ACCESS_KEY={aws-secret-access-key}
-export AWS_DEFAULT_REGION={aws-default-region}
+````
+
+### Link Docker Image into Project
+````bash
+
+cd {project-root}/az-use-case-perf-tests/bin/pubsub
+ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
 ````
 
 ## Run
