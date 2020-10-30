@@ -1,5 +1,30 @@
 # Release Notes
 
+## Version: 0.5.1
+Release Purpose: Automated Testing
+
+**Github Workflow**
+  * **.github/workflows**
+    - test-uc-non-persistent.yml
+      - runs on: pull_request, release, weekly schedule
+      - bootstraps external controller vm in azure
+      - runs
+        - **uc-non-persistent/infrastructure/standalone/.test/run.apply.fg.sh**
+        - **uc-non-persistent/tests/.test/run.fg.sh**
+        - **uc-non-persistent/infrastructure/standalone/.test/run.destroy.fg.sh**
+      - archives results
+  * [see here for pre-requisites](.github/WorkflowsReadme.md)
+
+**FIXES**
+  * fixes to log file directory for infrastructure bootstrap
+    - bootstrap scripts now logs into same directory as other _run.apply_ scripts
+  * tainting of trigger_bootstrap resource
+    - added to __run.apply.sh_
+  * terrform: azure/az-sa-sdkperf-nodes and az-sa-sol-broker-nodes
+    - resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-secgrp_association"
+      - added dependency on nic interfaces - should resolve error of nic not being ready 
+
+
 ## Version: 0.5.0
 Release Purpose: Auto Runs: Multi-Test & Infrastructure
 
