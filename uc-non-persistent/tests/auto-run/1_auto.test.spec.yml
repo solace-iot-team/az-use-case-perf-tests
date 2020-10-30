@@ -16,7 +16,7 @@
         config: 1-auto-standalone
     run_specs:
       run_params:
-        total_num_samples: 10
+        total_num_samples: 30
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
       run_defaults:
