@@ -19,7 +19,7 @@ on:
     - cron: "10 4 * * SUN"
 env:
 
-  DEBUG_FLAG: false
+  DEBUG_FLAG: ${{ false }}
 
   TEST_CONTROLLER_ID: "wft-azperf"
   TEST_LOCATION: "westeurope"
