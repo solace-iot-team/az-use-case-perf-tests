@@ -47,7 +47,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2020-05-01",
             "name": "[variables('networkSecurityGroups_controller_SecGroupNet_name')]",
-            "location": "[resourceGroup().location]",            
+            "location": "[resourceGroup().location]",
             "properties": {
                 "securityRules": [
                     {
@@ -74,13 +74,13 @@
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2020-05-01",
             "name": "[variables('publicIPAddresses_controller_vmPublicIP_name')]",
-            "location": "[resourceGroup().location]",            
+            "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Basic" // Standard
             },
             "zones": [
                 "[parameters('zone')]"
-            ],            
+            ],
             "properties": {
                 // "ipAddress": "40.68.26.99",
                 "publicIPAddressVersion": "IPv4",
@@ -97,7 +97,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-05-01",
             "name": "[variables('virtualNetworks_controller_vNet_name')]",
-            "location": "[resourceGroup().location]",            
+            "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
@@ -138,7 +138,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-05-01",
             "name": "[variables('networkInterfaces_controller_vmNetInt_name')]",
-            "location": "[resourceGroup().location]",            
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_controller_vmPublicIP_name'))]",
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_controller_vNet_name'), variables('virtualNetworks_controller_vNet_subNet_name'))]",
@@ -176,10 +176,10 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2019-07-01",
             "name": "[variables('virtualMachines_controller_vm_name')]",
-            "location": "[resourceGroup().location]",      
+            "location": "[resourceGroup().location]",
             "zones": [
                 "[parameters('zone')]"
-            ],            
+            ],
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaces_controller_vmNetInt_name'))]"
             ],
@@ -187,7 +187,8 @@
                 // Note: must be in same vNet to use
                 // "proximityPlacementGroup": "[parameters('proximity_placement_group_id')]",
                 "hardwareProfile": {
-                    "vmSize": "Standard_D4s_v3"
+                    "vmSize": "Standard_D8s_v3"
+                    // "vmSize": "Standard_D4s_v3"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -203,7 +204,7 @@
                         // "writeAcceleratorEnabled": true,
                         "caching": "ReadWrite",
                         "encryptionSettings": {
-                            "enabled": false        
+                            "enabled": false
                         },
                         "managedDisk": {
                             // StandardSSD_LRS, Premium_LRS, Standard_LRS
@@ -242,8 +243,8 @@
         }
     ],
     "outputs": {
-        "publicIPAddress": {  
-            "type": "string",  
+        "publicIPAddress": {
+            "type": "string",
             "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddresses_controller_vmPublicIP_name'))).IpAddress]"
         },
         "resourceGroupName": {
