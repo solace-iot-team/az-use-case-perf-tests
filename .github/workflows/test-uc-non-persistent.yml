@@ -19,6 +19,8 @@ on:
     - cron: "10 4 * * SUN"
 env:
 
+  DEBUG_FLAG: true
+
   TEST_CONTROLLER_ID: "wft-azperf"
   TEST_LOCATION: "westeurope"
   TEST_ZONE: "1"
@@ -139,6 +141,7 @@ jobs:
 
 
       - name: Controller - Set Bash Profile
+        if: ${{ env.DEBUG_FLAG }}
         run: |
           ssh controller "
 
@@ -154,11 +157,14 @@ jobs:
 
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
 
-              cat ~/.bash_profile
-
-              exit 1
-
           "
+
+      - name: EXIT if DEBUG_FLAG
+        if: ${{ env.DEBUG_FLAG }}
+        run: |
+          echo "DEBUG_FLAG=${DEBUG_FLAG}"
+          exit 1
+
 
       - name: Controller - Copy bootstrap script
         # https://github.com/garygrossgarten/github-action-scp

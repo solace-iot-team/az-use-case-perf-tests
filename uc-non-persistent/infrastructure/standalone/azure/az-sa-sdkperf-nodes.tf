@@ -76,7 +76,8 @@ resource "azurerm_network_interface" "sdkperf-nodes-nic" {
   ip_configuration {
     name                          = "internal"
     subnet_id                     = var.subnet_id == "" ? azurerm_subnet.sdkperf_subnet[0].id : var.subnet_id
-    private_ip_address_allocation = "Dynamic"
+    # private_ip_address_allocation = "Dynamic" - possible source of error if not assigned in time
+    private_ip_address_allocation = "Static"
     public_ip_address_id          = azurerm_public_ip.sdkperf-nodes-pubip[count.index].id
   }
 
