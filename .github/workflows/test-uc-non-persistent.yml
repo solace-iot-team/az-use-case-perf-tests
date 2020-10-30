@@ -157,12 +157,15 @@ jobs:
 
           "
 
-      - name: Controller - Try Connect SSH
+      - name: Controller - Connect SSH
+      # ensures that connection can be established
         run: |
           ssh controller "
 
-            touch connect_ok.log
-            
+            touch ssh_connect_SUCCESS.log
+
+            echo "successfully connected to controller via ssh"
+
           "
 
       # - name: DEBUG - EXIT - Use Controller Manually
@@ -368,13 +371,10 @@ jobs:
       - name: Teardown Controller
         if: ${{ always() && env.DEBUG_FLAG == 'false' }}
         run: |
-          echo "Teardown Controller - Delete Azure Resource Group"
-          echo "has triggered"
-          exit 1
-          # AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
-          # az group delete \
-          #   --name $AZURE_RESOURCE_GROUP \
-          #   --verbose
+          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+          az group delete \
+            --name $AZURE_RESOURCE_GROUP \
+            --verbose
 
 
 ###
