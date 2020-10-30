@@ -65,9 +65,12 @@ jobs:
     steps:
 
       - name: Print test env
-        if: ${{ env.DEBUG_FLAG == true }}
+        if: env.DEBUG_FLAG == 'true'
         run: |
           env | grep TEST
+
+      - name: DEBUG - EXIT
+        run: exit 1
 
       - name: Dump GitHub context
         if: ${{ env.DEBUG_FLAG == true }}
@@ -422,7 +425,7 @@ jobs:
         with:
           filename: .github/failed-test-template.md
 
-      - name: Teardown Controller - Delete Azure Resource Group
+      - name: Teardown Controller
         if: ${{ always() && env.DEBUG_FLAG == false }}
         run: |
           echo "Teardown Controller - Delete Azure Resource Group"
