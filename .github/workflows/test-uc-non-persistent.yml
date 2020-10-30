@@ -64,6 +64,12 @@ jobs:
 
     steps:
 
+      - name: EXIT if DEBUG_FLAG
+        if: ${{ env.DEBUG_FLAG }}
+        run: |
+          echo "DEBUG_FLAG=${DEBUG_FLAG}"
+          exit 1
+
       - name: Print test env
         run: |
           env | grep TEST
@@ -158,13 +164,6 @@ jobs:
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
 
           "
-
-      - name: EXIT if DEBUG_FLAG
-        if: ${{ env.DEBUG_FLAG }}
-        run: |
-          echo "DEBUG_FLAG=${DEBUG_FLAG}"
-          exit 1
-
 
       - name: Controller - Copy bootstrap script
         # https://github.com/garygrossgarten/github-action-scp
