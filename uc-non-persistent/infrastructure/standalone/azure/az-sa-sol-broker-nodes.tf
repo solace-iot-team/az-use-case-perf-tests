@@ -113,8 +113,7 @@ resource "azurerm_network_interface" "solacebroker-nodes-nic" {
   ip_configuration {
     name                          = "internal"
     subnet_id                     = var.subnet_id == "" ? azurerm_subnet.sdkperf_subnet[0].id : var.subnet_id
-    # private_ip_address_allocation = "Dynamic" - possible source of error if not assigned in time
-    private_ip_address_allocation = "Static"
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.solacebroker-nodes-pubip[count.index].id
   }
 
@@ -151,6 +150,10 @@ resource "azurerm_network_interface_security_group_association" "solacebroker-no
 
   network_interface_id      = azurerm_network_interface.solacebroker-nodes-nic[count.index].id
   network_security_group_id = azurerm_network_security_group.solacebroker_secgrp.id
+  # ensure nic is created and ready
+  depends_on = [
+        azurerm_network_interface.sdkperf-nodes-nic
+    ]
 }
 
 resource "local_file" "broker_nodes_file" {
