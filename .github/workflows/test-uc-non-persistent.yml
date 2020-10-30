@@ -65,7 +65,7 @@ jobs:
     steps:
 
       - name: EXIT if DEBUG_FLAG
-        if: ${{ env.DEBUG_FLAG }}
+        if: ${{ env.DEBUG_FLAG == true }}
         run: |
           echo "DEBUG_FLAG=${DEBUG_FLAG}"
           exit 1
