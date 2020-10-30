@@ -157,6 +157,14 @@ jobs:
 
           "
 
+      - name: Controller - Try Connect SSH
+        run: |
+          ssh controller "
+
+            touch connect_ok.log
+            
+          "
+
       # - name: DEBUG - EXIT - Use Controller Manually
       #   run: |
       #     echo "Fully setup Controller - ready to use manually"
@@ -217,7 +225,7 @@ jobs:
               echo "terraform initialized"
           "
 
-      ###############    
+      ###############
       # Example of how to log into Azure manually
       # - name: Controller - Bootstrap - Azure login
       #   run: |
