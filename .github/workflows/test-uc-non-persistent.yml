@@ -19,7 +19,7 @@ on:
     - cron: "10 4 * * SUN"
 env:
 
-  DEBUG_FLAG: ${{ true }}
+  DEBUG_FLAG: ${{ false }}
 
   TEST_CONTROLLER_ID: "wft-azperf"
   TEST_LOCATION: "westeurope"
@@ -49,18 +49,12 @@ env:
   TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
   TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
 
-  # TEST_ARCHIVE_INFRA_LOGS_NAME: infra-logs
-  # TEST_ARCHIVE_TEST_LOGS_NAME: test-logs
-  # TEST_ARCHIVE_TEST_RESULTS_NAME: test-results
-
   TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
   run_tests:
+
     runs-on: ubuntu-18.04
-    # outputs:
-    #   publicIpAddress: ${{ steps.azure_deploy.outputs.publicIPAddress }}
-    #   resourceGroupName: ${{ steps.azure_deploy.outputs.resourceGroupName }}
 
     steps:
 
@@ -163,8 +157,10 @@ jobs:
 
           "
 
-      - name: DEBUG - EXIT
-        run: exit 1    
+      # - name: DEBUG - EXIT - Use Controller Manually
+      #   run: |
+      #     echo "Fully setup Controller - ready to use manually"
+      #     exit 1
 
       - name: Controller - Copy bootstrap script
         # https://github.com/garygrossgarten/github-action-scp
@@ -184,15 +180,6 @@ jobs:
       - name: Controller - Run Bootstrap
         run: |
           ssh controller "./bootstrap.sh > ./bootstrap.sh.log"
-
-      # - name: Show Job Outputs
-      #   run: |
-      #     echo "outputs:"
-      #     echo "${{toJson(jobs.create_vm.outputs)}}"
-
-      # - name: "Show azure deploy outputs"
-      #   run: |
-      #     echo "${{toJson(steps.azure_deploy.outputs)}}"
 
       - name: Controller - Get Repo Ref
         env:
@@ -230,6 +217,7 @@ jobs:
               echo "terraform initialized"
           "
 
+      # Example of how to log into Azure manually
       # - name: Controller - Bootstrap - Azure login
       #   run: |
       #     ssh controller "\
@@ -289,22 +277,6 @@ jobs:
 
           "
 
-  # TEST_REPO_TESTS_DIR: uc-non-persistent/tests/.test
-  # TEST_REPO_TESTS_LOGS_DIR: logs
-  # TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
-  # TEST_REPO_TEST_RESULTS_DIR: test-results/stats
-  # TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
-  # TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
-  # TEST_ARCHIVE_TEST_LOGS_NAME: test-logs
-  # TEST_ARCHIVE_TEST_RESULTS_NAME: test-results
-
-  # TEST_ARCHIVE_INFRA_LOGS_NAME: infra-logs
-  # TEST_ARCHIVE_TEST_LOGS_NAME: test-logs
-  # TEST_ARCHIVE_TEST_RESULTS_NAME: test-results
-  #
-  # TEST_ARCHIVE_RESULTS_NAME: results
-
-
       - name: Controller - Download Test Logs
         if: always()
         env:
@@ -315,16 +287,6 @@ jobs:
           mkdir -p ./${RUNNER_ASSET_DIR}
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
-      # - name: Archive Test logs
-      #   if: always()
-      #   env:
-      #     RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{ env.TEST_ARCHIVE_TEST_LOGS_NAME }}
-      #     path: ${{ env.RUNNER_ASSET_DIR }}
-      #     if-no-files-found: error
-
       - name: Controller - Download Test Results
         if: always()
         env:
@@ -334,16 +296,6 @@ jobs:
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
           sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
-
-      # - name: Archive Test Results
-      #   if: always()
-      #   env:
-      #     RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TEST_RESULTS_DIR }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{ env.TEST_ARCHIVE_TEST_RESULTS_NAME }}
-      #     path: ${{ env.RUNNER_ASSET_DIR }}
-      #     if-no-files-found: error
 
       - name: Controller - Infra Destroy
         if: always()
@@ -379,27 +331,6 @@ jobs:
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
-
-      # - name: Check Runner Directory
-      #   env:
-      #     RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
-      #   run: |
-      #     echo "where am i and what is here"
-      #     pwd
-      #     ls -la
-      #     echo "what is in the runner asset dir?"
-      #     echo "RUNNER_ASSET_DIR=${RUNNER_ASSET_DIR}"
-      #     ls -la ${RUNNER_ASSET_DIR}
-
-      # - name: Archive Infra logs
-      #   if: always()
-      #   env:
-      #     RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{ env.TEST_ARCHIVE_INFRA_LOGS_NAME }}
-      #     path: ${{ env.RUNNER_ASSET_DIR }}
-      #     if-no-files-found: error
 
       - name: Archive Results
         if: always()
