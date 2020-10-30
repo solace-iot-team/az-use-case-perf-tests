@@ -19,7 +19,7 @@ on:
     - cron: "10 4 * * SUN"
 env:
 
-  DEBUG_FLAG: true
+  DEBUG_FLAG: false
 
   TEST_CONTROLLER_ID: "wft-azperf"
   TEST_LOCATION: "westeurope"
@@ -58,9 +58,9 @@ env:
 jobs:
   run_tests:
     runs-on: ubuntu-18.04
-    outputs:
-      publicIpAddress: ${{ steps.azure_deploy.outputs.publicIPAddress }}
-      resourceGroupName: ${{ steps.azure_deploy.outputs.resourceGroupName }}
+    # outputs:
+    #   publicIpAddress: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+    #   resourceGroupName: ${{ steps.azure_deploy.outputs.resourceGroupName }}
 
     steps:
 
