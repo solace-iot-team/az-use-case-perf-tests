@@ -374,6 +374,7 @@ jobs:
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
           az group delete \
             --name $AZURE_RESOURCE_GROUP \
+            --yes \
             --verbose
 
 
