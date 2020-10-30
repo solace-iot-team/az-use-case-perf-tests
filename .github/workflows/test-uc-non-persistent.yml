@@ -69,17 +69,14 @@ jobs:
         run: |
           env | grep TEST
 
-      - name: DEBUG - EXIT
-        run: exit 1
-
       - name: Dump GitHub context
-        if: ${{ env.DEBUG_FLAG == true }}
+        if: env.DEBUG_FLAG == 'true'
         run: |
           echo "entire 'github' object"
           echo "${{ toJson(github) }}"
 
       - name: Print github env before checkout
-        if: ${{ env.DEBUG_FLAG == true }}
+        if: env.DEBUG_FLAG == 'true'
         run: |
           pwd
           echo "GITHUB_SHA=$GITHUB_SHA"
@@ -95,7 +92,7 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: List Workspace
-        if: ${{ env.DEBUG_FLAG == true }}
+        if: env.DEBUG_FLAG == 'true'
         run: |
           cd $GITHUB_WORKSPACE
           ls -la
@@ -148,7 +145,7 @@ jobs:
 
 
       - name: Controller - Set Bash Profile
-        if: ${{ env.DEBUG_FLAG == true }}
+        if: env.DEBUG_FLAG == 'true'
         run: |
           ssh controller "
 
@@ -165,6 +162,9 @@ jobs:
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
 
           "
+
+      - name: DEBUG - EXIT
+        run: exit 1    
 
       - name: Controller - Copy bootstrap script
         # https://github.com/garygrossgarten/github-action-scp
@@ -426,7 +426,7 @@ jobs:
           filename: .github/failed-test-template.md
 
       - name: Teardown Controller
-        if: ${{ always() && env.DEBUG_FLAG == false }}
+        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
         run: |
           echo "Teardown Controller - Delete Azure Resource Group"
           echo "has triggered"
