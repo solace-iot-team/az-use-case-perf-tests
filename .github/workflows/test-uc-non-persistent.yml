@@ -217,6 +217,7 @@ jobs:
               echo "terraform initialized"
           "
 
+      ###############    
       # Example of how to log into Azure manually
       # - name: Controller - Bootstrap - Azure login
       #   run: |
