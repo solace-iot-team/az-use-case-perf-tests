@@ -93,7 +93,7 @@ resource "azurerm_network_security_rule" "solbroker-webportal" {
   network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
 }
 # enable SMF from sdkperf nodes only
-resource "azurerm_network_security_rule" "solbroker-msging" {
+resource "azurerm_network_security_rule" "solbroker-smf-plain" {
   name                        = "Messaging"
   priority                    = 103
   direction                  = "Inbound"
@@ -109,7 +109,7 @@ resource "azurerm_network_security_rule" "solbroker-msging" {
 }
 
 # enable web transport for testing with Try-me
-resource "azurerm_network_security_rule" "solbroker-webportal" {
+resource "azurerm_network_security_rule" "solbroker-ws-plain" {
   name                        = "WsPlain"
   priority                    = 104
   direction                  = "Inbound"
@@ -124,7 +124,7 @@ resource "azurerm_network_security_rule" "solbroker-webportal" {
   network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
 }
 # enable web transport for testing with Try-me
-resource "azurerm_network_security_rule" "solbroker-webportal" {
+resource "azurerm_network_security_rule" "solbroker-mqtt-plain" {
   name                        = "MqttPlain"
   priority                    = 105
   direction                  = "Inbound"
