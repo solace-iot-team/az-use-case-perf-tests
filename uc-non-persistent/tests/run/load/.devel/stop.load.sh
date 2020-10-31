@@ -13,6 +13,7 @@ usecaseHome=$projectHome/uc-non-persistent
 export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
 runName="0_load_only"
 
+export ANSIBLE_VERBOSITY=3
 
 export SHARED_SETUP_DIR="$usecaseHome/shared-setup"
 export RUN_LOG_FILE_BASE="$usecaseHome/tests/tmp/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName"
