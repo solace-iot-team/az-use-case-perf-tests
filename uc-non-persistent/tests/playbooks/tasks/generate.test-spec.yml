@@ -8,10 +8,11 @@
   - name: "Generating Run Specs for Run: {{run_spec.name}}"
     debug:
       msg:
-        - "infrastructure_num={{infrastructure_num}}"
+        - "infrastructure_num={{ infrastructure_num }}"
         - "run_spec_num = {{ run_spec_num }}"
-        - "{{infrastructure}}"
-        - "{{run_spec}}"
+        - "{{ infrastructure }}"
+        - "{{ run_spec }}"
+        - "{{ test_spec }}"
 
   - name: "Infrastructure Run Spec"
     set_fact:
@@ -30,13 +31,13 @@
     set_fact:
       run_load:
         include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include) }}"
-        consumers:
-          consumer_groups: "{{ run_spec.load.consumers.consumer_groups | default(test_spec.run_specs.run_defaults.load.consumers.consumer_groups) }}"
-        publishers:
-          publisher_groups: "{{ run_spec.load.publishers.publisher_groups | default(test_spec.run_specs.run_defaults.load.publishers.publisher_groups) }}"
-          client_connection_count: "{{ run_spec.load.publishers.client_connection_count | default(test_spec.run_specs.run_defaults.load.publishers.client_connection_count) }}"
-          msg_payload_size_bytes: "{{ run_spec.load.publishers.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.load.publishers.msg_payload_size_bytes) }}"
-          msg_rate_per_second: "{{ run_spec.load.publishers.msg_rate_per_second | default(test_spec.run_specs.run_defaults.load.publishers.msg_rate_per_second) }}"
+        subscribe:
+          consumers: "{{ run_spec.load.subscribe.consumers | default(test_spec.run_specs.run_defaults.load.subscribe.consumers) }}"
+        publish:
+          publishers: "{{ run_spec.load.publish.publishers | default(test_spec.run_specs.run_defaults.load.publish.publishers) }}"
+          client_connection_count: "{{ run_spec.load.publish.client_connection_count | default(test_spec.run_specs.run_defaults.load.publish.client_connection_count) }}"
+          msg_payload_size_bytes: "{{ run_spec.load.publish.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.load.publish.msg_payload_size_bytes) }}"
+          msg_rate_per_second: "{{ run_spec.load.publish.msg_rate_per_second | default(test_spec.run_specs.run_defaults.load.publish.msg_rate_per_second) }}"
 
   - name: "Compose Run Spec: Monitors for {{run_spec_id}}"
     set_fact:
