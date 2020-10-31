@@ -28,7 +28,7 @@ source $projectHome/.lib/functions.sh
 # Included?
 
   if [ -z "$IS_RUN_LOAD" ]; then
-    echo ">>> NOT INCLUDED in run"
+    echo ">>> LOAD NOT INCLUDED in run, exiting"
     exit
   fi
 
