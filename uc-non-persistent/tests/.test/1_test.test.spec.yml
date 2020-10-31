@@ -68,10 +68,13 @@
             include: true
       runs:
         - name: 0_base
+          description: "base run, no load"
           load:
             include: false
         - name: 1_variation
+          description: "default settings"
         - name: 2_variation
+          description: "variation: number of topics"
           load:
             publish:
               publishers:
@@ -88,6 +91,7 @@
                   number_of_topics: 10000
                   topic_prefix: "markets/exchange-3"
         - name: 3_variation
+          description: "variation: latency payload size"
           monitors:
             latency:
               msg_payload_size_bytes: 200

@@ -27,6 +27,12 @@
       path: "{{infrastructure_inventory_file}}"
       state: file
 
+  - name: "Compose Run Spec: General for {{run_spec_id}}"
+    set_fact:
+      run_general:
+        description: "{{ run_spec.description | default(run_spec.name) }}"
+        test_spec_name: "{{ test_spec.name }}"
+
   - name: "Compose Run Spec: Load for {{run_spec_id}}"
     set_fact:
       run_load:

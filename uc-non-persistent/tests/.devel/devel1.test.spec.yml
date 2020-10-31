@@ -68,6 +68,7 @@
             include: true
       runs:
         - name: 0_load_only
+          description: "load only run"
           monitors:
             latency:
               sdkperf_node_to_broker:
