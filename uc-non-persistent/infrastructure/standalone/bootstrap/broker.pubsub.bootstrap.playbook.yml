@@ -90,6 +90,15 @@
       delay: 1
       when: is_solace_cloud == False
 
+    - name: "Modify default VPN"
+      solace_vpn:
+        name: default
+        settings:
+          enabled: true
+          serviceMqttPlainTextEnabled: false
+        state: present
+      when: is_solace_cloud == False
+
     - name: "Create the VPN"
       solace_vpn:
         name: "{{ broker_pubsub.vpn_name }}"
@@ -97,6 +106,9 @@
           enabled: true
           authenticationBasicType: "none" # none, internal
           maxMsgSpoolUsage: "{{bootstrap.broker.pubsub.max_spool_usage}}"
+          serviceMqttPlainTextEnabled: true
+          serviceMqttMaxConnectionCount: 10
+          serviceMqttPlainTextListenPort: 1883
         state: present
       when: is_solace_cloud == False
 
@@ -112,7 +124,7 @@
           allowTransactedSessionsEnabled: false
           maxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           serviceSmfMaxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
-          serviceWebMaxConnectionCountPerClientUsername: 0
+          serviceWebMaxConnectionCountPerClientUsername: 10
           maxEndpointCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           maxEgressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           maxIngressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
