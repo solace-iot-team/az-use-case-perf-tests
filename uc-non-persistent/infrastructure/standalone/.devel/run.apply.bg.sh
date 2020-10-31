@@ -6,19 +6,21 @@
 
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/uc-non-persistent/*}
-usecaseHome=$projectHome/uc-non-persistent
 
 
-export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
-runName="0_load_only"
+#  format: {cloud_provider}.{config}
+export infrastructureIds=(
+  "aws.devel1"
+)
 
+export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
-export SHARED_SETUP_DIR="$usecaseHome/shared-setup"
-export RUN_LOG_FILE_BASE="$usecaseHome/tests/tmp/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName"
+export LOG_DIR=$scriptDir/logs
+rm -f $LOG_DIR/*
 
+export TF_VARIABLES_DIR=$scriptDir
 
-../_stop.load.sh
+nohup ../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
 
 ###
 # The End.
