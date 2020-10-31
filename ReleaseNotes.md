@@ -1,5 +1,21 @@
 # Release Notes
 
+## Version: 0.5.2
+Release Purpose: Auto-generated & adjustable Topics
+
+> :warning: **BREAKING CHANGES**
+
+**Test Spec**
+  * **uc-non-persistent/tests/auto-run**
+    - _**(breaking changes)**_
+    - 1_auto.test.spec.yml
+    - template.{spec-id}.test.spec.yml
+    - format changes to support auto generated & adjustable number of topics for publishers & consumers (load only) to test impact on performance
+  * **uc-non-persistent/infrastructure/standalone/azure & aws**
+    - added new security rules to allow plain MQTT & websocket traffic
+    - for testing purposes only
+    - use e.g. MQTT Explorer to see all the topics used by load test
+
 ## Version: 0.5.1
 Release Purpose: Automated Testing
 
@@ -22,7 +38,7 @@ Release Purpose: Automated Testing
     - added to __run.apply.sh_
   * terrform: azure/az-sa-sdkperf-nodes and az-sa-sol-broker-nodes
     - resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-secgrp_association"
-      - added dependency on nic interfaces - should resolve error of nic not being ready 
+      - added dependency on nic interfaces - should resolve error of nic not being ready
 
 
 ## Version: 0.5.0
