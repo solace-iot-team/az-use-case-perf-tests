@@ -1,3 +1,9 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
 ####################################################################################################
 # NOTE: The following network resources will only get created if:
 # The "sdkperf_secgroup_ids" variable is left "empty"
@@ -33,7 +39,7 @@ resource "azurerm_network_security_group" "solacebroker_secgrp" {
   name                = "${var.tag_name_prefix}-solacebroker_secgrp"
   location            = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
-  
+
   tags = {
     Name    = "${var.tag_name_prefix}-solacebroker_secgrp"
     Owner   = var.tag_owner
@@ -86,7 +92,7 @@ resource "azurerm_network_security_rule" "solbroker-webportal" {
   resource_group_name = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
   network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
 }
-
+# enable SMF from sdkperf nodes only
 resource "azurerm_network_security_rule" "solbroker-msging" {
   name                        = "Messaging"
   priority                    = 103
@@ -102,3 +108,37 @@ resource "azurerm_network_security_rule" "solbroker-msging" {
   network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
 }
 
+# enable web transport for testing with Try-me
+resource "azurerm_network_security_rule" "solbroker-webportal" {
+  name                        = "WsPlain"
+  priority                    = 104
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+  source_port_range          = "*"
+  destination_port_range     = "8008"
+  source_address_prefix      = "*"
+  destination_address_prefix = "*"
+
+  resource_group_name = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
+  network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
+}
+# enable web transport for testing with Try-me
+resource "azurerm_network_security_rule" "solbroker-webportal" {
+  name                        = "MqttPlain"
+  priority                    = 105
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+  source_port_range          = "*"
+  destination_port_range     = "1883"
+  source_address_prefix      = "*"
+  destination_address_prefix = "*"
+
+  resource_group_name = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
+  network_security_group_name = azurerm_network_security_group.solacebroker_secgrp.name
+}
+
+
+###
+# The End.
