@@ -6,19 +6,14 @@
 
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/uc-non-persistent/*}
-usecaseHome=$projectHome/uc-non-persistent
 
+export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
 
-export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.test1-standalone"
-runName="1_variation"
+export ANSIBLE_VERBOSITY=3
+export LOG_DIR=$scriptDir/logs
+rm -f $LOG_DIR/*
 
-
-export SHARED_SETUP_DIR="$usecaseHome/shared-setup"
-export RUN_LOG_FILE_BASE="$usecaseHome/tests/tmp/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName"
-
-
-../_stop.load.sh
+../_run.bootstrap.sh $UC_NON_PERSISTENT_INFRASTRUCTURE
 
 ###
 # The End.
