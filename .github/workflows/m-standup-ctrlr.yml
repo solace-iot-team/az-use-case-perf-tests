@@ -5,6 +5,9 @@
 
 name: m-standup-ctrlr
 on:
+  push:
+    branches:
+      - feature-wf-auto-1
   workflow_dispatch:
     inputs:
       controller_id:
