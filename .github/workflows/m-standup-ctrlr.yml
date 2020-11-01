@@ -67,9 +67,6 @@ jobs:
         run: |
           echo "actor=${{ github.actor }}"
 
-      - name: DEBUG - EXIT
-        run: exit 1
-
 
 
       - name: Print github env before checkout
@@ -82,6 +79,9 @@ jobs:
           echo "GITHUB_REF=$GITHUB_REF"
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
           echo "github.token=${{ github.token }}"
+
+      - name: DEBUG - EXIT
+        run: exit 1
 
       - name: Checkout Current Branch
         uses: actions/checkout@master
