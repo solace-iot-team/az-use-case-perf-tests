@@ -65,8 +65,10 @@ jobs:
           echo "${{ toJson(github) }}"
 
       - name: Check Auth
+        if: github.actor != 'ricardojosegomezulmk'
         run: |
-          echo "actor=${{ github.actor }}"
+          echo "not authorized"
+          exit 1
 
 
 
