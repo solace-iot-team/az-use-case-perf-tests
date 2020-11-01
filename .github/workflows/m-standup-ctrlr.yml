@@ -49,7 +49,7 @@ env:
   # TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
-  run_tests:
+  standup:
 
     runs-on: ubuntu-18.04
 
@@ -145,7 +145,6 @@ jobs:
 
 
       - name: Controller - Set Bash Profile
-        if: env.DEBUG_FLAG == 'true'
         run: |
           ssh controller "
 
@@ -247,141 +246,7 @@ jobs:
       #         echo "azure login succeeded"
       #     "
 
-      - name: Controller - Infra Apply - Link Docker Image into Repo
-        run: |
-          ssh controller "
 
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_BIN_PUBSUB_DIR}"
-
-              ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
-
-              ls -la
-
-          "
-
-      - name: Controller - Infra Apply
-        run: |
-          ssh controller "
-
-              source .bash_profile
-
-              export ARM_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"
-
-              export ARM_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"
-
-              export ARM_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-
-              export ARM_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"
-
-              export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
-
-              export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_DIR}"
-
-              ./${TEST_REPO_INFRA_APPLY_SCRIPT}
-
-          "
-
-      - name: Controller - Test Runs
-        run: |
-          ssh controller "
-
-              source .bash_profile
-
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_TESTS_DIR}"
-
-              ./${TEST_REPO_TESTS_RUN_SCRIPT}
-
-          "
-
-      - name: Controller - Download Test Logs
-        if: always()
-        env:
-          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
-          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TESTS_DIR }}/${{ env.TEST_REPO_TESTS_LOGS_DIR }}
-          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
-        run: |
-          mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
-
-      - name: Controller - Download Test Results
-        if: always()
-        env:
-          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
-          REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TEST_RESULTS_DIR }}
-          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TEST_RESULTS_DIR }}
-        run: |
-          mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
-
-      - name: Controller - Infra Destroy
-        if: always()
-        run: |
-          ssh controller "
-
-              source .bash_profile
-
-              export ARM_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"
-
-              export ARM_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"
-
-              export ARM_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-
-              export ARM_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"
-
-              export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
-
-              export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_DIR}"
-
-              ./${TEST_REPO_INFRA_DESTROY_SCRIPT}
-
-          "
-
-      - name: Controller - Infra - Download Logs
-        if: always()
-        env:
-          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
-          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
-          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
-        run: |
-          mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
-
-      - name: Archive Results
-        if: always()
-        env:
-          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.TEST_ARCHIVE_RESULTS_NAME }}
-          path: ${{ env.RUNNER_ASSET_DIR }}
-          if-no-files-found: error
-
-      - name: Teardown Controller
-        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
-        run: |
-          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
-          az group delete \
-            --name $AZURE_RESOURCE_GROUP \
-            --yes \
-            --verbose
-
-      - name: Check - Test - Create Issue if FAILED
-      # https://github.com/JasonEtco/create-an-issue
-        if: failure()
-        uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REF: ${{ github.repository }}/${{ github.ref }}
-          WORKFLOW: ${{ github.workflow }}
-          JOB: ${{ github.job }}
-          EVENT_NAME: ${{ github.event_name }}
-          VIEW_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
-        with:
-          filename: .github/failed-test-template.md
 
 ###
 # The End.
