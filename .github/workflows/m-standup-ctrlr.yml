@@ -11,6 +11,9 @@ on:
         description: "unique controller id"
         required: true
         default: wfm-azperf
+  # push:
+  #   paths:
+  #     - '.github/workflows/m-standup-ctrlr.yml'
 
 env:
 
@@ -23,8 +26,6 @@ env:
   TEST_AZURE_PROJECT: "solace-ctrlr"
   TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
   TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
-  # TEST_RUNNER_ASSETS_DIR: remote-assets
-  # TEST_RUNNER_ASSETS_INFRA_DIR: infra
   TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}
   TEST_REPO_KEYS_DIR: uc-non-persistent/keys
   TEST_AZURE_KEY_FILE: azure_key
@@ -32,19 +33,6 @@ env:
   TEST_REPO_INFRA_SA_AZURE_DIR: uc-non-persistent/infrastructure/standalone/azure
   TEST_REPO_INFRA_SA_AWS_DIR: uc-non-persistent/infrastructure/standalone/aws
   TEST_BIN_PUBSUB_DIR: bin/pubsub
-  # TEST_REPO_INFRA_DIR: uc-non-persistent/infrastructure/standalone/.test
-  # TEST_REPO_INFRA_LOGS_DIR: logs
-  # TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
-  # TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
-
-  # TEST_REPO_TESTS_DIR: uc-non-persistent/tests/.test
-  # TEST_REPO_TESTS_LOGS_DIR: logs
-  # TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
-  # TEST_REPO_TEST_RESULTS_DIR: uc-non-persistent/test-results/stats
-  # TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
-  # TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
-
-  # TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
   standup:
@@ -52,6 +40,12 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
+
+      - name: Check Auth
+        if: github.actor != 'ricardojosegomezulmke'
+        run: |
+          echo "not authorized"
+          exit 1
 
       - name: Print test env
         if: env.DEBUG_FLAG == 'true'
@@ -63,12 +57,6 @@ jobs:
         run: |
           echo "entire 'github' object"
           echo "${{ toJson(github) }}"
-
-      - name: Check Auth
-        if: github.actor != 'ricardojosegomezulmke'
-        run: |
-          echo "not authorized"
-          exit 1
 
       - name: Checkout Current Branch
         uses: actions/checkout@master
@@ -219,7 +207,6 @@ jobs:
 
               echo "terraform initialized"
           "
-
 
       - name: Controller - Link Docker Image into Repo
         run: |
