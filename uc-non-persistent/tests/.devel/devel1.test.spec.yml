@@ -5,16 +5,18 @@
 
 ---
   test_spec:
-    name: "{test-spec-name}"
+    name: devel1
     use_case: uc_non_persistent
     infrastructure_list:
-      - cloud_provider: "{cloud_provider}"
-        config: "{prefix}-standalone"
-      - cloud_provider: "{cloud_provider}"
-        config: "{prefix}-standalone"
+      # - cloud_provider: azure
+      #   config: test1-standalone
+      # - cloud_provider: azure
+      #   config: test2-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
     run_specs:
       run_params:
-        total_num_samples: {number of samples}
+        total_num_samples: 3
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
       run_defaults:
@@ -37,20 +39,20 @@
             # NOTE: publishers cannot be overridden in run
             publishers:
               - publisher_id: exch_0
-                number_of_topics: 500000
+                number_of_topics: 10
                 topic_prefix: "markets/exchange-0"
               - publisher_id: exch_1
-                number_of_topics: 500000
+                number_of_topics: 2
                 topic_prefix: "markets/exchange-1"
               - publisher_id: exch_2
-                number_of_topics: 500000
+                number_of_topics: 2
                 topic_prefix: "markets/exchange-2"
               - publisher_id: exch_3
-                number_of_topics: 500000
+                number_of_topics: 2
                 topic_prefix: "markets/exchange-3"
             client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
             msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-            msg_rate_per_second: 50000
+            msg_rate_per_second: 1
         monitors:
           latency:
             sdkperf_node_to_broker:
@@ -65,36 +67,18 @@
           vpn_stats:
             include: true
       runs:
-        - name: {run-name-0}
-          description: "{run description}"
-          load:
-            include: false
-        - name: {run-name-1}
-          description: "{run description}"
-          load:
-            publish:
-              publishers:
-                - publisher_id: exch_0
-                  number_of_topics: 10
-                  topic_prefix: "markets/exchange-0"
-                - publisher_id: exch_1
-                  number_of_topics: 10
-                  topic_prefix: "markets/exchange-1"
-                - publisher_id: exch_2
-                  number_of_topics: 10
-                  topic_prefix: "markets/exchange-2"
-                - publisher_id: exch_3
-                  number_of_topics: 10
-                  topic_prefix: "markets/exchange-3"
-        - name: {run-name-2}
-          description: "{run description}"
+        - name: 0_load_only
+          description: "load only run"
           monitors:
             latency:
-              msg_payload_size_bytes: 200
-        - name: {run-name-3}
-          description: "{run description}"
-          monitors:
-            latency:
-              msg_payload_size_bytes: 512
+              sdkperf_node_to_broker:
+                include: false
+              broker_node_to_broker:
+                include: false
+            ping:
+              include: false
+            vpn_stats:
+              include: false
+
 ###
 # The End.

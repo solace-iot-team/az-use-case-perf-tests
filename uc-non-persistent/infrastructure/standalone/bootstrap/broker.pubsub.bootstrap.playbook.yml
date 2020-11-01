@@ -10,6 +10,15 @@
   hosts: broker_pubsub
   gather_facts: no
   module_defaults:
+    solace_gather_facts:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+      solace_cloud_api_token: "{{ solace_cloud_api_token | default(omit) }}"
+      solace_cloud_service_id: "{{ solace_cloud_service_id | default(omit) }}"
     solace_get_available:
       host: "{{ sempv2_host }}"
       port: "{{ sempv2_port }}"
@@ -81,6 +90,15 @@
       delay: 1
       when: is_solace_cloud == False
 
+    - name: "Modify default VPN"
+      solace_vpn:
+        name: default
+        settings:
+          enabled: true
+          serviceMqttPlainTextEnabled: false
+        state: present
+      when: is_solace_cloud == False
+
     - name: "Create the VPN"
       solace_vpn:
         name: "{{ broker_pubsub.vpn_name }}"
@@ -88,6 +106,9 @@
           enabled: true
           authenticationBasicType: "none" # none, internal
           maxMsgSpoolUsage: "{{bootstrap.broker.pubsub.max_spool_usage}}"
+          serviceMqttPlainTextEnabled: true
+          serviceMqttMaxConnectionCount: 10
+          serviceMqttPlainTextListenPort: 1883
         state: present
       when: is_solace_cloud == False
 
@@ -103,7 +124,7 @@
           allowTransactedSessionsEnabled: false
           maxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           serviceSmfMaxConnectionCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
-          serviceWebMaxConnectionCountPerClientUsername: 0
+          serviceWebMaxConnectionCountPerClientUsername: 10
           maxEndpointCountPerClientUsername: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           maxEgressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
           maxIngressFlowCount: "{{ bootstrap.broker.docker_image.system_scaling_maxconnectioncount }}"
@@ -122,6 +143,13 @@
           password: "{{ broker_pubsub.client_user_name_pwd }}"
           enabled: true
         state: present
+
+    - name: "Gather Broker Facts"
+      solace_gather_facts:
+
+    - name: "Print out Facts"
+      debug:
+        msg: "{{ ansible_facts.solace }}"
 
     - name: "Display Standalone Broker Console URL"
       debug:

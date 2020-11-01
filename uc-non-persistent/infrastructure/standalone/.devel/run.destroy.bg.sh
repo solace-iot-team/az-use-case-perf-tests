@@ -6,19 +6,22 @@
 
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
-projectHome=${scriptDir%/uc-non-persistent/*}
-usecaseHome=$projectHome/uc-non-persistent
 
-export TMP_DIR="$scriptDir/../tmp"
-export TEST_SPEC_FILE="$scriptDir/1_test.test.spec.yml"
-export TEST_SPEC_INVENTORY_FILE="$TMP_DIR/test-specs/1_test.test.spec.inventory.yml"
 
-export SHARED_SETUP_DIR=$usecaseHome/shared-setup;
+#  format: {cloud_provider}.{config}
+export infrastructureIds=(
+  "aws.devel1"
+)
 
-export ANSIBLE_VERBOSITY=0
-nohup ../_abort.sh > ./logs/$scriptName.out 2>&1 &
-# export ANSIBLE_VERBOSITY=3
-# ../_abort.sh
+
+export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
+
+export LOG_DIR=$scriptDir/logs
+rm -f $LOG_DIR/**destroy**
+
+export TF_VARIABLES_DIR=$scriptDir
+
+nohup ../_run.destroy-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
 
 ###
 # The End.
