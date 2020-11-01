@@ -25,13 +25,13 @@ env:
   TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
   # TEST_RUNNER_ASSETS_DIR: remote-assets
   # TEST_RUNNER_ASSETS_INFRA_DIR: infra
-  TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}/${{ github.ref }}
+  TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}
   TEST_REPO_KEYS_DIR: uc-non-persistent/keys
   TEST_AZURE_KEY_FILE: azure_key
   TEST_AWS_KEY_FILE: aws_key
+  TEST_REPO_INFRA_SA_AZURE_DIR: uc-non-persistent/infrastructure/standalone/azure
+  TEST_REPO_INFRA_SA_AWS_DIR: uc-non-persistent/infrastructure/standalone/aws
   TEST_BIN_PUBSUB_DIR: bin/pubsub
-  # TEST_REPO_INFRA_SA_AZURE_DIR: uc-non-persistent/infrastructure/standalone/azure
-  # TEST_REPO_INFRA_SA_AWS_DIR: uc-non-persistent/infrastructure/standalone/aws
   # TEST_REPO_INFRA_DIR: uc-non-persistent/infrastructure/standalone/.test
   # TEST_REPO_INFRA_LOGS_DIR: logs
   # TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
@@ -65,38 +65,15 @@ jobs:
           echo "${{ toJson(github) }}"
 
       - name: Check Auth
-        if: github.actor != 'ricardojosegomezulmk'
+        if: github.actor != 'ricardojosegomezulmke'
         run: |
           echo "not authorized"
           exit 1
-
-
-
-      - name: Print github env before checkout
-        if: env.DEBUG_FLAG == 'true'
-        run: |
-          pwd
-          echo "GITHUB_SHA=$GITHUB_SHA"
-          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
-          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "GITHUB_REF=$GITHUB_REF"
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
-          echo "github.token=${{ github.token }}"
-
-      - name: DEBUG - EXIT
-        run: exit 1
 
       - name: Checkout Current Branch
         uses: actions/checkout@master
         with:
           ref: ${{ github.ref }}
-
-      - name: List Workspace
-        if: env.DEBUG_FLAG == 'true'
-        run: |
-          cd $GITHUB_WORKSPACE
-          ls -la
-          cd
 
       - name: Azure Login
         # https://github.com/marketplace/actions/azure-login
@@ -173,11 +150,6 @@ jobs:
 
           "
 
-      # - name: DEBUG - EXIT - Use Controller Manually
-      #   run: |
-      #     echo "Fully setup Controller - ready to use manually"
-      #     exit 1
-
       - name: Controller - Copy bootstrap script
         # https://github.com/garygrossgarten/github-action-scp
         # no error handling: workflow will not fail on error
@@ -197,40 +169,68 @@ jobs:
         run: |
           ssh controller "./bootstrap.sh > ./bootstrap.sh.log"
 
-      - name: Controller - Get Repo Ref
+      - name: Controller - Clone Repo
         env:
+          ORG: ${{ github.repository_owner }}
           CLONE_URL: ${{ github.event.repository.clone_url }}
         run: |
-          ssh controller "\
-              rm -rf "${TEST_CONTROLLER_REPO_DIR}" && \
-              mkdir -p "${TEST_CONTROLLER_REPO_DIR}" && \
-              cd "${TEST_CONTROLLER_REPO_DIR}" && \
-              git init && \
-              git remote add origin "${CLONE_URL}" && \
-              git fetch origin "${GITHUB_SHA}" && \
-              git reset --hard FETCH_HEAD
+          ssh controller "
+
+              rm -rf "${ORG}"
+
+              mkdir -p "${ORG}"
+
+              cd "${ORG}"
+
+              git clone ${CONE_URL}
+
           "
 
       - name: Controller - Bootstrap - SSH Keys
         run: |
-          ssh controller "\
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_KEYS_DIR}" && \
-              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AZURE_KEY_FILE} <<< y && \
-              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AWS_KEY_FILE} <<< y && \
-              echo "keys generated:" && \
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_KEYS_DIR}"
+
+              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AZURE_KEY_FILE} <<< y
+
+              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AWS_KEY_FILE} <<< y
+
+              echo "keys generated:"
+
               ls -la
           "
 
       - name: Controller - Bootstrap - Terraform
         run: |
-          ssh controller "\
-              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE_DIR}" && \
-              terraform init && \
-              ls -la && \
-              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS_DIR}" && \
-              terraform init && \
-              ls -la && \
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE_DIR}"
+
+              terraform init
+
+              ls -la
+
+              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS_DIR}"
+
+              terraform init
+
+              ls -la
+
               echo "terraform initialized"
+          "
+
+
+      - name: Controller - Link Docker Image into Repo
+        run: |
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_BIN_PUBSUB_DIR}"
+
+              ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+
+              ls -la
+
           "
 
       ###############
