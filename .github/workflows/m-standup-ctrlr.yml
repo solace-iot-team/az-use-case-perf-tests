@@ -182,7 +182,7 @@ jobs:
 
               cd "${ORG}"
 
-              git clone ${CONE_URL}
+              git clone ${CLONE_URL}
 
           "
 
