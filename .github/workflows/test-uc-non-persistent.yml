@@ -15,8 +15,9 @@ on:
       - master
   release:
     types: [published]
-  schedule:
-    - cron: "10 4 * * SUN"
+  # TODO: fix getting the master branch  
+  # schedule:
+  #   - cron: "10 4 * * SUN"
 env:
 
   DEBUG_FLAG: ${{ false }}
