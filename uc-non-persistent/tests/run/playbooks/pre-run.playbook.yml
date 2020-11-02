@@ -33,10 +33,10 @@
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
         run_name: "{{ RUN_NAME }}"
-        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        pre_run_start_ts_epoch_secs: "{{PRE_RUN_START_TS_EPOCH_SECS}}"
 
     - set_fact:
-        run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(run_start_ts_epoch_secs) }}"
+        run_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(pre_run_start_ts_epoch_secs) }}"
 
     - name: "Settings"
       set_fact:
