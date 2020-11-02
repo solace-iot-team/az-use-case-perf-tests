@@ -19,7 +19,6 @@ source $projectHome/.lib/functions.sh
   if [ -z "$RUN_SPEC_FILE" ]; then echo ">>> ERROR: missing env var: RUN_SPEC_FILE"; exit 1; fi
   if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var: SHARED_SETUP_DIR"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:RUN_LOG_FILE_BASE"; exit 1; fi
-  if [ -z "$RUN_START_TS_EPOCH_SECS" ]; then echo ">>> ERROR: missing env var:RUN_START_TS_EPOCH_SECS"; exit 1; fi
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var:RUN_ID"; exit 1; fi
 
 ############################################################################################################################
@@ -51,6 +50,9 @@ echo "# Starting Monitors"
 echo ">>> infrastructure   : $UC_NON_PERSISTENT_INFRASTRUCTURE"
 echo ">>> utc start time   : "$(date -u +"%Y-%m-%d %H:%M:%S")""
 echo ">>> local start time : "$(date +"%Y-%m-%d %H:%M:%S")""
+
+# set it here - last before starting time-synchronized monitors
+export RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 
 ##############################################################################################################################
 # Call monitor scripts

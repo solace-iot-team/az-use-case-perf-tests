@@ -44,12 +44,20 @@
         seconds: 3
         prompt: "Waiting 3 seconds ...."
 
+    - name: "Check if any consumers defined"
+      debug:
+        msg: "No consumers defined"
+      when: not run_spec.load.subscribe.consumers or run_spec.load.subscribe.consumers == ''
+
+    - name: "Check if any consumers defined"
+      meta: end_play
+      when: not run_spec.load.subscribe.consumers or run_spec.load.subscribe.consumers == ''
+
     - name: "Iterate over Consumers"
       include_tasks: ./tasks/consumer.start.yml
       loop: "{{ run_spec.load.subscribe.consumers }}"
       loop_control:
         index_var: consumer_num
         loop_var: consumer
-
 ###
 # The End.
