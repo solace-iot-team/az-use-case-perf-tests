@@ -1,0 +1,105 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+# ##########################################################################################################
+# Note:
+# SDKPerf does not start sometimes on a fresh infrastructure.
+# Log file is empty
+# Retry until it has started successfully.
+# TODO: successfuly start check could be enhanced by checking the client connection exists on broker.
+# ##########################################################################################################
+
+  - name: "Settings"
+    set_fact:
+      sdkperf_client_username: "{{ sdkperf_client_username_prefix }}-{{ publisher.publisher_id }}-"
+      sdkperf_remote_log_file: "./sdkperf_{{ publisher.publisher_id }}.log"
+      sdkperf_local_log_file: "{{ RUN_LOG_FILE_BASE }}.{{inventory_hostname}}.sdkperf_{{ publisher.publisher_id }}.log"
+      max_retry_count: 10
+
+  - name: "Start Publisher until success"
+    block:
+      - set_fact:
+          retry_count: "{{ 0 if retry_count is undefined else retry_count|int + 1 }}"
+
+      - name: "Starting Publisher"
+        debug:
+          msg:
+            - "try: {{ retry_count }}"
+            - "starting publisher {{ publisher.publisher_id }} on {{ inventory_hostname }}"
+
+      - name: "Run Publisher 'sdkperf' {{ publisher.publisher_id }}"
+        shell: >
+          nohup taskset -c {{ publisher_num }}
+          {{ sdkperf_exe }}
+          -cip={{ sdkperf_connection }}
+          -cn={{ sdkperf_client_username }}
+          -cu={{ sdkperf_user }}
+          -cp={{ sdkperf_pwd }}
+          -nagle
+          -rc={{ sdkperf_rc }}
+          -epl={{ sdkperf_epl }}
+          -cc={{ sdkperf_cc }}
+          -mn="{{ sdkperf_mn }}"
+          -msa="{{ sdkperf_msa }}"
+          -mr="{{ sdkperf_mr }}"
+          -apw="{{ sdkperf_apw }}"
+          -mt=direct
+          -ptc="{{ publisher.number_of_topics }}"
+          -ptp="{{ publisher.topic_prefix }}/"
+          </dev/null
+          > {{ sdkperf_remote_log_file }}
+          2>&1
+          &
+        register: sdkperf_result
+
+      - pause:
+          seconds: 3
+          prompt: "Waiting before downloading log file ...."
+
+      - name: "Fetch Log File: {{ sdkperf_remote_log_file }}"
+        fetch:
+          src: "{{ sdkperf_remote_log_file }}"
+          dest: "{{ sdkperf_local_log_file }}"
+          flat: yes
+        register: fetch_results
+
+      - name: "Slurp Log File: {{ sdkperf_local_log_file }}"
+        slurp:
+          src: "{{ fetch_results.dest }}"
+        register: sdkperf_log_file_contents
+        delegate_to: localhost
+
+      - set_fact:
+          log_contents: "{{ sdkperf_log_file_contents['content'] | b64decode }}"
+
+      - name: "Check if log_contents are not empty"
+        fail:
+          msg: "sdkperf log file: {{ sdkperf_remote_log_file }} is empty"
+        when: log_contents == ''
+
+      - name: "Check if startup successful"
+        fail:
+          msg: "sdkperf start unsuccessful for {{ publisher.publisher_id }}"
+        when: "'ERROR' in log_contents"
+
+    rescue:
+      - fail:
+          msg: "Failed to start publisher: {{ publisher.publisher_id  }} on {{ inventory_hostname }}"
+        when: retry_count|int == (max_retry_count-1)
+      - debug:
+          msg:
+            - "Failed to start publisher {{ publisher.publisher_id  }} on {{ inventory_hostname }}"
+            - "retry_count = {{ retry_count }}"
+      - pause:
+          seconds: 3
+          prompt: "Waiting before retrying again ...."
+      - include_tasks: publisher.start.yml
+
+
+###
+# The End.
