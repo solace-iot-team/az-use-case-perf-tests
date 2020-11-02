@@ -21,15 +21,22 @@ source $projectHome/.lib/functions.sh
       exit 1
   fi
   export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
+
+  if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:LOG_DIR"; exit 1; fi
+
+
 ############################################################################################################################
 # Settings
 
-  tmpDir=$scriptDir/tmp;
+  # tmpDir=$scriptDir/tmp;
   sharedSetupDir="$usecaseHome/shared-setup"; [ ! -d $sharedSetupDir ] && (echo ">>> ERROR: directory $sharedSetupDir DOES NOT exists."; exit)
-  logFileNameBase="$tmpDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.$scriptName"
+  # logFileNameBase="$tmpDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.$scriptName"
+  logFileNameBase="$LOG_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.$scriptName"
 
-  mkdir $tmpDir > /dev/null 2>&1;
-  rm -rf "$tmpDir/$logFileNameBase"*;
+  rm -rf "$LOG_DIR/$logFileNameBase"*;
+
+  # mkdir $tmpDir > /dev/null 2>&1;
+  # rm -rf "$tmpDir/$logFileNameBase"*;
 
   export ANSIBLE_LOG_PATH="$logFileNameBase.ansible.log"
   if [ -z "$ANSIBLE_VERBOSITY" ]; then export ANSIBLE_VERBOSITY=0; fi
@@ -54,7 +61,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --extra-vars "PROJECT_DIR=$projectHome" \
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
 
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - script:$scriptName, playbook:$playbook"; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 ##############################################################################################################################
 # Run Broker VM bootstrap
@@ -67,7 +74,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --extra-vars "PROJECT_DIR=$projectHome" \
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
 
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - script:$scriptName, playbook:$playbook"; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 ##############################################################################################################################
 # Run SDKPerf VM bootstrap
@@ -79,7 +86,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --extra-vars "PROJECT_DIR=$projectHome" \
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
 
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - script:$scriptName, playbook:$playbook"; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 ##############################################################################################################################
 # Run Broker PubSub bootstrap
@@ -91,7 +98,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --extra-vars "PROJECT_DIR=$projectHome" \
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
 
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - script:$scriptName, playbook:$playbook"; exit 1; fi
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
   echo ">>> SUCCESS: $scriptName"
 

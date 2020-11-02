@@ -1,5 +1,53 @@
 # Release Notes
 
+## Version: 0.5.3
+Release Purpose: Maintenance Load
+
+**load startup fix**
+  * issue: sdkperf randomly not starting correctly on newly stood up infrastructure
+  * solution: retry (max 10 times) on start-up failure
+
+## Version: 0.5.2
+Release Purpose: Auto-generated & adjustable Topics
+
+> :warning: **BREAKING CHANGES**
+
+**Test Spec**
+  * **uc-non-persistent/tests/auto-run**
+    - _**(breaking changes)**_
+    - 1_auto.test.spec.yml
+    - template.{spec-id}.test.spec.yml
+    - format changes to support auto generated & adjustable number of topics for publishers & consumers (load only) to test impact on performance
+  * **uc-non-persistent/infrastructure/standalone/azure & aws**
+    - added new security rules to allow plain MQTT & websocket traffic
+    - for testing purposes only
+    - use e.g. MQTT Explorer to see all the topics used by load test
+
+## Version: 0.5.1
+Release Purpose: Automated Testing
+
+**Github Workflow**
+  * **.github/workflows**
+    - test-uc-non-persistent.yml
+      - runs on: pull_request, release, weekly schedule
+      - bootstraps external controller vm in azure
+      - runs
+        - **uc-non-persistent/infrastructure/standalone/.test/run.apply.fg.sh**
+        - **uc-non-persistent/tests/.test/run.fg.sh**
+        - **uc-non-persistent/infrastructure/standalone/.test/run.destroy.fg.sh**
+      - archives results
+  * [see here for pre-requisites](.github/WorkflowsReadme.md)
+
+**FIXES**
+  * fixes to log file directory for infrastructure bootstrap
+    - bootstrap scripts now logs into same directory as other _run.apply_ scripts
+  * tainting of trigger_bootstrap resource
+    - added to __run.apply.sh_
+  * terrform: azure/az-sa-sdkperf-nodes and az-sa-sol-broker-nodes
+    - resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-secgrp_association"
+      - added dependency on nic interfaces - should resolve error of nic not being ready
+
+
 ## Version: 0.5.0
 Release Purpose: Auto Runs: Multi-Test & Infrastructure
 

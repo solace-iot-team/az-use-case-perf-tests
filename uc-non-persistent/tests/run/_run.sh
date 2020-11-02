@@ -20,7 +20,6 @@ source $projectHome/.lib/functions.sh
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var:RUN_ID"; exit 1; fi
   if [ -z "$RUN_NAME" ]; then echo ">>> ERROR: missing env var:RUN_NAME"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:RUN_LOG_FILE_BASE"; exit 1; fi
-  if [ -z "$RUN_START_TS_EPOCH_SECS" ]; then echo ">>> ERROR: missing env var:RUN_START_TS_EPOCH_SECS"; exit 1; fi
 
 ##############################################################################################################################
 # Prepare
@@ -83,12 +82,17 @@ echo ">>> Post processing results ..."
   nohup $runScript > $logFileName 2>&1 &
   pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; exit 1; fi
 
-echo ">>> DONE."
-if [ -f "$RUN_LOG_FILE_BASE*ERROR.log" ]; then
-  echo ">>> ERROR: see: $RUN_LOG_FILE_BASE*ERROR.log"
-else
-  echo ">>> SUCCESS: no errors found"
-fi
+##############################################################################################################################
+# Set exit status
+  if [ "$FAILED" -gt 0 ]; then
+    echo ">>> ERROR - $scriptName - FAILED"
+    if [ -f "$RUN_LOG_FILE_BASE*ERROR.log" ]; then
+      echo ">>> INFO: see: $RUN_LOG_FILE_BASE*ERROR.log"
+    fi
+    exit 1
+  else
+    echo ">>> SUCCESS: no errors found"
+  fi
 
 ###
 # The End.

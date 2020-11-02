@@ -7,23 +7,13 @@
 scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
+export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
 
-#  format: {cloud_provider}.{config}
-export infrastructureIds=(
-  "azure.test1"
-  "azure.test2"
-  "aws.test1"
-)
-
-export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
-
+export ANSIBLE_VERBOSITY=3
 export LOG_DIR=$scriptDir/logs
 rm -f $LOG_DIR/*
 
-export TF_VARIABLES_DIR=$scriptDir
-
-nohup ../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
-# ../_run.apply-all.sh
+../_run.bootstrap.sh $UC_NON_PERSISTENT_INFRASTRUCTURE
 
 ###
 # The End.

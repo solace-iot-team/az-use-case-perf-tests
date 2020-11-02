@@ -1,0 +1,239 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+name: m-standup-ctrlr
+on:
+  workflow_dispatch:
+    inputs:
+      controller_id:
+        description: "unique controller id"
+        required: true
+        default: wfm-azperf
+  # push:
+  #   paths:
+  #     - '.github/workflows/m-standup-ctrlr.yml'
+
+env:
+
+  DEBUG_FLAG: ${{ true }}
+
+  TEST_CONTROLLER_ID: ${{github.event.inputs.controller_id}}
+  TEST_LOCATION: "westeurope"
+  TEST_ZONE: "1"
+  TEST_VM_ADMIN_USERNAME: "controller"
+  TEST_AZURE_PROJECT: "solace-ctrlr"
+  TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
+  TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
+  TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}
+  TEST_REPO_KEYS_DIR: uc-non-persistent/keys
+  TEST_AZURE_KEY_FILE: azure_key
+  TEST_AWS_KEY_FILE: aws_key
+  TEST_REPO_INFRA_SA_AZURE_DIR: uc-non-persistent/infrastructure/standalone/azure
+  TEST_REPO_INFRA_SA_AWS_DIR: uc-non-persistent/infrastructure/standalone/aws
+  TEST_BIN_PUBSUB_DIR: bin/pubsub
+
+jobs:
+  standup:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+
+      - name: Check Auth
+        if: github.actor != 'ricardojosegomezulmke'
+        run: |
+          echo "not authorized"
+          exit 1
+
+      - name: Print test env
+        if: env.DEBUG_FLAG == 'true'
+        run: |
+          env | grep TEST
+
+      - name: Dump GitHub context
+        if: env.DEBUG_FLAG == 'true'
+        run: |
+          echo "entire 'github' object"
+          echo "${{ toJson(github) }}"
+
+      - name: Checkout Current Branch
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Azure Login
+        # https://github.com/marketplace/actions/azure-login
+        uses: azure/login@v1.1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+
+      - name: Create Azure Resource Group
+        run: |
+          AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
+          AZURE_PROJECT_TAG="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}"
+          az group create \
+            --name $AZURE_RESOURCE_GROUP \
+            --location ${TEST_LOCATION} \
+            --tags project=$AZURE_PROJECT_TAG \
+            --verbose
+
+      - name: Standup Controller
+        id: azure_deploy
+        # https://github.com/marketplace/actions/deploy-azure-resource-manager-arm-template
+        uses: azure/arm-deploy@v1.0.1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ env.TEST_CONTROLLER_ID }}-${{ env.TEST_AZURE_PROJECT }}-rg
+          template: ${{ env.TEST_AZURE_DEPLOY_ARM_TEMPLATE }}
+          parameters: vm_admin_public_key="${{ secrets.CONTROLLER_VM_PUBLIC_KEY }}" project_prefix=${{ env.TEST_CONTROLLER_ID }}-${{ env.TEST_AZURE_PROJECT }} zone=${{ env.TEST_ZONE }} vm_admin_username=${{ env.TEST_VM_ADMIN_USERNAME }}
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${SSH_KEY}" > ~/.ssh/controller_key
+          chmod 600 ~/.ssh/controller_key
+          cat >>~/.ssh/config <<END
+          Host controller
+            HostName ${SSH_HOST}
+            User ${SSH_USER}
+            IdentityFile ~/.ssh/controller_key
+            StrictHostKeyChecking no
+          END
+          chmod 600 ~/.ssh/config
+          # cat ~/.ssh/config
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
+          SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+
+
+      - name: Controller - Set Bash Profile
+        run: |
+          ssh controller "
+
+              echo 'export ARM_CLIENT_ID="${{ secrets.AZURE_CLIENT_ID }}"' >> ~/.bash_profile
+
+              echo 'export ARM_CLIENT_SECRET="${{ secrets.AZURE_CLIENT_SECRET }}"' >> ~/.bash_profile
+
+              echo 'export ARM_SUBSCRIPTION_ID="${{ secrets.AZURE_SUBSCRIPTION_ID }}"' >> ~/.bash_profile
+
+              echo 'export ARM_TENANT_ID="${{ secrets.AZURE_TENANT_ID }}"' >> ~/.bash_profile
+
+              echo 'export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"' >> ~/.bash_profile
+
+              echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
+
+          "
+
+      - name: Controller - Connect SSH
+      # ensures that connection can be established
+        run: |
+          ssh controller "
+
+            touch ssh_connect_SUCCESS.log
+
+            echo "successfully connected to controller via ssh"
+
+          "
+
+      - name: Controller - Copy bootstrap script
+        # https://github.com/garygrossgarten/github-action-scp
+        # no error handling: workflow will not fail on error
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: ${{ env.TEST_BOOTSTRAP_SH }}
+          remote: bootstrap.sh
+          host: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+          username: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          privateKey: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
+
+      - name: Controller - Set Bootstrap to Executable
+        run: |
+          ssh controller "chmod u+x bootstrap.sh"
+
+      - name: Controller - Run Bootstrap
+        run: |
+          ssh controller "./bootstrap.sh > ./bootstrap.sh.log"
+
+      - name: Controller - Clone Repo
+        env:
+          ORG: ${{ github.repository_owner }}
+          CLONE_URL: ${{ github.event.repository.clone_url }}
+        run: |
+          ssh controller "
+
+              rm -rf "${ORG}"
+
+              mkdir -p "${ORG}"
+
+              cd "${ORG}"
+
+              git clone ${CLONE_URL}
+
+          "
+
+      - name: Controller - Bootstrap - SSH Keys
+        run: |
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_KEYS_DIR}"
+
+              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AZURE_KEY_FILE} <<< y
+
+              ssh-keygen -t rsa -b 4096 -N '' -f ${TEST_AWS_KEY_FILE} <<< y
+
+              echo "keys generated:"
+
+              ls -la
+          "
+
+      - name: Controller - Bootstrap - Terraform
+        run: |
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AZURE_DIR}"
+
+              terraform init
+
+              ls -la
+
+              cd ~/"${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_INFRA_SA_AWS_DIR}"
+
+              terraform init
+
+              ls -la
+
+              echo "terraform initialized"
+          "
+
+      - name: Controller - Link Docker Image into Repo
+        run: |
+          ssh controller "
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_BIN_PUBSUB_DIR}"
+
+              ln -s ~/downloads/solace-pubsub-evaluation-docker.tar.gz solace-pubsub-docker.tar.gz
+
+              ls -la
+
+          "
+
+      ###############
+      # Example of how to log into Azure manually
+      # - name: Controller - Bootstrap - Azure login
+      #   run: |
+      #     ssh controller "\
+      #         az login --service-principal \
+      #           --username ${{ secrets.AZURE_CLIENT_ID }} \
+      #           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
+      #           --tenant ${{ secrets.AZURE_TENANT_ID }}
+      #
+      #         echo "azure login succeeded"
+      #     "
+
+
+
+###
+# The End.

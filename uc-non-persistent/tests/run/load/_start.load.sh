@@ -28,7 +28,7 @@ source $projectHome/.lib/functions.sh
 # Included?
 
   if [ -z "$IS_RUN_LOAD" ]; then
-    echo ">>> NOT INCLUDED in run"
+    echo ">>> LOAD NOT INCLUDED in run, exiting"
     exit
   fi
 
@@ -58,7 +58,8 @@ echo "# Starting Consumers ..."
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
                     $playbook \
-                    --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE"
+                    --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE" \
+                    --extra-vars "RUN_LOG_FILE_BASE=$RUN_LOG_FILE_BASE"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
@@ -70,7 +71,8 @@ echo "# Starting Publishers ..."
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
                     $playbook \
-                    --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE"
+                    --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE" \
+                    --extra-vars "RUN_LOG_FILE_BASE=$RUN_LOG_FILE_BASE"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

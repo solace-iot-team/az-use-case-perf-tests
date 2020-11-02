@@ -10,9 +10,10 @@ projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
 
-export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.test1-standalone"
-runName="1_variation"
+export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.devel2-standalone"
+runName="testing_load_startup"
 
+export ANSIBLE_VERBOSITY=3
 
 export SHARED_SETUP_DIR="$usecaseHome/shared-setup"
 export RUN_LOG_FILE_BASE="$usecaseHome/tests/tmp/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName"

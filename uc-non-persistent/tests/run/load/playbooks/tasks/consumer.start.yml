@@ -1,0 +1,108 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+# ##########################################################################################################
+# Note:
+# SDKPerf does not start sometimes on a fresh infrastructure.
+# Log file is empty
+# Retry until it has started successfully.
+# TODO: successfuly start check could be enhanced by checking the client connection exists on broker.
+# ##########################################################################################################
+
+  - name: "Settings"
+    set_fact:
+      sdkperf_client_username: "{{ sdkperf_client_username_prefix }}-{{ consumer.consumer_id }}-"
+      sdkperf_topic_list: "{{ consumer.topic_list }}"
+      sdkperf_remote_log_file: "./sdkperf_{{ consumer.consumer_id }}.log"
+      sdkperf_local_log_file: "{{ RUN_LOG_FILE_BASE }}.{{inventory_hostname}}.sdkperf_{{ consumer.consumer_id }}.log"
+      max_retry_count: 10
+
+  - name: "Start Consumer until success"
+    block:
+      - set_fact:
+          retry_count: "{{ 0 if retry_count is undefined else retry_count|int + 1 }}"
+
+      - name: "Starting Consumer"
+        debug:
+          msg:
+            - "try: {{ retry_count }}"
+            - "starting consumer {{ consumer.consumer_id }} on {{ inventory_hostname }}"
+
+      - name: "Run Consumer 'sdkperf' {{ consumer.consumer_id }}"
+        shell: >
+          nohup taskset -c {{ consumer_num }}
+          {{ sdkperf_exe }}
+          -cip={{ sdkperf_connection }}
+          -cn={{ sdkperf_client_username }}
+          -cu={{ sdkperf_user }}
+          -cp={{ sdkperf_pwd }}
+          -nagle
+          -rc={{ sdkperf_rc }}
+          -pea=0
+          -epl={{ sdkperf_epl }}
+          -stl="{{ sdkperf_topic_list }}"
+          </dev/null
+          > {{ sdkperf_remote_log_file }}
+          2>&1
+          &
+        register: sdkperf_result
+
+      - pause:
+          seconds: 3
+          prompt: "Waiting before downloading log file ...."
+
+      - name: "Fetch Log File: {{ sdkperf_remote_log_file }}"
+        fetch:
+          src: "{{ sdkperf_remote_log_file }}"
+          dest: "{{ sdkperf_local_log_file }}"
+          flat: yes
+        register: fetch_results
+
+      - name: "Slurp Log File: {{ sdkperf_local_log_file }}"
+        slurp:
+          src: "{{ fetch_results.dest }}"
+        register: sdkperf_log_file_contents
+        delegate_to: localhost
+
+      - set_fact:
+          log_contents: "{{ sdkperf_log_file_contents['content'] | b64decode }}"
+
+      - name: "Check if log_contents are not empty"
+        fail:
+          msg: "sdkperf log file: {{ sdkperf_remote_log_file }} is empty"
+        when: log_contents == ''
+
+      - name: "Check if startup successful"
+        fail:
+          msg: "sdkperf start unsuccessful for {{ consumer.consumer_id }}"
+        when: "'ERROR' in log_contents"
+
+      # - name: "Set start result"
+      #   set_fact:
+      #     started_ok: false
+      #
+      # - name: "Check if startup successful"
+      #   fail:
+      #     msg: "sdkperf consumer start failed for {{ consumer.consumer_id }} on {{ inventory_hostname }}"
+      #   when: not started_ok
+
+    rescue:
+      - fail:
+          msg: "Failed to start consumer: {{ consumer.consumer_id }} on {{ inventory_hostname }}"
+        when: retry_count|int == (max_retry_count-1)
+      - debug:
+          msg:
+            - "Failed to start consumer number {{ consumer.consumer_id }} on {{ inventory_hostname }}"
+            - "retry_count = {{ retry_count }}"
+      - pause:
+          seconds: 3
+          prompt: "Waiting before retrying again ...."
+      - include_tasks: consumer.start.yml
+
+###
+# The End.

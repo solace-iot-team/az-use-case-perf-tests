@@ -8,18 +8,19 @@ scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
-export TMP_DIR="$scriptDir/../tmp"
 
-export TEST_SPEC_FILE="$scriptDir/1_auto.test.spec.yml"
-export TEST_SPEC_INVENTORY_FILE="$TMP_DIR/test-specs/1_auto.test.spec.inventory.yml"
 
-export SHARED_SETUP_DIR=$usecaseHome/shared-setup;
+export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.devel2-standalone"
+runName="testing_load_startup"
 
-export ANSIBLE_VERBOSITY=0
-nohup ../_abort.sh > ./logs/$scriptName.out 2>&1 &
+export ANSIBLE_VERBOSITY=3
 
-# export ANSIBLE_VERBOSITY=3
-# ../_abort.sh
+export RUN_SPEC_FILE="$usecaseHome/tests/tmp/run-specs/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName.yml"
+export SHARED_SETUP_DIR="$usecaseHome/shared-setup"
+export RUN_LOG_FILE_BASE="$usecaseHome/tests/tmp/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName"
+export IS_RUN_LOAD="true"
+
+../_start.load.sh
 
 ###
 # The End.

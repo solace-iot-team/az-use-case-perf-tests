@@ -78,6 +78,8 @@ resource "azurerm_network_interface" "sdkperf-nodes-nic" {
     subnet_id                     = var.subnet_id == "" ? azurerm_subnet.sdkperf_subnet[0].id : var.subnet_id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.sdkperf-nodes-pubip[count.index].id
+
+
   }
 
   tags = {
@@ -112,6 +114,11 @@ resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-s
 
   network_interface_id      = azurerm_network_interface.sdkperf-nodes-nic[count.index].id
   network_security_group_id = azurerm_network_security_group.sdkperf_secgrp.id
+
+  # ensure nic is created and ready
+  depends_on = [
+        azurerm_network_interface.sdkperf-nodes-nic
+    ]
 }
 
 

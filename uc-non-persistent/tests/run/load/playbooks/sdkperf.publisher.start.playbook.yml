@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "SDKPerf Publisher Start"
+- name: "SDKPerf Publish Start"
   hosts: sdkperf_publishers
   gather_facts: no
   pre_tasks:
@@ -29,10 +29,10 @@
         sdkperf_pwd: "{{ broker_pubsub.client_user_name_pwd }}"
         sdkperf_rc: "{{ load.sdkperf.rc }}"
         sdkperf_epl: "{{ load.sdkperf.epl }}"
-        sdkperf_cc: "{{ run_spec.load.publishers.client_connection_count }}"
+        sdkperf_cc: "{{ run_spec.load.publish.client_connection_count }}"
         sdkperf_mn: "{{ load.sdkperf.publishers.total_number_of_messages }}"
-        sdkperf_msa: "{{ run_spec.load.publishers.msg_payload_size_bytes }}"
-        sdkperf_mr: "{{ run_spec.load.publishers.msg_rate_per_second }}"
+        sdkperf_msa: "{{ run_spec.load.publish.msg_payload_size_bytes }}"
+        sdkperf_mr: "{{ run_spec.load.publish.msg_rate_per_second }}"
         sdkperf_apw: "{{ load.sdkperf.publishers.ack_window_size_bytes }}"
 
     - name: "Ensure no SDKPerf processes are running"
@@ -44,34 +44,21 @@
         seconds: 3
         prompt: "Waiting 3 seconds ...."
 
-    - name: "Run 'sdkperf' ..."
-      shell: >
-        nohup taskset -c {{ group_num }}
-        {{ sdkperf_exe }}
-        -cip={{ sdkperf_connection }}
-        -cn={{ sdkperf_client_username_prefix }}-{{ group.group_id }}-
-        -cu={{ sdkperf_user }}
-        -cp={{ sdkperf_pwd }}
-        -nagle
-        -rc={{ sdkperf_rc }}
-        -epl={{ sdkperf_epl }}
-        -cc={{ sdkperf_cc }}
-        -ptl="{{ group.topic_list }}"
-        -mn="{{ sdkperf_mn }}"
-        -msa="{{ sdkperf_msa }}"
-        -mr="{{ sdkperf_mr }}"
-        -apw="{{ sdkperf_apw }}"
-        -mt=direct
-        </dev/null
-        > sdkperf_{{ group.group_id }}.out 2>&1
-        &
-      register: sdkperf_result
-      loop: "{{ run_spec.load.publishers.publisher_groups }}"
+    - name: "Check if any publishers defined"
+      debug:
+        msg: "No publishers defined"
+      when: not run_spec.load.publish.publishers or run_spec.load.publish.publishers == ''
+
+    - name: "Check if any publishers defined"
+      meta: end_play
+      when: not run_spec.load.publish.publishers or run_spec.load.publish.publishers == ''
+
+    - name: "Iterate over Publishers"
+      include_tasks: ./tasks/publisher.start.yml
+      loop: "{{ run_spec.load.publish.publishers }}"
       loop_control:
-        index_var: group_num
-        loop_var: group
-    # TODO:
-    #   to check correct start: download log files and check for ERROR string
+        index_var: publisher_num
+        loop_var: publisher
 
 ###
 # The End.
