@@ -9,10 +9,10 @@ on:
     branches:
       - 'feature-wf-test**'
       - 'mtn-wf-test**'
-  pull_request:
-    types: [opened, reopened]
-    branches:
-      - master
+  # pull_request:
+  #   types: [opened, reopened]
+  #   branches:
+  #     - master
   release:
     types: [published]
   # TODO: fix getting the master branch
