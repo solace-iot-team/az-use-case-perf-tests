@@ -1,0 +1,109 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  test_spec:
+    name: 2_auto
+    use_case: uc_non_persistent
+    infrastructure_list:
+      - cloud_provider: azure
+        config: 1-auto-standalone
+      - cloud_provider: aws
+        config: 1-auto-standalone
+    run_specs:
+      run_params:
+        total_num_samples: 10
+        # sample_duration_secs: min: 45 secs, max: 120 secs
+        sample_duration_secs: 60
+      run_defaults:
+        load:
+          include: true
+          subscribe:
+            consumers:
+              - consumer_id: consumer_1
+                topic_list: markets/pub-1/000001
+              - consumer_id: consumer_2
+                topic_list: markets/pub-1/000002
+              - consumer_id: consumer_3
+                topic_list: markets/pub-1/000003
+              - consumer_id: consumer_4
+                topic_list: markets/pub-1/000004
+              - consumer_id: consumer_5
+                topic_list: markets/pub-1/000005
+              - consumer_id: consumer_6
+                topic_list: markets/pub-1/000006
+              - consumer_id: consumer_7
+                topic_list: markets/pub-1/000007
+              - consumer_id: consumer_8
+                topic_list: markets/pub-1/000008
+              - consumer_id: consumer_9
+                topic_list: markets/pub-1/000009
+              - consumer_id: consumer_10
+                topic_list: markets/pub-1/000010
+
+              - consumer_id: consumer_11
+                topic_list: markets/pub-1/000011
+              - consumer_id: consumer_12
+                topic_list: markets/pub-1/000012
+              - consumer_id: consumer_13
+                topic_list: markets/pub-1/000013
+              - consumer_id: consumer_14
+                topic_list: markets/pub-1/000014
+              - consumer_id: consumer_15
+                topic_list: markets/pub-1/000015
+              - consumer_id: consumer_16
+                topic_list: markets/pub-1/000016
+              - consumer_id: consumer_17
+                topic_list: markets/pub-1/000017
+              - consumer_id: consumer_18
+                topic_list: markets/pub-1/000018
+              - consumer_id: consumer_19
+                topic_list: markets/pub-1/000019
+              - consumer_id: consumer_20
+                topic_list: markets/pub-1/000020
+          publish:
+            publishers:
+              - publisher_id: publisher_1
+                number_of_topics: 20
+                topic_prefix: "markets/pub-1"
+            client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
+            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+            msg_rate_per_second: 50000
+        monitors:
+          latency:
+            sdkperf_node_to_broker:
+              include: true
+            broker_node_to_broker:
+              include: true
+            msg_rate_per_second: 1000 # define a max of 10000
+            msg_payload_size_bytes: 100 # define a max of 10K
+            lpm: true
+          ping:
+            include: true
+          vpn_stats:
+            include: true
+      runs:
+
+        - name: test_1_to_40_100bytes
+          description: "test 1 publisher to 40 consumers, each on separate topic, 100 bytes"
+
+        - name: test_1_to_40_500bytes
+          description: "test 1 publisher to 40 consumers, each on separate topic, 500 bytes"
+          load:
+            msg_payload_size_bytes: 500
+          monitors:
+            latency:
+              msg_payload_size_bytes: 500
+
+        - name: test_1_to_40_1000bytes
+          description: "test 1 publisher to 40 consumers, each on separate topic, 1000 bytes"
+          load:
+            msg_payload_size_bytes: 1000
+          monitors:
+            latency:
+              msg_payload_size_bytes: 1000
+
+###
+# The End.
