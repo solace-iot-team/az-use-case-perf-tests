@@ -53,14 +53,11 @@
       return_content: yes
     register: vpn_stats_result
 
-# BEGIN CHANGES
-  # here: get the number of consumers & publishers connected
-
-  - name: "Get Client Connections"
+  - name: "Get Client Connections - Consumer"
     uri:
       # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
       # GET /msgVpns/{msgVpnName}/clients
-      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{broker_pubsub.client_user_name}}&select={{run.select_client_connection_stats|trim|replace(' ','')}}"
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientName==*consumer*&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
       method: GET
       user: "{{ sempv2_username }}"
       password: "{{ sempv2_password }}"
@@ -69,12 +66,26 @@
       return_content: yes
     register: result
 
-  - meta: end_play  
-  # - set_fact:
-  #     number_connected_clients_start: "{{ result.json.data | length }}"
-  #     connected_client_list_start: "{{ result.json.data }}"
+  - set_fact:
+      num_consumers: "{{ result.json.data | length }}"
+      consumer_list: "{{ result.json.data }}"
 
-#  END CHANGES
+  - name: "Get Client Connections - Publishers"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+      # GET /msgVpns/{msgVpnName}/clients
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientName==*publisher*&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: result
+
+  - set_fact:
+      num_publishers: "{{ result.json.data | length }}"
+      publisher_list: "{{ result.json.data }}"
 
     # artificial pause for timing calculations - call is too fast
   - pause:
