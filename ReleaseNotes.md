@@ -1,5 +1,12 @@
 # Release Notes
 
+## Version: 0.5.3
+Release Purpose: Maintenance Load
+
+**load startup fix**
+  * issue: sdkperf randomly not starting correctly on newly stood up infrastructure
+  * solution: retry (max 10 times) on start-up failure
+
 ## Version: 0.5.2
 Release Purpose: Auto-generated & adjustable Topics
 
