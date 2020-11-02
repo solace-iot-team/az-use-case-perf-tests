@@ -45,8 +45,13 @@
         prompt: "Waiting 3 seconds ...."
 
     - name: "Check if any consumers defined"
+      debug:
+        msg: "No consumers defined"
+      when: not run_spec.load.subscribe.consumers or run_spec.load.subscribe.consumers == ''
+
+    - name: "Check if any consumers defined"
       meta: end_play
-      when: run_spec.load.subscribe.consumers == ''
+      when: not run_spec.load.subscribe.consumers or run_spec.load.subscribe.consumers == ''
 
     - name: "Iterate over Consumers"
       include_tasks: ./tasks/consumer.start.yml
