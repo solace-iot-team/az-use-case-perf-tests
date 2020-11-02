@@ -14,8 +14,9 @@ on:
     branches:
       - master
   release:
-    types: [published]
-  # TODO: fix getting the master branch  
+    # all types
+    # types: [published]
+  # TODO: fix getting the master branch
   # schedule:
   #   - cron: "10 4 * * SUN"
 env:
