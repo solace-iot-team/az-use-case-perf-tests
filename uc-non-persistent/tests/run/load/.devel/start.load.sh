@@ -10,8 +10,10 @@ projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
 
-export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.devel2-standalone"
+export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
 runName="testing_load_startup"
+runName="test_vpn_stats_client_connections"
+runName="test_p2p_1_to_40_100_bytes"
 
 export ANSIBLE_VERBOSITY=3
 

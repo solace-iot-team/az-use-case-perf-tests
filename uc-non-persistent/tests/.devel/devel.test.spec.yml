@@ -67,18 +67,72 @@
           vpn_stats:
             include: true
       runs:
-        - name: vpn_stats
-          description: "default vpn stats only run"
+        - name: test_p2p_1_to_40_100bytes
+          description: "test 1 publisher to 40 consumers, each on separate topic, 100 bytes"
           load:
-            include: false
-          monitors:
-            latency:
-              sdkperf_node_to_broker:
-                include: false
-              broker_node_to_broker:
-                include: false
-            ping:
-              include: false
+            include: true
+            subscribe:
+              consumers:
+                - consumer_id: consumer_1
+                  topic_list: markets/pub-1/000001
+                - consumer_id: consumer_2
+                  topic_list: markets/pub-1/000002
+                - consumer_id: consumer_3
+                  topic_list: markets/pub-1/000003
+                - consumer_id: consumer_4
+                  topic_list: markets/pub-1/000004
+                - consumer_id: consumer_5
+                  topic_list: markets/pub-1/000005
+                - consumer_id: consumer_6
+                  topic_list: markets/pub-1/000006
+                - consumer_id: consumer_7
+                  topic_list: markets/pub-1/000007
+                - consumer_id: consumer_8
+                  topic_list: markets/pub-1/000008
+                - consumer_id: consumer_9
+                  topic_list: markets/pub-1/000009
+                - consumer_id: consumer_10
+                  topic_list: markets/pub-1/000010
+
+                - consumer_id: consumer_11
+                  topic_list: markets/pub-1/000011
+                - consumer_id: consumer_12
+                  topic_list: markets/pub-1/000012
+                - consumer_id: consumer_13
+                  topic_list: markets/pub-1/000013
+                - consumer_id: consumer_14
+                  topic_list: markets/pub-1/000014
+                - consumer_id: consumer_15
+                  topic_list: markets/pub-1/000015
+                - consumer_id: consumer_16
+                  topic_list: markets/pub-1/000016
+                - consumer_id: consumer_17
+                  topic_list: markets/pub-1/000017
+                - consumer_id: consumer_18
+                  topic_list: markets/pub-1/000018
+                - consumer_id: consumer_19
+                  topic_list: markets/pub-1/000019
+                - consumer_id: consumer_20
+                  topic_list: markets/pub-1/000020
+            publish:
+              publishers:
+                - publisher_id: publisher_1
+                  number_of_topics: 40
+                  topic_prefix: "markets/pub-1"
+              msg_payload_size_bytes: 100
+              msg_rate_per_second: 50000
+        # - name: test_vpn_stats_client_connections
+        #   description: "test vpn stats - get pub-sub client connections"
+        #   load:
+        #     include: true
+        #   monitors:
+        #     latency:
+        #       sdkperf_node_to_broker:
+        #         include: false
+        #       broker_node_to_broker:
+        #         include: false
+        #     ping:
+        #       include: false
         # - name: defaul_load_only
         #   description: "default load only run"
         #   monitors:

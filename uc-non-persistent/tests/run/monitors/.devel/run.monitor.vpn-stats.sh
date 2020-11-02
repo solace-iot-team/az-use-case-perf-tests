@@ -11,7 +11,7 @@ usecaseHome=$projectHome/uc-non-persistent
 
 
 export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
-runName="vpn_stats"
+runName="test_vpn_stats_client_connections"
 
 export ANSIBLE_VERBOSITY=3
 export RUN_SPEC_FILE="$usecaseHome/tests/tmp/run-specs/$UC_NON_PERSISTENT_INFRASTRUCTURE.$runName.yml"
