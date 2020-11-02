@@ -10,8 +10,14 @@ projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
 export TMP_DIR="$scriptDir/../tmp"
+
+
 export TEST_SPEC_FILE="$scriptDir/devel1.test.spec.yml"
 export TEST_SPEC_INVENTORY_FILE="$TMP_DIR/test-specs/devel1.test.spec.inventory.yml"
+
+export TEST_SPEC_FILE="$scriptDir/devel2.test.spec.yml"
+export TEST_SPEC_INVENTORY_FILE="$TMP_DIR/test-specs/devel2.test.spec.inventory.yml"
+
 
 export SHARED_SETUP_DIR=$usecaseHome/shared-setup;
 
