@@ -20,7 +20,6 @@ source $projectHome/.lib/functions.sh
   if [ -z "$RUN_ID" ]; then echo ">>> ERROR: missing env var:RUN_ID"; exit 1; fi
   if [ -z "$RUN_NAME" ]; then echo ">>> ERROR: missing env var:RUN_NAME"; exit 1; fi
   if [ -z "$RUN_LOG_FILE_BASE" ]; then echo ">>> ERROR: missing env var:RUN_LOG_FILE_BASE"; exit 1; fi
-  if [ -z "$RUN_START_TS_EPOCH_SECS" ]; then echo ">>> ERROR: missing env var:RUN_START_TS_EPOCH_SECS"; exit 1; fi
 
 ##############################################################################################################################
 # Prepare

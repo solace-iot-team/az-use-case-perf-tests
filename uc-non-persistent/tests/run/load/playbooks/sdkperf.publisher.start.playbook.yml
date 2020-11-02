@@ -44,6 +44,15 @@
         seconds: 3
         prompt: "Waiting 3 seconds ...."
 
+    - name: "Check if any publishers defined"
+      debug:
+        msg: "No publishers defined"
+      when: not run_spec.load.publish.publishers or run_spec.load.publish.publishers == ''
+
+    - name: "Check if any publishers defined"
+      meta: end_play
+      when: not run_spec.load.publish.publishers or run_spec.load.publish.publishers == ''
+
     - name: "Iterate over Publishers"
       include_tasks: ./tasks/publisher.start.yml
       loop: "{{ run_spec.load.publish.publishers }}"
