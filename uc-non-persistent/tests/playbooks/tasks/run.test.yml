@@ -30,7 +30,7 @@
   - name: "Scan Logs for errors"
     shell: >
       export LOG_DIR={{LOG_DIR}};
-      {{ scan_4_errors_script }} 
+      {{ scan_4_errors_script }}
     args:
       executable: /bin/bash
     delegate_to: localhost
@@ -81,8 +81,6 @@
       export IS_RUN_MONITOR_BROKERNODE_LATENCY={{'true' if run_spec.monitors.latency.broker_node_to_broker.include else ''}};
       export IS_RUN_MONITOR_PING={{'true' if run_spec.monitors.ping.include else ''}};
       export IS_RUN_LOAD={{'true' if run_spec.load.include else ''}};
-
-      export RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 
       {{RUN_SCRIPTS_DIR}}/{{run_script}} > {{run_log_file_base}}.{{run_script}}.log 2>&1
 
