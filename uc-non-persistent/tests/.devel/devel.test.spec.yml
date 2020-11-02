@@ -10,8 +10,8 @@
     infrastructure_list:
       - cloud_provider: azure
         config: devel1-standalone
-      # - cloud_provider: azure
-      #   config: devel2-standalone
+      - cloud_provider: azure
+        config: devel2-standalone
       # - cloud_provider: aws
       #   config: devel1-standalone
     run_specs:
@@ -87,14 +87,14 @@
               # start all consumers on each consumer node
               # NOTE: consumers cannot be overridden in run
               consumers:
-                # - consumer_id: consumer_0
-                #   topic_list: markets/exchange-0/>,markets/exchange-1/>
-                # - consumer_id: consumer_1
-                #   topic_list: markets/exchange-0/>,markets/exchange-1/>
-                # - consumer_id: consumer_2
-                #   topic_list: markets/exchange-2/>,markets/exchange-3/>
-                # - consumer_id: consumer_3
-                #   topic_list: markets/exchange-2/>,markets/exchange-3/>
+                - consumer_id: consumer_0
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_1
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_2
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
+                - consumer_id: consumer_3
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
             publish:
               # start all publishers on each publisher node
               # NOTE: publishers cannot be overridden in run
@@ -102,15 +102,15 @@
                 - publisher_id: exch_0
                   number_of_topics: 1
                   topic_prefix: "markets/exchange-0"
-                # - publisher_id: exch_1
-                #   number_of_topics: 2
-                #   topic_prefix: "markets/exchange-1"
-                # - publisher_id: exch_2
-                #   number_of_topics: 2
-                #   topic_prefix: "markets/exchange-2"
-                # - publisher_id: exch_3
-                #   number_of_topics: 2
-                #   topic_prefix: "markets/exchange-3"
+                - publisher_id: exch_1
+                  number_of_topics: 2
+                  topic_prefix: "markets/exchange-1"
+                - publisher_id: exch_2
+                  number_of_topics: 2
+                  topic_prefix: "markets/exchange-2"
+                - publisher_id: exch_3
+                  number_of_topics: 2
+                  topic_prefix: "markets/exchange-3"
               client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
               msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
               msg_rate_per_second: 1
