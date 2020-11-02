@@ -116,9 +116,10 @@ resource "azurerm_network_interface_security_group_association" "sdkperf-nodes-s
   network_security_group_id = azurerm_network_security_group.sdkperf_secgrp.id
 
   # ensure nic is created and ready
-  depends_on = [
-        azurerm_network_interface.sdkperf-nodes-nic
-    ]
+  # this actually fails the destroy most of the times.
+  # depends_on = [
+  #       azurerm_network_interface.sdkperf-nodes-nic
+  #   ]
 }
 
 

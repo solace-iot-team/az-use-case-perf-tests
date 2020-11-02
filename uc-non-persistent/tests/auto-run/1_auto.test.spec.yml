@@ -67,12 +67,12 @@
           vpn_stats:
             include: true
       runs:
-        - name: 0_base
+        - name: test_base_run
           description: "base run without any load"
           load:
             include: false
-        - name: 1_variation
-          description: "base run with 10 topics per publisher"
+        - name: test_10_topics_100bytes
+          description: "base run with 10 topics per publisher, 100 bytes"
           load:
             publish:
               publishers:
@@ -88,21 +88,30 @@
                 - publisher_id: exch_3
                   number_of_topics: 10
                   topic_prefix: "markets/exchange-3"
-        - name: 2_variation
-          description: "defaults with payload size variation"
+        - name: test_500000_topics_200bytes
+          description: "base run with 500,000 topics per publisher, 200 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 200
           monitors:
             latency:
               msg_payload_size_bytes: 200
-        - name: 3_variation
-          description: "defaults with payload size variation"
+        - name: test_500000_topics_500bytes
+          description: "base run with 500,000 topics per publisher, 500 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 500
           monitors:
             latency:
               msg_payload_size_bytes: 500
-        - name: 4_variation
-          description: "defaults with payload size variation"
+        - name: test_500000_topics_1000bytes
+          description: "base run with 500,000 topics per publisher, 1000 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 1000
           monitors:
             latency:
-              msg_payload_size_bytes: 1024
+              msg_payload_size_bytes: 1000
 
 ###
 # The End.
