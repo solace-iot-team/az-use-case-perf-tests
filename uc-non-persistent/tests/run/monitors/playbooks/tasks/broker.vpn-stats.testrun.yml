@@ -53,6 +53,29 @@
       return_content: yes
     register: vpn_stats_result
 
+# BEGIN CHANGES
+  # here: get the number of consumers & publishers connected
+
+  - name: "Get Client Connections"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+      # GET /msgVpns/{msgVpnName}/clients
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientUsername=={{broker_pubsub.client_user_name}}&select={{run.select_client_connection_stats|trim|replace(' ','')}}"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: result
+
+  - meta: end_play  
+  # - set_fact:
+  #     number_connected_clients_start: "{{ result.json.data | length }}"
+  #     connected_client_list_start: "{{ result.json.data }}"
+
+#  END CHANGES
+
     # artificial pause for timing calculations - call is too fast
   - pause:
       seconds: "{{min_collection_period_secs}}"
