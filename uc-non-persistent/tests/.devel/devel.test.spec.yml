@@ -8,12 +8,12 @@
     name: devel
     use_case: uc_non_persistent
     infrastructure_list:
-      - cloud_provider: azure
-        config: devel1-standalone
-      - cloud_provider: azure
-        config: devel2-standalone
-      # - cloud_provider: aws
+      # - cloud_provider: azure
       #   config: devel1-standalone
+      # - cloud_provider: azure
+      #   config: devel2-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
     run_specs:
       run_params:
         total_num_samples: 3
@@ -67,6 +67,72 @@
           vpn_stats:
             include: true
       runs:
+        - name: test_p2p_1_to_40_100bytes
+          description: "test 1 publisher to 40 consumers, each on separate topic, 100 bytes"
+          load:
+            include: true
+            subscribe:
+              consumers:
+                - consumer_id: consumer_1
+                  topic_list: markets/pub-1/000001
+                - consumer_id: consumer_2
+                  topic_list: markets/pub-1/000002
+                - consumer_id: consumer_3
+                  topic_list: markets/pub-1/000003
+                - consumer_id: consumer_4
+                  topic_list: markets/pub-1/000004
+                - consumer_id: consumer_5
+                  topic_list: markets/pub-1/000005
+                - consumer_id: consumer_6
+                  topic_list: markets/pub-1/000006
+                - consumer_id: consumer_7
+                  topic_list: markets/pub-1/000007
+                - consumer_id: consumer_8
+                  topic_list: markets/pub-1/000008
+                - consumer_id: consumer_9
+                  topic_list: markets/pub-1/000009
+                - consumer_id: consumer_10
+                  topic_list: markets/pub-1/000010
+
+                - consumer_id: consumer_11
+                  topic_list: markets/pub-1/000011
+                - consumer_id: consumer_12
+                  topic_list: markets/pub-1/000012
+                - consumer_id: consumer_13
+                  topic_list: markets/pub-1/000013
+                - consumer_id: consumer_14
+                  topic_list: markets/pub-1/000014
+                - consumer_id: consumer_15
+                  topic_list: markets/pub-1/000015
+                - consumer_id: consumer_16
+                  topic_list: markets/pub-1/000016
+                - consumer_id: consumer_17
+                  topic_list: markets/pub-1/000017
+                - consumer_id: consumer_18
+                  topic_list: markets/pub-1/000018
+                - consumer_id: consumer_19
+                  topic_list: markets/pub-1/000019
+                - consumer_id: consumer_20
+                  topic_list: markets/pub-1/000020
+            publish:
+              publishers:
+                - publisher_id: publisher_1
+                  number_of_topics: 40
+                  topic_prefix: "markets/pub-1"
+              msg_payload_size_bytes: 100
+              msg_rate_per_second: 50000
+        # - name: test_vpn_stats_client_connections
+        #   description: "test vpn stats - get pub-sub client connections"
+        #   load:
+        #     include: true
+        #   monitors:
+        #     latency:
+        #       sdkperf_node_to_broker:
+        #         include: false
+        #       broker_node_to_broker:
+        #         include: false
+        #     ping:
+        #       include: false
         # - name: defaul_load_only
         #   description: "default load only run"
         #   monitors:
@@ -79,51 +145,51 @@
         #       include: false
         #     vpn_stats:
         #       include: false
-        - name: testing_load_startup
-          description: "testing load startup"
-          load:
-            include: true
-            subscribe:
-              # start all consumers on each consumer node
-              # NOTE: consumers cannot be overridden in run
-              consumers:
-                - consumer_id: consumer_0
-                  topic_list: markets/exchange-0/>,markets/exchange-1/>
-                - consumer_id: consumer_1
-                  topic_list: markets/exchange-0/>,markets/exchange-1/>
-                - consumer_id: consumer_2
-                  topic_list: markets/exchange-2/>,markets/exchange-3/>
-                - consumer_id: consumer_3
-                  topic_list: markets/exchange-2/>,markets/exchange-3/>
-            publish:
-              # start all publishers on each publisher node
-              # NOTE: publishers cannot be overridden in run
-              publishers:
-                - publisher_id: exch_0
-                  number_of_topics: 1
-                  topic_prefix: "markets/exchange-0"
-                - publisher_id: exch_1
-                  number_of_topics: 2
-                  topic_prefix: "markets/exchange-1"
-                - publisher_id: exch_2
-                  number_of_topics: 2
-                  topic_prefix: "markets/exchange-2"
-                - publisher_id: exch_3
-                  number_of_topics: 2
-                  topic_prefix: "markets/exchange-3"
-              client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
-              msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-              msg_rate_per_second: 1
-          monitors:
-            latency:
-              sdkperf_node_to_broker:
-                include: false
-              broker_node_to_broker:
-                include: false
-            ping:
-              include: false
-            vpn_stats:
-              include: false
+        # - name: testing_load_startup
+        #   description: "testing load startup"
+        #   load:
+        #     include: true
+        #     subscribe:
+        #       # start all consumers on each consumer node
+        #       # NOTE: consumers cannot be overridden in run
+        #       consumers:
+        #         - consumer_id: consumer_0
+        #           topic_list: markets/exchange-0/>,markets/exchange-1/>
+        #         - consumer_id: consumer_1
+        #           topic_list: markets/exchange-0/>,markets/exchange-1/>
+        #         - consumer_id: consumer_2
+        #           topic_list: markets/exchange-2/>,markets/exchange-3/>
+        #         - consumer_id: consumer_3
+        #           topic_list: markets/exchange-2/>,markets/exchange-3/>
+        #     publish:
+        #       # start all publishers on each publisher node
+        #       # NOTE: publishers cannot be overridden in run
+        #       publishers:
+        #         - publisher_id: exch_0
+        #           number_of_topics: 1
+        #           topic_prefix: "markets/exchange-0"
+        #         - publisher_id: exch_1
+        #           number_of_topics: 2
+        #           topic_prefix: "markets/exchange-1"
+        #         - publisher_id: exch_2
+        #           number_of_topics: 2
+        #           topic_prefix: "markets/exchange-2"
+        #         - publisher_id: exch_3
+        #           number_of_topics: 2
+        #           topic_prefix: "markets/exchange-3"
+        #       client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
+        #       msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
+        #       msg_rate_per_second: 1
+        #   monitors:
+        #     latency:
+        #       sdkperf_node_to_broker:
+        #         include: false
+        #       broker_node_to_broker:
+        #         include: false
+        #     ping:
+        #       include: false
+        #     vpn_stats:
+        #       include: false
 
 ###
 # The End.

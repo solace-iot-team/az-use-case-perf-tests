@@ -34,8 +34,11 @@
             - "starting consumer {{ consumer.consumer_id }} on {{ inventory_hostname }}"
 
       - name: "Run Consumer 'sdkperf' {{ consumer.consumer_id }}"
+        # NOTE: binding sdkperf to a cpu ==> max limit of consumers is the cpu count
+        #  nohup taskset -c {{ consumer_num }}
+        # nohup
         shell: >
-          nohup taskset -c {{ consumer_num }}
+          nohup
           {{ sdkperf_exe }}
           -cip={{ sdkperf_connection }}
           -cn={{ sdkperf_client_username }}
