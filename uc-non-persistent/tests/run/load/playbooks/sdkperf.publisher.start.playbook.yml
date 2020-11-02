@@ -44,6 +44,10 @@
         seconds: 3
         prompt: "Waiting 3 seconds ...."
 
+    - name: "Check if any publishers defined"
+      meta: end_play
+      when: run_spec.load.publish.publishers == ''
+
     - name: "Iterate over Publishers"
       include_tasks: ./tasks/publisher.start.yml
       loop: "{{ run_spec.load.publish.publishers }}"
