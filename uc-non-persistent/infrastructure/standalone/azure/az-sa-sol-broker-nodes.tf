@@ -151,9 +151,10 @@ resource "azurerm_network_interface_security_group_association" "solacebroker-no
   network_interface_id      = azurerm_network_interface.solacebroker-nodes-nic[count.index].id
   network_security_group_id = azurerm_network_security_group.solacebroker_secgrp.id
   # ensure nic is created and ready
-  depends_on = [
-        azurerm_network_interface.sdkperf-nodes-nic
-    ]
+  # this actually fails the destroy most of the times.
+  # depends_on = [
+  #       azurerm_network_interface.sdkperf-nodes-nic
+  #   ]
 }
 
 resource "local_file" "broker_nodes_file" {
