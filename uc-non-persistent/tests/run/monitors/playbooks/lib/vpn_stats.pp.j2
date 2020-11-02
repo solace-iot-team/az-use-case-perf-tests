@@ -16,5 +16,11 @@
     "stats_name": "{{stats_name}}",
     "log_file": "--omitted--"
   },
+  "clients_connections": {
+    "num_consumers": {{ num_consumers }},
+    "consumer_list": {{ consumer_list | to_nice_json }},
+    "num_publishers": {{ num_publishers }},
+    "publisher_list": {{ publisher_list | to_nice_json }}
+  },
   "metrics": {{ vpn_stats_output_json | to_nice_json}}
 }

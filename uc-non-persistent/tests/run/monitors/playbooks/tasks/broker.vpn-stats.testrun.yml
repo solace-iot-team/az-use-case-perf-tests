@@ -53,6 +53,40 @@
       return_content: yes
     register: vpn_stats_result
 
+  - name: "Get Client Connections - Consumer"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+      # GET /msgVpns/{msgVpnName}/clients
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientName==*consumer*&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: result
+
+  - set_fact:
+      num_consumers: "{{ result.json.data | length }}"
+      consumer_list: "{{ result.json.data }}"
+
+  - name: "Get Client Connections - Publishers"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/client/getMsgVpnClients
+      # GET /msgVpns/{msgVpnName}/clients
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients?count=100&where=clientName==*publisher*&select={{monitor.vpn_stats.select_client_connection_stats|trim|replace(' ','')}}"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: result
+
+  - set_fact:
+      num_publishers: "{{ result.json.data | length }}"
+      publisher_list: "{{ result.json.data }}"
+
     # artificial pause for timing calculations - call is too fast
   - pause:
       seconds: "{{min_collection_period_secs}}"
