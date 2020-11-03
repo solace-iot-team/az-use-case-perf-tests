@@ -1,6 +1,4 @@
-from .run import Run
-
 class BaseSample():
 
-    def __init__(self, run:Run ):
+    def __init__(self, run):
         self.run = run

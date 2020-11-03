@@ -1,18 +1,20 @@
 import array as arr
 import json
+
+from .broker_series import BrokerSeries
 from .common_base import CommonBase
 from .constants import *
-from .latency_node_latency_series import LatencyNodeLatencySeries
 from .latency_broker_latency_series import LatencyBrokerLatencySeries
-from .broker_series import BrokerSeries
+from .latency_node_latency_series import LatencyNodeLatencySeries
 from .ping_series import PingSeries
 from .run_meta import RunMeta
 
+
 class Run(CommonBase):
 
-    def __init__(self, run_dir: str):
+    def __init__(self, run_definition, run_dir: str):
         CommonBase.__init__(self)
-        #self.run_definition = run_definition
+        self.run_definition = run_definition
         self.run_dir = run_dir
         #is this run with all contained files parsed
         self.processed = False

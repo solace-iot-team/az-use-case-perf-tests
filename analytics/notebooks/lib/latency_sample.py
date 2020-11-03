@@ -1,22 +1,14 @@
-from .run import Run
-from .constants import *
-from ._constants import *
-from ._util import *
-from .base_sample import BaseSample
 
-from array import array as arr
-from array import array as arr
+import array as arr
 
 from ._constants import *
 from ._util import *
 from .base_sample import BaseSample
 from .constants import *
-from .run import Run
-
 
 class LatencySample(BaseSample):
 
-    def __init__(self, run: Run, sample_json):
+    def __init__(self, run, sample_json):
         BaseSample.__init__(self, run)
         self.read_metrics(sample_json)
         self.arr_latency = arr.array("i")

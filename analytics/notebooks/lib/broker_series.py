@@ -4,12 +4,11 @@ from .base_series import BaseSeries
 from .broker_sample import BrokerSample
 from .constants import *
 from .perf_error import PerfError
-from .run import Run
 
 
 class BrokerSeries(BaseSeries):
 
-    def __init__(self, run: Run):
+    def __init__(self, run):
         BaseSeries.__init__(self, run)
         self.list_samples = list()
         self.read_sample_files()

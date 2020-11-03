@@ -5,8 +5,8 @@ from os import path
 from .common_base import CommonBase
 from .constants import *
 from .perf_error import PerfError
-from .run_result_location import RunResultLocation
 from .run import Run
+from .run_result_location import RunResultLocation
 
 
 class RunDefinition(CommonBase):
@@ -29,7 +29,7 @@ class RunDefinition(CommonBase):
         if not rootExists:
             raise SystemExit(f'[FATAL] [EXITING] Root folder does not exist:{self._location.root_folder}')
         for run_dir in self._read_list_runs():
-            self._list_runs.append(Run(run_dir))
+            self._list_runs.append(Run(self,run_dir))
         self._processed_samples = True
 
     def _file_path_in_run_location(self, filename: str) -> str:

@@ -4,12 +4,11 @@ from .base_series import BaseSeries
 from .constants import *
 from .perf_error import PerfError
 from .ping_sample import PingSample
-from .run import Run
 
 
 class PingSeries(BaseSeries):
 
-    def __init__(self, run: Run):
+    def __init__(self, run):
         BaseSeries.__init__(self, run)
         self.list_samples = list()
         self.read_sample_files()

@@ -1,13 +1,11 @@
-from .run import Run
 from ._util import *
 from .base_sample import BaseSample
-from .constants import *
-from .run import Run
+from ._constants import *
 
 
 class PingSample(BaseSample):
 
-    def __init__(self, run:Run, sample_json):
+    def __init__(self, run, sample_json):
         BaseSample.__init__(self, run)
         self.read_metrics(sample_json)
 

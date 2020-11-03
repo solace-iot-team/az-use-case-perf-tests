@@ -1,16 +1,15 @@
 import json
-from array import array as arr
+import array as arr
 
 from .base_series import BaseSeries
 from .constants import *
-from .perf_error import PerfError
-from .run import Run
 from .latency_sample import LatencySample
+from .perf_error import PerfError
 
 
 class LatencyNodeLatencySeries(BaseSeries):
 
-    def __init__(self, run: Run):
+    def __init__(self, run):
         BaseSeries.__init__(self, run)
         self.list_samples = list()
         self.read_sample_files()
