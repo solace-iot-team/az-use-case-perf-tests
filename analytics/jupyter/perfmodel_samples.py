@@ -16,9 +16,17 @@ for run in runDefinition.all_runs():
 #get the first run
 run_item = runDefinition.all_runs()[0]
 
+run_item.export_latency_node_delta_index_latencies(lambda lat: lat > 1000)
+run_item.export_broker_node_delta_index_latencies(lambda lat: lat > 1000)
+
+result = run_item.export_latency_node_series_length_latencies(lambda lat: lat > 1000)
+result = run_item.export_broker_node_series_length_latencies(lambda lat: lat > 1000)
 #find a sample based on run-id, metric-type and sample number
 sample = runDefinition.find_sample("2020-10-23-16-21-43",perfmodel.c_sample_metric_type_latency_node, 2)
 print(str(sample))
+delta_index = sample.export_delta_index_latencies(lambda lat: lat > 1000)
+
+
 #export all latency metrics
 all_metrics = sample.export_all_metrics()
 #export specific metric
