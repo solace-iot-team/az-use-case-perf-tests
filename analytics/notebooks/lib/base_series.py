@@ -1,9 +1,8 @@
 from .common_base import CommonBase
-from .run import Run
 
 class BaseSeries(CommonBase):
 
-    def __init__(self, run:Run):
+    def __init__(self, run):
         CommonBase.__init__(self)
         self.run = run
 
