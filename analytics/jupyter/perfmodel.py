@@ -32,6 +32,9 @@ k_broker_avg_rx_msg_rate = "broker_avg_rx_msg_rate"
 k_broker_discard_tx_msg_count = "broker_discard_tx_msg_count"
 k_broker_discard_rx_msg_count = "broker_discard_rx_msg_count"
 
+k_latency_series_length = "series_length"
+k_latency_gap_length = "gap_length"
+
 # collection of k_constants
 c_latency_all_metrics= [k_latency_50th, k_latency_95th, k_latency_99th, k_latency_99_9th, k_latency_average, k_latency_maximum, k_latency_minimum, k_latency_std_deviation]
 c_ping_all_metrics = [k_ping_rtt_avg, k_ping_rtt_max, k_ping_rtt_min, k_ping_rtt_mdev]
@@ -239,6 +242,8 @@ class Run(CommonBase):
         CommonBase.__init__(self)
         self.run_definition = run_definition
         self.run_dir = run_dir
+        #is this run with all contained files parsed
+        self.processed = False
         self.success = None
         self.run_meta = None
         self.latency_node_latency_series = None
@@ -287,6 +292,18 @@ class Run(CommonBase):
 
     def export_broker_node_distinct_latencies(self) -> arr.array:
         return self.broker_node_latency_series.export_distinct_latencies()
+
+    def export_latency_node_delta_index_latencies(self, filter_predicate):
+        return self.latency_node_latency_series.export_delta_index_latencies(filter_predicate)
+
+    def export_broker_node_delta_index_latencies(self, filter_predicate):
+        return self.broker_node_latency_series.export_delta_index_latencies(filter_predicate)
+
+    def export_latency_node_series_length_latencies(self, filter_predicate) -> dict:
+        return self.latency_node_latency_series.export_series_length_latencies(filter_predicate)
+
+    def export_broker_node_series_length_latencies(self, filter_predicate) -> dict:
+        return self.broker_node_latency_series.export_series_length_latencies(filter_predicate)
 
     def export_ping_series(self, list_metrics) -> arr.array:
         return self.ping_series.export_metrics(list_metrics)
@@ -348,6 +365,22 @@ class LatencyNodeLatencySeries(BaseSeries):
             result_array.extend(series.export_distinct_latencies())
         return result_array
 
+    def export_delta_index_latencies(self, filter_predicate) -> arr:
+        result_array = arr.array("i")
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            result_array.extend(series.export_delta_index_latencies(filter_predicate))
+        return result_array
+
+    def export_series_length_latencies(self, filter_predicate) -> dict:
+        result_dict = {"series_length":arr.array("i"), "gap_length":arr.array("i")}
+
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            series_result_dict = series.export_series_length_latencies(filter_predicate)
+            result_dict[k_latency_series_length].extend(series_result_dict["series_length"])
+            result_dict[k_latency_gap_length].extend(series_result_dict["gap_length"])
+
+        return result_dict
+
     def find_sample(self, sample_num):
         try:
             return next(filter(lambda item: item.sample_num==sample_num, self.list_samples ))
@@ -382,6 +415,22 @@ class LatencyBrokerLatencySeries(BaseSeries):
         for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
             result_array.extend(series.export_distinct_latencies())
         return result_array
+
+    def export_delta_index_latencies(self, filter_predicate) -> arr:
+        result_array = arr.array("i")
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            result_array.extend(series.export_delta_index_latencies(filter_predicate))
+        return result_array
+
+    def export_series_length_latencies(self, filter_predicate) -> dict:
+        result_dict = {"series_length":arr.array("i"), "gap_length":arr.array("i")}
+
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            series_result_dict = series.export_series_length_latencies(filter_predicate)
+            result_dict["series_length"].extend(series_result_dict["series_length"])
+            result_dict["gap_length"].extend(series_result_dict["gap_length"])
+
+        return result_dict
 
     def find_sample(self, sample_num):
         try:
@@ -514,6 +563,63 @@ class LatencySample(BaseSample):
     def export_distinct_latencies(self) -> arr:
         return self.arr_latency
 
+    def export_delta_index_latencies(self, filter_predicate) -> arr:
+        """
+        Index distances between two latencies that fulfill filter_predicate
+        :param filter_predicate:
+        :return:
+        """
+        last_index = -1
+        result_arr = arr.array("i")
+        i = 0
+        while i<len(self.arr_latency):
+            if (filter_predicate(self.arr_latency[i])):
+                if last_index == -1:
+                    last_index = i
+                else:
+                    result_arr.append(i-last_index)
+                    last_index = i
+            i += 1
+        return result_arr
+
+    def export_series_length_latencies(self, filter_predicate) -> dict:
+        """
+        Index distances between two latencies that fulfill filter_predicate
+        :param filter_predicate:
+        :return:
+        """
+        active_series=False
+        predicate_fit = False
+        series_distance= 0
+        gap_distance = 0
+        last_index = -1
+        series_arr = arr.array("i")
+        gap_arr = arr.array("i")
+        i = 0
+        while i<len(self.arr_latency):
+            predicate_fit = filter_predicate(self.arr_latency[i])
+            if active_series:
+                if predicate_fit:
+                    series_distance += 1
+                else:
+                    if series_distance>0:
+                        series_arr.append(series_distance)
+                    #reset series
+                    active_series=False
+                    series_distance=0
+            else:
+                if predicate_fit:
+                    #edge case - first element is a fit
+                    if i>0:
+                        gap_arr.append(gap_distance)
+                    #reset gap series
+                    active_series = True
+                    gap_distance = 0
+                else:
+                    active_series = False
+                    gap_distance += 1
+            i += 1
+        return {k_latency_series_length:series_arr, k_latency_gap_length:gap_arr}
 
 class PingSample(BaseSample):
 
