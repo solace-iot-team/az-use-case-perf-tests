@@ -69,7 +69,7 @@ if [ "$FAILED" -eq 0 ]; then
         code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - notebook exit: $runNotebookName"; FAILED=1; fi
 
 # DEBUG: for testing only
-break
+# break
 
       fi
       if [ "$FAILED" -gt 0 ]; then break; fi
