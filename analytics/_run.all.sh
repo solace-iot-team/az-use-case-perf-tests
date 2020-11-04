@@ -86,7 +86,7 @@ fi
 
   outputFilePattern="$ANALYSIS_OUT_DIR/*"
   # TODO: find the correct patterns
-  outputErrors=$(grep -n -e "NameError" -e "Error" $outputFilePattern )
+  outputErrors=$(grep -n -e "NameError" $outputFilePattern )
 
   if [[ -z "$logErrors" && -z "$outputErrors" && "$FAILED" -eq 0 ]]; then
     echo ">>> FINISHED:SUCCESS - $scriptName";
