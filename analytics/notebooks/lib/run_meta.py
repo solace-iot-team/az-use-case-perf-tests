@@ -92,7 +92,7 @@ class RunMeta():
         elif self.cloud_provider == "aws":
             return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
         else:    
-            return "unknown"
+            return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
     def getMonitorNode(self):
         return self.metaJson["meta"]["nodes"]["sdkperf_nodes"][0]
@@ -104,7 +104,7 @@ class RunMeta():
         elif self.cloud_provider == "aws":
             return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
         else:    
-            return f"ERROR: unknown node spec for {self.cloud_provider}"
+            return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
     """ Monitor Latency """
     def getRunSpecMonitorLatencyLpm(self):
