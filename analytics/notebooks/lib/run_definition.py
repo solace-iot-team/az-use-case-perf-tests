@@ -1,3 +1,10 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+
 import glob
 import os.path
 from os import path
@@ -27,7 +34,7 @@ class RunDefinition(CommonBase):
         rootExists = self._check_root_folder_in_run_location()
         self._process_distinct_latency_samples = process_distinct_latency_samples
         if not rootExists:
-            raise SystemExit(f'[FATAL] [EXITING] Root folder does not exist:{self._location.root_folder}')
+            raise SystemExit(f'[ERROR] [EXITING] Root folder does not exist:{self._location.root_folder}')
         for run_dir in self._read_list_runs():
             self._list_runs.append(Run(self,run_dir))
         self._processed_samples = True
