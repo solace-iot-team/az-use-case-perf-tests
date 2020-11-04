@@ -28,6 +28,7 @@ class RunDefinition(CommonBase):
         self._location = location
         self._list_runs = list()
         self._process_distinct_latency_samples=True
+        #just metadata read
         self._processed_samples = False
 
     def process_run_samples(self, process_distinct_latency_samples:bool=True):
@@ -71,17 +72,22 @@ class RunDefinition(CommonBase):
         self._check_processed_sampled()
         return self._list_runs
 
-    def find_run(self,run_id):
+    def find_run(self, run_id, read_samples:bool=True):
         """
         Searches for run with run_id
 
         :param run_id:
+        :param read_samples: read also the latencies before handing over the run
         :return: Run
         :raise: PerfError: if run_id was not found
         """
         self._check_processed_sampled()
         try:
-            return next(filter(lambda item: item.run_meta.run_id==run_id, self._list_runs))
+            run =  next(filter(lambda item: item.run_meta.run_id==run_id, self._list_runs))
+            if read_samples:
+                #idempotent - samples will be read just once
+                run.read_samples()
+            return run
         except StopIteration:
             raise PerfError(f'run_id: {run_id} not found')
 
@@ -98,6 +104,8 @@ class RunDefinition(CommonBase):
         """
         self._check_processed_sampled()
         run = self.find_run(run_id)
+        #idempotent - samples will be read just once
+        run.read_samples()
         if (metrics_type==c_sample_metric_type_latency_node):
             return run.latency_node_latency_series.find_sample(sample_num)
         if (metrics_type==c_sample_metric_type_latency_broker):
