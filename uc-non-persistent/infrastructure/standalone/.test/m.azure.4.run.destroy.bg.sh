@@ -19,11 +19,11 @@ export infrastructureIds=(
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
 export LOG_DIR=$scriptDir/logs
-rm -f $LOG_DIR/*
+rm -f $LOG_DIR/**destroy**
 
 export TF_VARIABLES_DIR=$scriptDir
 
-../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1
+nohup ../_run.destroy-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
 
 ###
 # The End.
