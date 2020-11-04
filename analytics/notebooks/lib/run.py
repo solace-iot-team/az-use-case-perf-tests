@@ -81,27 +81,69 @@ class Run(CommonBase):
 
 
     def export_latency_node_latency_series(self, list_metrics) -> list:
+        """
+        Exports metrics calculated by SDKPerf
+        :param list_metrics:
+        :return:
+        """
         return self.latency_node_latency_series.export_metrics(list_metrics)
 
     def export_broker_node_latency_series(self, list_metrics) -> list:
+        """
+        Exports metrics calculated by SDKPerf
+        :param list_metrics:
+        :return:
+        """
         return self.broker_node_latency_series.export_metrics(list_metrics)
 
     def export_latency_node_distinct_latencies(self) -> arr.array:
+        """
+        Exports  distinct latencies (raw data) of all samples
+        :return:
+        """
         return self.latency_node_latency_series.export_distinct_latencies()
 
     def export_broker_node_distinct_latencies(self) -> arr.array:
+        """
+        Exports  distinct latencies (raw data) of all samples
+        :return:
+        """
         return self.broker_node_latency_series.export_distinct_latencies()
 
     def export_latency_node_delta_index_latencies(self, filter_predicate):
+        """
+        EXPERIMENTAL
+
+        Exports index distances between latencies that fulfill filter_predicate
+        :return:
+        """
         return self.latency_node_latency_series.export_delta_index_latencies(filter_predicate)
 
     def export_broker_node_delta_index_latencies(self, filter_predicate):
+        """
+        EXPERIMENTAL
+
+        Exports index distances between latencies that fulfill filter_predicate
+        :return:
+        """
         return self.broker_node_latency_series.export_delta_index_latencies(filter_predicate)
 
     def export_latency_node_series_length_latencies(self, filter_predicate) -> dict:
+        """
+        EXPERIMENTAL
+
+        Export length of series and gaps between of latencies that fulfill filter_predicate
+        :return:
+        """
         return self.latency_node_latency_series.export_series_length_latencies(filter_predicate)
 
     def export_broker_node_series_length_latencies(self, filter_predicate) -> dict:
+        """
+        EXPERIMENTAL
+
+        Export length of series and gaps between of latencies that fulfill filter_predicate
+        :return:
+        """
         return self.broker_node_latency_series.export_series_length_latencies(filter_predicate)
 
     def export_ping_series(self, list_metrics) -> arr.array:
@@ -109,3 +151,25 @@ class Run(CommonBase):
 
     def export_broker_series(self, list_metrics) -> arr.array:
         return self.broker_series.export_metrics(list_metrics)
+
+    def export_latency_node_series_latencies(self, inlude_sample_index:bool=True):
+        """
+        Exports all latencies including sample_num and sample relative index
+        :param: include_sample_index false to exclude sample relative index
+        :return:
+        """
+        result = self.latency_node_latency_series.export_latency_node_series_latencies()
+        if not inlude_sample_index:
+            del result[k_sample_index]
+        return result
+
+    def export_broker_node_series_latencies(self, inlude_sample_index:bool=True):
+        """
+        Exports all latencies including sample_num and sample relative index
+        :param: include_sample_index false to exclude sample relative index
+        :return:
+        """
+        result = self.broker_node_latency_series.export_latency_node_series_latencies()
+        if not inlude_sample_index:
+            del result[k_sample_index]
+        return result

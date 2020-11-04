@@ -25,7 +25,6 @@ class BrokerSample(BaseSample):
         self.broker_discard_rx_msg_count = int(sample_json["metrics"]["discardedTxMsgCount"])
 
     def export_metrics(self, list_metrics: list) -> list:
-
         rows = list()
         for metric in list_metrics:
             row = dict()

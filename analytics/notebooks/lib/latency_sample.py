@@ -71,6 +71,19 @@ class LatencySample(BaseSample):
     def export_distinct_latencies(self) -> arr:
         return self.arr_latency
 
+    def export_latency_node_series_latencies(self):
+        arr_sample_num = arr.array("i")
+        arr_sample_index = arr.array("i")
+        arr_sample_latency = arr.array("i")
+        i = 0
+        while i<len(self.arr_latency):
+            arr_sample_num.append(self.sample_num)
+            arr_sample_index.append(i)
+            arr_sample_latency.append(self.arr_latency[i])
+            i += 1
+        result_dict = {k_sample_num:arr_sample_num,k_sample_index:arr_sample_index, k_latency:arr_sample_latency}
+        return result_dict
+
     def export_delta_index_latencies(self, filter_predicate) -> arr:
         """
         Index distances between two latencies that fulfill filter_predicate
