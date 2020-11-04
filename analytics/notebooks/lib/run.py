@@ -17,19 +17,24 @@ class Run(CommonBase):
         self.run_definition = run_definition
         self.run_dir = run_dir
         #is this run with all contained files parsed
-        self.processed = False
+        self.samples_processed = False
         self.success = None
         self.run_meta = None
         self.latency_node_latency_series = None
         self.broker_node_latency_series = None
         self.ping_series = None
         self.broker_series = None
-        self.extract_stats()
+        self._extract_metadata()
 
     def __str__(self):
-        return f'[PerfRun: {self.run_meta}  [sucess: {self.success}]] {self.latency_node_latency_series}'
+        return f'[PerfRun: {self.run_meta}  [sucess: {self.success}] [latencies-processed: {self.samples_processed}]]'
 
-    def extract_stats(self):
+    def _extract_metadata(self):
+        """
+        checks in log files if run was successful
+        reads meta.json
+        :return:
+        """
         meta_path = self.run_dir + "/" + perf_filename_meta
         self.check_file_exists(meta_path, True, "meta data does not exist")
         with open(meta_path) as meta_file:
@@ -38,10 +43,29 @@ class Run(CommonBase):
         self.check_folder_exists(logs_path, True, "logs folder does not exist")
         success_log = self.files_in_folder_by_pattern(logs_path, perf_run_pattern_success_log_file)
         self.success = len(success_log) == 1
+
+    def _extract_stats(self):
+        """
+
+        :return:
+        """
         self.latency_node_latency_series = LatencyNodeLatencySeries(self)
         self.broker_node_latency_series = LatencyBrokerLatencySeries(self)
         self.broker_series = BrokerSeries(self)
         self.ping_series = PingSeries(self)
+        self.samples_processed = True
+
+    def read_samples(self):
+        """
+        Idempotent implemented.
+
+        If run was sucessful all latencies are read from samples
+
+        :return:
+        """
+        if self.success:
+            if not self.samples_processed:
+                self._extract_stats()
 
     def _touch_all_exports(self):
         """
@@ -54,6 +78,7 @@ class Run(CommonBase):
         self.export_broker_node_latency_series([k_latency_99_9th])
         self.export_latency_node_distinct_latencies()
         self.export_broker_node_distinct_latencies()
+
 
     def export_latency_node_latency_series(self, list_metrics) -> list:
         return self.latency_node_latency_series.export_metrics(list_metrics)
