@@ -35,6 +35,15 @@ class LatencyBrokerLatencySeries(BaseSeries):
             result_array.extend(series.export_distinct_latencies())
         return result_array
 
+    def export_latency_node_series_latencies(self):
+        result_dict = {k_sample_num:arr.array("i"),k_sample_index:arr.array("i"), k_latency:arr.array("i")}
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            series_result_dict = series.export_latency_node_series_latencies()
+            result_dict[k_sample_num].extend(series_result_dict[k_sample_num])
+            result_dict[k_sample_index].extend(series_result_dict[k_sample_index])
+            result_dict[k_latency].extend(series_result_dict[k_latency])
+        return result_dict
+
     def export_delta_index_latencies(self, filter_predicate) -> arr:
         result_array = arr.array("i")
         for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):

@@ -35,6 +35,15 @@ class LatencyNodeLatencySeries(BaseSeries):
             result_array.extend(series.export_distinct_latencies())
         return result_array
 
+    def export_latency_node_series_latencies(self):
+        result_dict = {k_sample_num:arr.array("i"),k_sample_index:arr.array("i"), k_latency:arr.array("i")}
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            series_result_dict = series.export_latency_node_series_latencies()
+            result_dict[k_sample_num].extend(series_result_dict[k_sample_num])
+            result_dict[k_sample_index].extend(series_result_dict[k_sample_index])
+            result_dict[k_latency].extend(series_result_dict[k_latency])
+        return result_dict
+
     def export_delta_index_latencies(self, filter_predicate) -> arr:
         result_array = arr.array("i")
         for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
@@ -42,13 +51,12 @@ class LatencyNodeLatencySeries(BaseSeries):
         return result_array
 
     def export_series_length_latencies(self, filter_predicate) -> dict:
-        result_dict = {"series_length":arr.array("i"), "gap_length":arr.array("i")}
+        result_dict = {k_latency_series_length:arr.array("i"), k_latency_gap_length:arr.array("i")}
 
         for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
             series_result_dict = series.export_series_length_latencies(filter_predicate)
-            result_dict[k_latency_series_length].extend(series_result_dict["series_length"])
-            result_dict[k_latency_gap_length].extend(series_result_dict["gap_length"])
-
+            result_dict[k_latency_series_length].extend(series_result_dict[k_latency_series_length])
+            result_dict[k_latency_gap_length].extend(series_result_dict[k_latency_gap_length])
         return result_dict
 
     def find_sample(self, sample_num):
