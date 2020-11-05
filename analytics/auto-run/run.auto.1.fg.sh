@@ -10,8 +10,7 @@ projectHome=${scriptDir%/analytics/*}
 
 # settings
 
-# TODO: insert the correct notebook to run
-export NOTEBOOK_NAME="devel-1.ipynb"
+export NOTEBOOK_NAME="auto.1.ipynb"
 
 export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 
@@ -26,6 +25,8 @@ infrastructureIds=(
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
 export LOG_DIR="$scriptDir/logs"
+
+export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
 
 rm -rf $LOG_DIR/*
 
