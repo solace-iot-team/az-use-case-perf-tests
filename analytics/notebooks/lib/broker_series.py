@@ -74,21 +74,10 @@ class BrokerSeries(BaseSeries):
         md = f"""
 ## Run Overview
 
-**Avg Fan-out ratio: {self.aggregates["fan_out_ratio"]:.2f} to 1**
-
-Number of messages:
-* received: {self.aggregates["rx_msg_count"]:,}
-* sent: {self.aggregates["tx_msg_count"]:,}
-
-Number discarded messages: 
-* received: {self.aggregates["discard_rx_msg_count"]:,}
-* sent: {self.aggregates["discard_tx_msg_count"]:,}
-
-Avg message rates (1/sec):
-* received: {self.aggregates["avg_rx_msg_rate_per_sec"]:,.0f}
-* sent: {self.aggregates["avg_tx_msg_rate_per_sec"]:,.0f}
- 
-
+|  |Messages|Discarded|Rates (1/sec)|Fan Out|
+|--|:------:|:-------:|:-----------:|:-----:|
+|received:| {self.aggregates["rx_msg_count"]:,}  | {self.aggregates["discard_rx_msg_count"]:,}  | {self.aggregates["avg_rx_msg_rate_per_sec"]:,.0f} |1|
+|sent:   |  {self.aggregates["tx_msg_count"]:,}  | {self.aggregates["discard_tx_msg_count"]:,}  | {self.aggregates["avg_tx_msg_rate_per_sec"]:,.0f} |{self.aggregates["fan_out_ratio"]:.2f}|
         """
         
         return md
