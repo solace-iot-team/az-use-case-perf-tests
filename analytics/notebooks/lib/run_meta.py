@@ -219,9 +219,6 @@ Included: **{self.getRuncSpecMonitorPingIsIncluded()}**
 ### Monitor Solace Broker VPN Stats
 Included: **{self.getRuncSpecMonitorVpnIsIncluded()}**
 
-
-  ---
-
             """
 
         return md    

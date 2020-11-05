@@ -87,9 +87,7 @@ Number discarded messages:
 Avg message rates (1/sec):
 * received: {self.aggregates["avg_rx_msg_rate_per_sec"]:,.0f}
 * sent: {self.aggregates["avg_tx_msg_rate_per_sec"]:,.0f}
-
-
-  ---      
+ 
 
         """
         
