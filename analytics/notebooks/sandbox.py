@@ -4,6 +4,9 @@ from lib import run_definition
 from lib import run_result_location
 from lib import constants
 from lib import run
+from lib import run_analytics
+
+import pandas as pd
 
 #define run result location
 location = run_result_location.RunResultLocation("../testresults/azure.1-auto-standalone")
@@ -40,5 +43,13 @@ specific_metric = sample.export_metrics([constants.k_latency_50th])
 
 s1 = run_item.export_latency_node_series_latencies()
 s2 = run_item.export_broker_node_series_latencies()
-print(str(s1))
-print(str(s2))
+
+s3 = run_item.export_latency_node_distinct_latencies_per_sample()
+s4 = run_item.export_broker_node_distinct_latencies_per_sample()
+
+latency_dict = run_item.export_latency_node_distinct_latencies_per_sample()
+
+ra = run_analytics.RunAnalytics(run_item)
+x = ra.export_latency_node_series_latencies_metrics()
+x2 = ra.export_latency_node_series_latencies_metrics_as_dataframe()
+print("end")

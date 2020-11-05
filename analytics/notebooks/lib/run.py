@@ -110,6 +110,20 @@ class Run(CommonBase):
         """
         return self.broker_node_latency_series.export_distinct_latencies()
 
+    def export_latency_node_distinct_latencies_per_sample(self):
+        """
+
+        :return: dict[sample_num]:array(latencies)
+        """
+        return self.latency_node_latency_series.export_distinct_latencies_per_sample()
+
+    def export_broker_node_distinct_latencies_per_sample(self):
+        """
+
+        :return: dict[sample_num]:array(latencies)
+        """
+        return self.broker_node_latency_series.export_distinct_latencies_per_sample()
+
     def export_latency_node_delta_index_latencies(self, filter_predicate):
         """
         EXPERIMENTAL

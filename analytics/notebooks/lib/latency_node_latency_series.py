@@ -35,6 +35,12 @@ class LatencyNodeLatencySeries(BaseSeries):
             result_array.extend(series.export_distinct_latencies())
         return result_array
 
+    def export_distinct_latencies_per_sample(self) -> arr:
+        result_dict = dict()
+        for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+            result_dict[series.sample_num]=series.export_distinct_latencies()
+        return result_dict
+
     def export_latency_node_series_latencies(self):
         result_dict = {k_sample_num:arr.array("i"),k_sample_index:arr.array("i"), k_latency:arr.array("i")}
         for series in sorted(self.list_samples, key=lambda sample: sample.sample_num):

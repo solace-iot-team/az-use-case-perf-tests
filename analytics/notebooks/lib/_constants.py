@@ -42,3 +42,41 @@ d_metric_property = {
     k_broker_discard_tx_msg_count: p_broker_discard_tx_msg_count,
     k_broker_discard_rx_msg_count: p_broker_discard_rx_msg_count
 }
+
+d_latency_percentile = {
+    k_latency_00_05th : 0.005,
+    k_latency_01_th : 0.01,
+    k_latency_00_5th : 0.05,
+    k_latency_10th : 0.10,
+    k_latency_25th : 0.25,
+    k_latency_50th : 0.5,
+    k_latency_75th : 0.75,
+    k_latency_90th : 0.90,
+    k_latency_95th : 0.95,
+    k_latency_99th : 0.99,
+    k_latency_99_5th : 0.995,
+    k_latency_99_9th : 0.999,
+    k_latency_99_95th : 0.9995,
+    k_latency_99_99th : 0.9999,
+    k_latency_99_995th : 0.99995,
+    k_latency_99_999th : 0.99999,
+}
+
+l_latency_percentile_keys= [ k_latency_00_05th,
+                        k_latency_01_th,
+                        k_latency_00_5th,
+                        k_latency_10th,
+                        k_latency_25th,
+                        k_latency_50th,
+                        k_latency_75th,
+                        k_latency_90th,
+                        k_latency_95th,
+                        k_latency_99th,
+                        k_latency_99_5th,
+                        k_latency_99_9th,
+                        k_latency_99_95th,
+                        k_latency_99_99th,
+                        k_latency_99_995th,
+                        k_latency_99_999th]
+
+
