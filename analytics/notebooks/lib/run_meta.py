@@ -7,10 +7,6 @@
 from ._util import to_date
 from .constants import *
 
-# import locale
-# locale.setlocale(locale.LC_ALL, '')
-
-
 class RunMeta():
     """ RunMeta """
     def __init__(self, metaJson):
@@ -106,6 +102,22 @@ class RunMeta():
         else:    
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
+    def getPublisherNodeSpec(self):
+        return self.getMonitorNodeSpec()
+
+    def getNumPublisherNodes(self):
+        return "TODO: needs inventory in meta"
+
+    def getConsumerNodeSpec(self):
+        return self.getMonitorNodeSpec()
+
+    def getNumConsumerNodes(self):
+        return "TODO: needs inventory in meta"
+
+    """ Run Spec General """
+    def getRunSpecGeneral(self):
+        return self.metaJson["meta"]["run_spec"]["general"]
+
     """ Monitor Latency """
     def getRunSpecMonitorLatencyLpm(self):
         if not self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded() and not self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded():
@@ -140,10 +152,13 @@ class RunMeta():
 
     def getAsMarkdown(self):
         md = f"""
-  ---
 
 ## Run Settings
 Description: "{self.getRunSpecDescription()}"
+
+Test Spec:
+- name: {self.getRunSpecGeneral()["test_spec_name"]}
+- description: TODO
 
 ### General
 
@@ -158,8 +173,19 @@ Description: "{self.getRunSpecDescription()}"
 
 ### Infrastructure
 
-- Broker Node: {self.getBrokerNodeSpec()}
-- Monitor Nodes: {self.getMonitorNodeSpec()}
+- Broker Node: 
+    - number of nodes: 1
+    - spec: {self.getBrokerNodeSpec()}
+- Load Nodes
+    - Publishers
+        - number of nodes: {self.getNumPublisherNodes()}
+        - spec: {self.getPublisherNodeSpec()}
+    - Consumers
+        - number of nodes: {self.getNumConsumerNodes()}
+        - spec: {self.getConsumerNodeSpec()}
+- Monitor Node:
+    - number of nodes: 1
+    - spec: {self.getMonitorNodeSpec()}
 
 ### Load
 
