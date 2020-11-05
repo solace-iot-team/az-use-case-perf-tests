@@ -69,12 +69,7 @@ class BrokerSeries(BaseSeries):
             avg_tx_msg_rate_per_sec=avg_tx_msg_rate/len(self.list_samples)
         )
 
-    def getChecksAsMarkdown(self):
-
-        logging.debug('type(aggregates)={}'.format(type(self.aggregates)))
-        logging.debug("aggregates={}".format(self.aggregates))
-
-
+    def getOverviewAsMarkdown(self):
 
         md = f"""
 ## Run Overview
