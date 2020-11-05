@@ -127,12 +127,12 @@ class RunMeta():
     def getRunSpecMonitorLatencyMsgPayloadSizeBytes(self) -> str:
         if not self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded() and not self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded():
             return "n/a"  
-        return f'{int(self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["msg_rate_per_second"]):,}'
+        return f'{int(self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["msg_payload_size_bytes"]):,}'
 
     def getRunSpecMonitorLatencyMsgRatePerSec(self) -> str:
         if not self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded() and not self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded():
             return "n/a"  
-        return f'{int(self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["msg_payload_size_bytes"]):,}'
+        return f'{int(self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["msg_rate_per_second"]):,}'
 
     """ Monitor Latency Latency Node """
     def getRuncSpecMonitorLatencyLatencyNodeIsIncluded(self):
@@ -154,73 +154,33 @@ class RunMeta():
         md = f"""
 
 ## Run Settings
-Description: "{self.getRunSpecDescription()}"
+* Description: "{self.getRunSpecDescription()}"
+* Test Spec: "description - todo" ({self.getRunSpecGeneral()["test_spec_name"]})
 
-Test Spec:
-- name: {self.getRunSpecGeneral()["test_spec_name"]}
-- description: TODO
+|General|                                                             | | Infrastructure            |                                                                            |      |   |  
+|:--|:----------------------------------------------------------------|-|:--------------------------|:---------------------------------------------------------------------------|:-----|:--|
+|Infrastructure: |{self.infrastructure}                               | |Broker Node:               |nodes: 1<br/>spec: {self.getBrokerNodeSpec()}                               |      |   |
+|Run name: |{self.run_name}                                           | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>spec:{self.getPublisherNodeSpec()} |      |   |
+|Run Id: |{self.run_id}                                               | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>spec:{self.getConsumerNodeSpec()}  |      |   |
+|Run Start: |{self.ts_run_start}                                      | |Monitor Node:              |nodes: 1 <br/>spec:{self.getMonitorNodeSpec()}  |      |   |
+|Run End: |{self.ts_run_end}|||
+|Run Duration: |{self.run_duration()}|||
+|Sample Duration (secs): |{self.getRunSpecParamsSampleDurationSecs()}|||
+|Number of Samples:|{self.getRunSpecParamsTotalNumSamples()}|||
 
-### General
 
-- Infrastructure: {self.infrastructure}
-- Run name: {self.run_name}
-- Run Id: {self.run_id}
-- Run Start: {self.ts_run_start}
-- Run End: {self.ts_run_end}
-- Run Duration: {self.run_duration()}
-  - Sample Duration (secs): {self.getRunSpecParamsSampleDurationSecs()}
-  - Number of Samples: {self.getRunSpecParamsTotalNumSamples()}
-
-### Infrastructure
-
-- Broker Node: 
-    - number of nodes: 1
-    - spec: {self.getBrokerNodeSpec()}
-- Load Nodes
-    - Publishers
-        - number of nodes: {self.getNumPublisherNodes()}
-        - spec: {self.getPublisherNodeSpec()}
-    - Consumers
-        - number of nodes: {self.getNumConsumerNodes()}
-        - spec: {self.getConsumerNodeSpec()}
-- Monitor Node:
-    - number of nodes: 1
-    - spec: {self.getMonitorNodeSpec()}
-
-### Load
-
-Included: **{self.getRuncSpecLoadIsIncluded()}**
-- Num client connections @ run start: {self.getNumClientConnectionsAtStart()}
-- Num client connections @ run end: {self.getNumClientConnectionsAtEnd()}
-- Publishers
-  - number of publishers: {self.getRunSpecLoadNumberOfPublishers()}
-  - message payload size (bytes): {self.getRunSpecLoadPublishMsgPayloadSizeBytes()}
-  - total message rate (sec): {self.getRunSpecLoadPublishTotalMsgRatePerSec()}
-  - total number of topics: {self.getRunSpecLoadPublishTotalNumberOfTopics()}
-- Consumers
-  - number of consumers: {self.getRunSpecLoadSubscribeTotalNumberOfConsumers()}
-
-### Monitor: Latency
-
-Latency Node to Broker Node (Network) included: **{self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded()}**
-
-Broker Node to Broker Node (local) included: **{self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded()}**
-
-- measure each message: {self.getRunSpecMonitorLatencyLpm()}
-- message payload size (bytes): {self.getRunSpecMonitorLatencyMsgPayloadSizeBytes()}
-- message rate (sec): {self.getRunSpecMonitorLatencyMsgRatePerSec()}
-
-### Monitor Ping
-
-Latency Node to Broker Node (Network)
-
-Included: **{self.getRuncSpecMonitorPingIsIncluded()}**
-
-### Monitor Solace Broker VPN Stats
-Included: **{self.getRuncSpecMonitorVpnIsIncluded()}**
-
+|Load|                                                                          | | Monitors   |                              |                                                                 |  
+|:--|:--------------------------------------------------------------------------|-|:-----------|:-----------------------------|:----------------------------------------------------------------|
+|Included:              |**{self.getRuncSpecLoadIsIncluded()}**                 | |**Latency** |                              |                                                                 |  
+|Connections @ start:   |{self.getNumClientConnectionsAtStart()}                | | |Latency Node to Broker Node - included:  |**{self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded()}**      |    
+|Connections @ end:     |{self.getNumClientConnectionsAtEnd()}                  | | |Broker Node to Broker Node - included:   |**{self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded()}**       |      
+|Publishers:            |{self.getRunSpecLoadNumberOfPublishers()}              | | |Payload (bytes):                         |{self.getRunSpecMonitorLatencyMsgPayloadSizeBytes()}             |      
+| - Payload (bytes):    |{self.getRunSpecLoadPublishMsgPayloadSizeBytes()}      | | |Rate (1/sec):                            |{self.getRunSpecMonitorLatencyMsgRatePerSec()}                   |      
+| - Rate (1/sec):       |{self.getRunSpecLoadPublishTotalMsgRatePerSec()}       | |**Ping**       | included:                 |**{self.getRuncSpecMonitorPingIsIncluded()}**                    |  
+| - Topics:             |{self.getRunSpecLoadPublishTotalNumberOfTopics()}      | |**Broker VPN** | included:                 |**{self.getRuncSpecMonitorVpnIsIncluded()}**                     |  
+|Consumers:             |{self.getRunSpecLoadSubscribeTotalNumberOfConsumers()} | 
+|                       |                                                       | 
             """
-
         return md    
 
 ###
