@@ -37,7 +37,7 @@ k_latency_99_99th = "99_99th"
 k_latency_99_995th = "99_995th"
 k_latency_99_999th = "99_999th"
 
-k_latency_average = "average"
+k_latency_average = "mean"
 k_latency_maximum = "maximum"
 k_latency_minimum = "minimum"
 k_latency_std_deviation = "std_deviation"
