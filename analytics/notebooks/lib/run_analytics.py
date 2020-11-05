@@ -22,6 +22,25 @@ class RunAnalytics():
     def export_latency_node_series_latencies_metrics_as_dataframe(self):
         return pd.DataFrame(data=self.export_latency_node_series_latencies_metrics())
 
+    def export_broker_node_series_latencies_metrics_as_dataframe(self):
+        return pd.DataFrame(data=self.export_broker_node_series_latencies_metrics())
+
+    def export_broker_node_series_latencies_metrics(self):
+        result = dict()
+        #quantiles
+        percentiles = list(d_latency_percentile.values())
+        lat_dict =self.run.export_broker_node_distinct_latencies_per_sample()
+        for key, value in lat_dict.items():
+            tmp_df = pd.DataFrame(data={"sample":value})
+            tmp_quantiles = tmp_df['sample'].quantile(q=percentiles)
+            self.add_to_dict(result,k_latency_minimum, tmp_df['sample'].min())
+            self.add_to_dict(result,k_latency_maximum, tmp_df['sample'].max())
+            self.add_to_dict(result,k_latency_average, tmp_df['sample'].mean())
+            for map_key,map_percentile in d_latency_percentile.items():
+                self.add_to_dict(result,map_key, tmp_quantiles[map_percentile])
+
+        return result
+
     def export_latency_node_series_latencies_metrics(self):
         result = dict()
         #quantiles
@@ -35,8 +54,9 @@ class RunAnalytics():
             self.add_to_dict(result,k_latency_average, tmp_df['sample'].mean())
             for map_key,map_percentile in d_latency_percentile.items():
                 self.add_to_dict(result,map_key, tmp_quantiles[map_percentile])
-
         return result
+
+
 
     def add_to_dict(self, target:dict, the_key, the_value):
         if the_key in target:
