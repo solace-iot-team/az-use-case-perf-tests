@@ -30,8 +30,8 @@ class RunAnalytics():
         for key, value in lat_dict.items():
             tmp_df = pd.DataFrame(data={"sample":value})
             tmp_quantiles = tmp_df['sample'].quantile(q=percentiles)
-            self.add_to_dict(result,k_latency_minimum, tmp_df['sample'].min())
-            self.add_to_dict(result,k_latency_maximum, tmp_df['sample'].max())
+            # self.add_to_dict(result,k_latency_minimum, tmp_df['sample'].min())
+            # self.add_to_dict(result,k_latency_maximum, tmp_df['sample'].max())
             self.add_to_dict(result,k_latency_average, tmp_df['sample'].mean())
             for map_key,map_percentile in d_latency_percentile.items():
                 self.add_to_dict(result,map_key, tmp_quantiles[map_percentile])
