@@ -116,6 +116,7 @@
                 - publisher_id: exch_3
                   number_of_topics: 10000
                   topic_prefix: "markets/exchange-3"
+
         - name: lat_payload_200bytes
           description: "base run with latency payload size=200 bytes"
           monitors:
