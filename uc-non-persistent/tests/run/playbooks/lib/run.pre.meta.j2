@@ -19,6 +19,8 @@
 
     "run_spec": {{ run_spec | to_nice_json }},
 
+    "inventory": {{ test_inventory | to_nice_json }},
+
     "nodes": {
       "broker_nodes": {{ test_broker_nodes.broker_nodes | to_nice_json }},
       "sdkperf_nodes": {{ test_sdkperf_nodes.sdkperf_nodes | to_nice_json }}
