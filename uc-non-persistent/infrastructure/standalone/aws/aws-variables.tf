@@ -39,7 +39,7 @@ variable "sdkperf_vm_type" {
 ############################################################################################################
 
 variable "zone" {
-  default = "unused"
+  default = "auto"
 }
 variable "cloud_provider" {
   default = "aws"
