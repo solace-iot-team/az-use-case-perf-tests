@@ -67,14 +67,40 @@
           vpn_stats:
             include: true
       runs:
-        - name: 0_base
-          description: "base run, no load"
+
+        - name: base_run
+          description: "base run with defaults"
+
+        - name: no_load
+          description: "base run without load"
           load:
             include: false
-        - name: 1_variation
-          description: "default settings"
-        - name: 2_variation
-          description: "variation: number of topics"
+
+        - name: base_no_broker_node_latency
+          description: "base run without broker node latency"
+          monitors:
+            latency:
+              broker_node_to_broker:
+                include: false
+
+        - name: base_no_latency_node_latency
+          description: "base run without latency node latency"
+          monitors:
+            latency:
+              sdkperf_node_to_broker:
+                include: false
+
+        - name: base_no_latency
+          description: "base run without any latency monitors"
+          monitors:
+            latency:
+              broker_node_to_broker:
+                include: false
+              sdkperf_node_to_broker:
+                include: false
+
+        - name: topics_10k
+          description: "base run with 10K topics"
           load:
             publish:
               publishers:
@@ -90,8 +116,8 @@
                 - publisher_id: exch_3
                   number_of_topics: 10000
                   topic_prefix: "markets/exchange-3"
-        - name: 3_variation
-          description: "variation: latency payload size"
+        - name: lat_payload_200bytes
+          description: "base run with latency payload size=200 bytes"
           monitors:
             latency:
               msg_payload_size_bytes: 200
