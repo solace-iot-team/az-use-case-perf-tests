@@ -20,7 +20,7 @@ ANALYTICS_ENABLE_LOGGING_ENV="ANALYTICS_ENABLE_LOGGING"
 ANALYTICS_LOG_FILE_ENV="ANALYTICS_LOG_FILE"
 
 """Check Python Version """
-_PY3_MIN = sys.version_info[:2] >= (3, 8)
+_PY3_MIN = sys.version_info[:2] >= (3, 6)
 if not _PY3_MIN:
     sys.stderr.write(
         '>>> ERROR: %s require a minimum of Python version 3.6.9. Current version: %s."}' % (PACKAGE_NAME, ''.join(sys.version.splitlines()))
