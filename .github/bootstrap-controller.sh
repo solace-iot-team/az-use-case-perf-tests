@@ -21,7 +21,7 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 CMD="sudo apt -y upgrade";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt install software-properties-common";
+CMD="sudo apt-get install software-properties-common";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo add-apt-repository ppa:deadsnakes/ppa -y";
@@ -33,10 +33,10 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 #####################################################################################
 # Python 3
 
-CMD="sudo apt install python3";
+CMD="sudo apt-get install python3";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt install python3-pip -y";
+CMD="sudo apt-get install python3-pip -y";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
@@ -58,15 +58,43 @@ if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 #####################################################################################
 # Misc Tools
 
-CMD="sudo apt install jq -y";
+CMD="sudo apt-get install jq -y";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo -H python3 -m pip install yq";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt install unzip";
+CMD="sudo apt-get install unzip";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
+#####################################################################################
+# Jupyter Tools
+CMD="sudo -H python3 -m pip install jupyter";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install pandas";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install jsonpath-ng";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install matplotlib";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install seaborn";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install plotly";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install jupyter_contrib_nbextensions";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="jupyter contrib nbextension install --user";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="jupyter nbextension enable python-markdown/main";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
 # Switch to downloads directory
