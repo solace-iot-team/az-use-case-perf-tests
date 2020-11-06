@@ -1,5 +1,23 @@
 # Release Notes
 
+## Version: 0.6.0
+Release Purpose: Analytics & Report Generation
+
+#### New
+**analytics**
+* based on jupyter notebooks
+* **analytics/notebooks/run-analysis.ipynb**
+  - production notebook to analyze a single run and generate a report
+* **analytics/auto-run**
+  - sample script to analyze and generate html reports for all runs in **test-results/stats/{infrastructure-id}** folders
+* **test-results/analysis**
+  - contains 1 html report file per run analyzed
+
+#### Changes
+
+**meta.json**
+  * added inventory used for reporting on runs
+
 ## Version: 0.5.3
 Release Purpose: Maintenance Load
 
