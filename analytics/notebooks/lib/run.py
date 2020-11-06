@@ -168,6 +168,9 @@ class Run(CommonBase):
     def export_ping_series(self, list_metrics) -> arr.array:
         return self.ping_series.export_metrics(list_metrics)
 
+    def export_ping_metrics_as_columns(self) -> dict:
+        return self.ping_series.export_metrics_as_columns()
+
     def export_broker_series(self, list_metrics) -> arr.array:
         return self.broker_series.export_metrics(list_metrics)
 

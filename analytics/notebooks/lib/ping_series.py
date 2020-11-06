@@ -30,6 +30,15 @@ class PingSeries(BaseSeries):
             result_list.extend(series.export_metrics(list_metrics))
         return result_list
 
+    def export_metrics_as_columns(self) -> dict:
+        result = {k_ping_rtt_min:list(), k_ping_rtt_max:list(), k_ping_rtt_avg:list(), k_ping_rtt_mdev:list()}
+        for sample in self.list_samples:
+            result[k_ping_rtt_min].append(sample.ping_rtt_min)
+            result[k_ping_rtt_max].append(sample.ping_rtt_max)
+            result[k_ping_rtt_avg].append(sample.ping_rtt_avg)
+            result[k_ping_rtt_mdev].append(sample.ping_rtt_mdev)
+        return result
+
     def find_sample(self, sample_num):
         try:
             return next(filter(lambda item: item.sample_num==sample_num, self.list_samples ))

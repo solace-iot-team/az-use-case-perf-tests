@@ -191,6 +191,12 @@ class RunAnalytics():
             self.add_to_dict(result,map_key, tmp_quantiles[map_percentile])
         return result
 
+    def export_ping_series_as_dataframe(self):
+        return pd.DataFrame(data=self.run.export_ping_series(c_ping_all_metrics))
+
+    def export_ping_series_as_columns_dataframe(self):
+        return pd.DataFrame(data=self.run.export_ping_metrics_as_columns())
+
     def add_to_dict(self, target:dict, the_key, the_value):
         if the_key in target:
             target[the_key].append(the_value)

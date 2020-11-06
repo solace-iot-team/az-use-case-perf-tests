@@ -38,3 +38,4 @@ class PingSample(BaseSample):
             row['value'] = self.__getattribute__(d_metric_property[metric])
             rows.append(row)
         return rows
+
