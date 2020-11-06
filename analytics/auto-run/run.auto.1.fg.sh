@@ -10,7 +10,7 @@ projectHome=${scriptDir%/analytics/*}
 
 # settings
 
-export NOTEBOOK_NAME="auto.1.ipynb"
+export NOTEBOOK_NAME="run-analysis.ipynb"
 
 export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 
@@ -26,14 +26,14 @@ export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
 export LOG_DIR="$scriptDir/logs"
 
-export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
+export NOTEBOOK_FILE="$projectHome/analytics/notebooks/$NOTEBOOK_NAME"
 
 rm -rf $LOG_DIR/*
 
 
 ../_run.all.sh
-# ../_run.sh > ./logs/$scriptName.out 2>&1
 
+# ../_run.sh > ./logs/$scriptName.out 2>&1
 # nohup ../_run.sh > ./logs/$scriptName.out 2>&1 &
 
 ###
