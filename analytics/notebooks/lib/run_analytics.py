@@ -82,6 +82,78 @@ class RunAnalytics():
         return result
 
 
+    def export_combined_all_distinct_latencies_metrics(self) -> dict:
+        """
+        Calculates metrics (min, max, mean, percentiles) for broker and latency nodes
+
+        :return: dict ['metrics"]['latency-node']['broker-node']
+        """
+        percentiles = list(d_latency_percentile.values())
+        ln_latencies = self.run.export_latency_node_distinct_latencies()
+        bn_latencies = self.run.export_broker_node_distinct_latencies()
+        tmp_df = pd.DataFrame(data={"latencies":ln_latencies})
+        tmp_quantiles = tmp_df['latencies'].quantile(q=percentiles)
+
+        list_metrics = [k_latency_minimum,k_latency_average]
+        list_metrics += list(d_latency_percentile.keys())
+        list_metrics.append(k_latency_maximum)
+
+        list_latency_node = list()
+        list_latency_node.append(tmp_df['latencies'].min())
+        list_latency_node.append(tmp_df['latencies'].mean())
+        for map_key,map_percentile in d_latency_percentile.items():
+            list_latency_node.append(tmp_quantiles[map_percentile])
+        list_latency_node.append(tmp_df['latencies'].max())
+
+        tmp_df = pd.DataFrame(data={"latencies":bn_latencies})
+        tmp_quantiles = tmp_df['latencies'].quantile(q=percentiles)
+
+        list_broker_node = list()
+        list_broker_node.append(tmp_df['latencies'].min())
+        list_broker_node.append(tmp_df['latencies'].mean())
+        for map_key,map_percentile in d_latency_percentile.items():
+            list_broker_node.append(tmp_quantiles[map_percentile])
+        list_broker_node.append(tmp_df['latencies'].max())
+
+        return {"metrics":list_metrics, "latency-node":list_latency_node, "broker-node":list_broker_node}
+
+
+
+    def export_combined_all_distinct_latencies_metrics_as_keyvalue_dataframe(self):
+        return pd.DataFrame(self.export_latency_node_all_distinct_latencies_as_keyvalue_metrics() + self.export_broker_node_all_distinct_latencies_as_keyvalue_metrics())
+
+    def export_latency_node_all_distinct_latencies_metrics_as_keyvalue_dataframe(self):
+        return pd.DataFrame(self.export_latency_node_all_distinct_latencies_as_keyvalue_metrics())
+
+    def export_latency_node_all_distinct_latencies_as_keyvalue_metrics(self):
+        rows = list()
+        percentiles = list(d_latency_percentile.values())
+        latencies = self.run.export_latency_node_distinct_latencies()
+        tmp_df = pd.DataFrame(data={"latencies":latencies})
+        tmp_quantiles = tmp_df['latencies'].quantile(q=percentiles)
+        rows.append({ 'node': 'latency-node','metric' : k_latency_minimum, 'value': tmp_df['latencies'].min() })
+        rows.append({ 'node': 'latency-node','metric' : k_latency_average, 'value': tmp_df['latencies'].mean() })
+        for map_key,map_percentile in d_latency_percentile.items():
+            rows.append({ 'node': 'latency-node','metric' : map_key, 'value': tmp_quantiles[map_percentile] })
+        rows.append({ 'node': 'latency-node','metric' : k_latency_maximum, 'value': tmp_df['latencies'].max() })
+        return rows
+
+    def export_broker_node_all_distinct_latencies_metrics_as_keyvalue_dataframe(self):
+            return pd.DataFrame(self.export_broker_node_all_distinct_latencies_as_keyvalue_metrics())
+
+    def export_broker_node_all_distinct_latencies_as_keyvalue_metrics(self):
+        rows = list()
+        percentiles = list(d_latency_percentile.values())
+        latencies = self.run.export_latency_node_distinct_latencies()
+        tmp_df = pd.DataFrame(data={"latencies":latencies})
+        tmp_quantiles = tmp_df['latencies'].quantile(q=percentiles)
+        rows.append({ 'node': 'broker-node','metric' : k_latency_minimum, 'value': tmp_df['latencies'].min() })
+        rows.append({ 'node': 'broker-node','metric' : k_latency_average, 'value': tmp_df['latencies'].mean() })
+        for map_key,map_percentile in d_latency_percentile.items():
+            rows.append({ 'node': 'broker-node','metric' : map_key, 'value': tmp_quantiles[map_percentile] })
+        rows.append({ 'node': 'broker-node','metric' : k_latency_maximum, 'value': tmp_df['latencies'].max() })
+        return rows
+
     def export_latency_node_all_distinct_latencies_metrics_as_dataframe(self):
         return pd.DataFrame(data=self.export_latency_node_all_distinct_latencies_metrics())
 
