@@ -1,3 +1,8 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
 # constants related to sample json files
 perf_pattern_run_dir = "run.*"
 perf_run_log_dir = "logs"
