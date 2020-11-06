@@ -1,3 +1,8 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
 import json
 
 from .base_series import BaseSeries

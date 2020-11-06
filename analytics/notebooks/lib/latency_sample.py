@@ -1,5 +1,9 @@
 
 import array as arr
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
 
 from ._constants import *
 from ._util import *
