@@ -9,12 +9,12 @@
     use_case: uc_non_persistent
     description: "devel spec - max sampling"
     infrastructure_list:
-      - cloud_provider: azure
-        config: devel1-standalone
+      # - cloud_provider: azure
+      #   config: devel1-standalone
       # - cloud_provider: azure
       #   config: devel2-standalone
-      # - cloud_provider: aws
-      #   config: devel1-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
     run_specs:
       run_params:
         total_num_samples: 20
