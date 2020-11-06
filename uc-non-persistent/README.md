@@ -16,6 +16,7 @@
 
 - [Destroy Infrastructure Resources](./infrastructure/standalone)
 
+- [Analyze Results & Generate Reports](../analytics)
 
 ---
 The End.
