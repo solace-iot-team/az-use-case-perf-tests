@@ -10,31 +10,29 @@ projectHome=${scriptDir%/analytics/*}
 
 # settings
 
-export NOTEBOOK_NAME="run-analysis.ipynb"
+# export NOTEBOOK_NAME="run-analysis.ipynb"
+# export NOTEBOOK_FILE="$projectHome/uc-non-persistent/analytics/notebooks/$NOTEBOOK_NAME"
+
+export NOTEBOOK_NAME="devel-1.ipynb"
+export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
 
 export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 
 export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 
 infrastructureIds=(
-  "azure.1-auto-standalone"
-  "azure.2-auto-standalone"
-  "aws.1-auto-standalone"
+  "aws.devel1"
+  "azure.devel1"
+  "azure.devel2"
 )
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 
 export LOG_DIR="$scriptDir/logs"
 
-export NOTEBOOK_FILE="$projectHome/analytics/notebooks/$NOTEBOOK_NAME"
-
 rm -rf $LOG_DIR/*
 
-
-../_run.all.sh
-
-# ../_run.sh > ./logs/$scriptName.out 2>&1
-# nohup ../_run.sh > ./logs/$scriptName.out 2>&1 &
+nohup ../_run.all.sh > ./logs/$scriptName.out 2>&1 &
 
 ###
 # The End.
