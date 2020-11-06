@@ -6,6 +6,7 @@
 
 from ._util import to_date
 from .constants import *
+from .perf_error import PerfError
 
 class RunMeta():
     """ RunMeta """
@@ -23,6 +24,12 @@ class RunMeta():
 
     def run_duration(self):
         return self.ts_run_end - self.ts_run_start
+
+    def getEnvRegion(self):
+        return self.metaJson["meta"]["env"]["region"]
+
+    def getEnvZone(self):
+        return self.metaJson["meta"]["env"]["zone"]
 
     def getNumClientConnectionsAtStart(self):
         return self.metaJson["meta"]["client_connections"]["start_test"]["number"]
@@ -78,11 +85,21 @@ class RunMeta():
             return "n/a"    
         return len(self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumers"])
 
-    def getBrokerNode(self):
-        return self.metaJson["meta"]["nodes"]["broker_nodes"][0]
+    def getNumBrokerNodes(self):
+        return len(self.metaJson["meta"]["nodes"]["broker_nodes"])
+
+    def getBrokerNodeDetails(self, public_ip):
+        broker_nodes = self.metaJson["meta"]["nodes"]["broker_nodes"]
+        # there can only be 1
+        if len(broker_nodes) != 1:
+            raise PerfError("[ERROR] - found more than 1 broker_node in nodes")
+        if broker_nodes[0]["public_ip"] != public_ip:
+            raise PerfError("[ERROR] - broker node public ip does not match inventory public_ip")
+        return broker_nodes[0]
 
     def getBrokerNodeSpec(self):
-        node = self.getBrokerNode()
+        public_ip = self.metaJson["meta"]["inventory"]["all"]["hosts"]["broker_centos"]["ansible_host"]
+        node = self.getBrokerNodeDetails(public_ip)
         if self.cloud_provider == "azure":
             return f"size: {node['size']}"
         elif self.cloud_provider == "aws":
@@ -90,11 +107,17 @@ class RunMeta():
         else:    
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
-    def getMonitorNode(self):
-        return self.metaJson["meta"]["nodes"]["sdkperf_nodes"][0]
+    def getMonitorNodeDetails(self, public_ip):
+        sdkperf_nodes = self.metaJson["meta"]["nodes"]["sdkperf_nodes"]
+        return [x for x in sdkperf_nodes if x["public_ip"] == public_ip][0]
 
     def getMonitorNodeSpec(self):
-        node = self.getMonitorNode()
+        sdkperf_latency_hosts = self.metaJson["meta"]["inventory"]["sdkperf_latency"]["hosts"]
+        # assuming here there is only 1
+        if len(sdkperf_latency_hosts) != 1:
+            raise PerfError("[ERROR] - found more than 1 sdkperf_latency host in inventory")
+        monitor_node_public_ip = sdkperf_latency_hosts[list(sdkperf_latency_hosts)[0]]["ansible_host"]
+        node = self.getMonitorNodeDetails(monitor_node_public_ip)
         if self.cloud_provider == "azure":
             return f"size: {node['size']}"
         elif self.cloud_provider == "aws":
@@ -103,22 +126,27 @@ class RunMeta():
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
     def getPublisherNodeSpec(self):
+        # lazy, assuming they are the same
         return self.getMonitorNodeSpec()
 
     def getNumPublisherNodes(self):
-        return "TODO: needs inventory in meta"
+        return len(self.metaJson["meta"]["inventory"]["sdkperf_publishers"]["hosts"])
 
     def getConsumerNodeSpec(self):
+        # lazy, assuming they are the same
         return self.getMonitorNodeSpec()
 
     def getNumConsumerNodes(self):
-        return "TODO: needs inventory in meta"
+        return len(self.metaJson["meta"]["inventory"]["sdkperf_consumers"]["hosts"])
 
     """ Run Spec General """
     def getRunSpecGeneral(self):
         return self.metaJson["meta"]["run_spec"]["general"]
 
     """ Monitor Latency """
+    def getNumMonitorNodes(self):
+        return len(self.metaJson["meta"]["inventory"]["sdkperf_latency"]["hosts"])
+
     def getRunSpecMonitorLatencyLpm(self):
         if not self.getRuncSpecMonitorLatencyBrokerNodeIsIncluded() and not self.getRuncSpecMonitorLatencyLatencyNodeIsIncluded():
             return "n/a"  
@@ -150,23 +178,29 @@ class RunMeta():
     def getRuncSpecMonitorVpnIsIncluded(self):
         return self.metaJson["meta"]["run_spec"]["monitors"]["vpn_stats"]["include"]
 
+    def getUseCaseAsMarkdown(self):
+        md = f"""
+## Use Case: {self.metaJson["meta"]["use_case"]}
+        """
+        return md
+
+
     def getAsMarkdown(self):
         md = f"""
 
 ## Run Settings
 * Description: "{self.getRunSpecDescription()}"
-* Test Spec: "description - todo" ({self.getRunSpecGeneral()["test_spec_name"]})
+* test spec id: ({self.getRunSpecGeneral()["test_spec_name"]})
 
-|General|                                                             | | Infrastructure            |                                                                            |      |   |  
-|:--|:----------------------------------------------------------------|-|:--------------------------|:---------------------------------------------------------------------------|:-----|:--|
-|Infrastructure: |{self.infrastructure}                               | |Broker Node:               |nodes: 1<br/>spec: {self.getBrokerNodeSpec()}                               |      |   |
-|Run name: |{self.run_name}                                           | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>spec:{self.getPublisherNodeSpec()} |      |   |
-|Run Id: |{self.run_id}                                               | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>spec:{self.getConsumerNodeSpec()}  |      |   |
-|Run Start: |{self.ts_run_start}                                      | |Monitor Node:              |nodes: 1 <br/>spec:{self.getMonitorNodeSpec()}  |      |   |
-|Run End: |{self.ts_run_end}|||
-|Run Duration: |{self.run_duration()}|||
-|Sample Duration (secs): |{self.getRunSpecParamsSampleDurationSecs()}|||
-|Number of Samples:|{self.getRunSpecParamsTotalNumSamples()}|||
+|General                    |                                                   | | Infrastructure:           | cloud provider:{self.cloud_provider}                                        |      |   |  
+|:--------------------------|:--------------------------------------------------|-|:--------------------------|:----------------------------------------------------------------------------|:-----|:--|
+|Run name:                  |{self.run_name}                                    | |{self.infrastructure}      |region: {self.getEnvRegion()}, zone: {self.getEnvZone()}                     |      |   |                                              
+|Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>spec: {self.getBrokerNodeSpec()}       |      |   |
+|Run Start:                 |{self.ts_run_start}                                | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>spec:{self.getPublisherNodeSpec()}  |      |   |
+|Run End:                   |{self.ts_run_end}                                  | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>spec:{self.getConsumerNodeSpec()}   |      |   |
+|Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>spec:{self.getMonitorNodeSpec()}     |      |   |  
+|Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |                           |                                                                             |      |   | 
+|Number of Samples:         |{self.getRunSpecParamsTotalNumSamples()}           | |                           |                                                                             |      |   | 
 
 
 |Load|                                                                          | | Monitors   |                              |                                                                 |  
@@ -178,8 +212,8 @@ class RunMeta():
 | - Payload (bytes):    |{self.getRunSpecLoadPublishMsgPayloadSizeBytes()}      | | |Rate (1/sec):                            |{self.getRunSpecMonitorLatencyMsgRatePerSec()}                   |      
 | - Rate (1/sec):       |{self.getRunSpecLoadPublishTotalMsgRatePerSec()}       | |**Ping**       | included:                 |**{self.getRuncSpecMonitorPingIsIncluded()}**                    |  
 | - Topics:             |{self.getRunSpecLoadPublishTotalNumberOfTopics()}      | |**Broker VPN** | included:                 |**{self.getRuncSpecMonitorVpnIsIncluded()}**                     |  
-|Consumers:             |{self.getRunSpecLoadSubscribeTotalNumberOfConsumers()} | 
-|                       |                                                       | 
+|Consumers:             |{self.getRunSpecLoadSubscribeTotalNumberOfConsumers()} | |               |                           |                                                                 |   
+
             """
         return md    
 
