@@ -6,7 +6,7 @@ Analytics are based on [Jupyter Notebooks](https://jupyter-notebook.readthedocs.
 
 ### Mac
 
-  * Get a recent Python Release (>= 3.8.5)??
+  * Tested with Python>=3.8.5
 
 ````bash
 pip3 install jupyter
@@ -30,7 +30,7 @@ jupyter nbextension enable python-markdown/main
 
 ### Ubuntu
 
-Ubuntu: Python 3.6.9
+* Tested with Python=3.6.9
 
 ````bash
 

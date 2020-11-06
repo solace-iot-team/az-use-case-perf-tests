@@ -10,11 +10,12 @@ projectHome=${scriptDir%/analytics/*}
 
 # settings
 
-# export NOTEBOOK_NAME="run-analysis.ipynb"
-# export NOTEBOOK_FILE="$projectHome/uc-non-persistent/analytics/notebooks/$NOTEBOOK_NAME"
-
 export NOTEBOOK_NAME="devel-1.ipynb"
 export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
+
+export NOTEBOOK_NAME="run-analysis.ipynb"
+export NOTEBOOK_FILE="$projectHome/analytics/notebooks/$NOTEBOOK_NAME"
+
 
 export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 
