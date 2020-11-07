@@ -6,3 +6,7 @@ uc-non-persistent/ansible/.python-version
 uc-non-persistent/terraform/tf_log.log
 
 .DS_Store
+/analytics/testresults/latest-greatest/
+/analytics/jupyter/.ipynb_checkpoints/
+/.idea/
+/analytics/jupyter/__pycache__/

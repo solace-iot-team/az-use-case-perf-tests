@@ -12,18 +12,21 @@
     - include_vars:
         file: run.vars.yml
         name: run
-    - include_vars: "{{TEST_SPEC_FILE}}"
+    - include_vars: "{{ TEST_SPEC_FILE }}"
     - include_vars:
-        file: "{{RUN_SPEC_FILE}}"
+        file: "{{ RUN_SPEC_FILE }}"
         name: run_spec
     - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.broker-nodes.json"
+        file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.inventory.json"
+        name: test_inventory
+    - include_vars:
+        file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.broker-nodes.json"
         name: test_broker_nodes
     - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.sdkperf-nodes.json"
+        file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.sdkperf-nodes.json"
         name: test_sdkperf_nodes
     - include_vars:
-        file: "{{SHARED_SETUP_DIR}}/{{infrastructure}}.env.json"
+        file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.env.json"
         name: test_env
 
   tasks:
