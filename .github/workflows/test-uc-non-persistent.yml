@@ -52,6 +52,13 @@ env:
   TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
   TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
 
+  TEST_REPO_ANALYTICS_DIR: analytics/.test
+  TEST_REPO_ANALYTICS_LOGS_DIR: logs
+  TEST_REPO_ANALYTICS_RUN_SCRIPT: run.fg.sh
+  TEST_REPO_ANALYTICS_RESULTS_DIR: uc-non-persistent/test-results/analytics
+  TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR: analytics-logs
+  TEST_RUNNER_ASSETS_ANALYTICS_RESULTS_DIR: analytics-results
+
   TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
@@ -308,6 +315,38 @@ jobs:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TEST_RESULTS_DIR }}
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TEST_RESULTS_DIR }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
+
+      - name: Controller - Run Analytics
+        run: |
+          ssh controller "
+
+              source .bash_profile
+
+              cd "${TEST_CONTROLLER_REPO_DIR}/${TEST_REPO_ANALYTICS_DIR}"
+
+              ./${TEST_REPO_ANALYTICS_RUN_SCRIPT}
+
+          "
+
+      - name: Controller - Download Analytics Logs
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_DIR }}/${{ env.TEST_REPO_ANALYTICS_LOGS_DIR }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+
+      - name: Controller - Download Analytics Results
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_RESULTS_DIR }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_ANALYTICS_RESULTS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
           sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
