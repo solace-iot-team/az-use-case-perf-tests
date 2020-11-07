@@ -54,7 +54,7 @@ source $projectHome/.lib/functions.sh
   filePattern="$LOG_DIR/*.$callScript.out"
   errors=$(grep -n -e "ERROR" $filePattern )
 
-  if [ -z "$errors" && "$FAILED" -eq 0 ]; then
+  if [[ -z "$errors" && "$FAILED" -eq 0 ]]; then
     echo ">>> FINISHED:SUCCESS - $scriptName";
     touch "$LOG_DIR/$callScript.SUCCESS.out"
   else
