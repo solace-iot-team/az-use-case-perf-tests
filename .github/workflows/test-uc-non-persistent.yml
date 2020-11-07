@@ -351,15 +351,6 @@ jobs:
           mkdir -p ./${RUNNER_ASSET_DIR}
           sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
 
-################################################################
-# DEBUG
-      - name: DEBUG EXIT
-        if: always()
-        run: |
-          echo "login to controller and run analytics manually to test"
-          exit 1
-################################################################
-
       - name: Controller - Infra Destroy
         if: always()
         run: |
