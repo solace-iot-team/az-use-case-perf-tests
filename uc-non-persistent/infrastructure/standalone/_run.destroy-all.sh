@@ -42,14 +42,11 @@ source $projectHome/.lib/functions.sh
       export TF_LOG_PATH="$LOG_DIR/$infrastructureId.$callScript.terraform.log"
 
       nohup $scriptDir/$callScript > $LOG_DIR/$infrastructureId.$callScript.out 2>&1 &
-      scriptPids+=" $!"
+      # wait for every script to finish before starting the next one
+      # don't break on failure but continue with the others
+      pid="$!"; if wait $pid; then echo ">>> SUCCESS: $callScript"; else echo ">>> ERROR: $?: $callScript"; FAILED=1; fi
 
   done
-
-##############################################################################################################################
-# wait for all jobs to finish
-
-  wait ${scriptPids[*]}
 
 ##############################################################################################################################
 # Check for errors
@@ -57,7 +54,7 @@ source $projectHome/.lib/functions.sh
   filePattern="$LOG_DIR/*.$callScript.out"
   errors=$(grep -n -e "ERROR" $filePattern )
 
-  if [ -z "$errors" ]; then
+  if [ -z "$errors" && "$FAILED" -eq 0 ]; then
     echo ">>> FINISHED:SUCCESS - $scriptName";
     touch "$LOG_DIR/$callScript.SUCCESS.out"
   else
