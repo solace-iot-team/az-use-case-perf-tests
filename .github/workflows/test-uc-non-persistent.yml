@@ -5,6 +5,8 @@
 
 name: test-uc-non-persistent
 on:
+  # for testing
+  workflow_dispatch:
   push:
     branches:
       - 'feature-wf-test**'
