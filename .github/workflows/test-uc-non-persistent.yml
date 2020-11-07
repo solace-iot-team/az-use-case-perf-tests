@@ -55,7 +55,7 @@ env:
   TEST_REPO_ANALYTICS_DIR: analytics/.test
   TEST_REPO_ANALYTICS_LOGS_DIR: logs
   TEST_REPO_ANALYTICS_RUN_SCRIPT: run.fg.sh
-  TEST_REPO_ANALYTICS_RESULTS_DIR: uc-non-persistent/test-results/analytics
+  TEST_REPO_ANALYTICS_RESULTS_DIR: uc-non-persistent/test-results/analysis
   TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR: analytics-logs
   TEST_RUNNER_ASSETS_ANALYTICS_RESULTS_DIR: analytics-results
 
@@ -354,6 +354,7 @@ jobs:
 ################################################################
 # DEBUG
       - name: DEBUG EXIT
+        if: always()
         run: |
           echo "login to controller and run analytics manually to test"
           exit 1
