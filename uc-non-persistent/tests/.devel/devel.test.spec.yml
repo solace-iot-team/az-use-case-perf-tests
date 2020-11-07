@@ -7,6 +7,7 @@
   test_spec:
     name: devel
     use_case: uc_non_persistent
+    description: "devel spec - max sampling"
     infrastructure_list:
       # - cloud_provider: azure
       #   config: devel1-standalone
@@ -16,9 +17,9 @@
         config: devel1-standalone
     run_specs:
       run_params:
-        total_num_samples: 3
+        total_num_samples: 20
         # sample_duration_secs: min: 45 secs, max: 120 secs
-        sample_duration_secs: 60
+        sample_duration_secs: 120
       run_defaults:
         load:
           include: true
@@ -67,60 +68,32 @@
           vpn_stats:
             include: true
       runs:
-        - name: test_p2p_1_to_40_100bytes
-          description: "test 1 publisher to 40 consumers, each on separate topic, 100 bytes"
-          load:
-            include: true
-            subscribe:
-              consumers:
-                - consumer_id: consumer_1
-                  topic_list: markets/pub-1/000001
-                - consumer_id: consumer_2
-                  topic_list: markets/pub-1/000002
-                - consumer_id: consumer_3
-                  topic_list: markets/pub-1/000003
-                - consumer_id: consumer_4
-                  topic_list: markets/pub-1/000004
-                - consumer_id: consumer_5
-                  topic_list: markets/pub-1/000005
-                - consumer_id: consumer_6
-                  topic_list: markets/pub-1/000006
-                - consumer_id: consumer_7
-                  topic_list: markets/pub-1/000007
-                - consumer_id: consumer_8
-                  topic_list: markets/pub-1/000008
-                - consumer_id: consumer_9
-                  topic_list: markets/pub-1/000009
-                - consumer_id: consumer_10
-                  topic_list: markets/pub-1/000010
 
-                - consumer_id: consumer_11
-                  topic_list: markets/pub-1/000011
-                - consumer_id: consumer_12
-                  topic_list: markets/pub-1/000012
-                - consumer_id: consumer_13
-                  topic_list: markets/pub-1/000013
-                - consumer_id: consumer_14
-                  topic_list: markets/pub-1/000014
-                - consumer_id: consumer_15
-                  topic_list: markets/pub-1/000015
-                - consumer_id: consumer_16
-                  topic_list: markets/pub-1/000016
-                - consumer_id: consumer_17
-                  topic_list: markets/pub-1/000017
-                - consumer_id: consumer_18
-                  topic_list: markets/pub-1/000018
-                - consumer_id: consumer_19
-                  topic_list: markets/pub-1/000019
-                - consumer_id: consumer_20
-                  topic_list: markets/pub-1/000020
+        - name: base
+          description: "base run: 120 seconds samples * 20 samples"
+
+        - name: max_good
+          description: "base + 1000 bytes, 10K msg rate"
+          load:
             publish:
-              publishers:
-                - publisher_id: publisher_1
-                  number_of_topics: 40
-                  topic_prefix: "markets/pub-1"
-              msg_payload_size_bytes: 100
-              msg_rate_per_second: 50000
+              msg_rate_per_second: 100000
+              msg_payload_size_bytes: 1000
+          monitors:
+            latency:
+              msg_rate_per_second: 10000
+              msg_payload_size_bytes: 1000
+
+        # - name: max_break
+        #   description: "max msg size, max load, max sampling duration, max rate"
+        #   load:
+        #     publish:
+        #       msg_rate_per_second: 100000
+        #       msg_payload_size_bytes: 1000
+        #   monitors:
+        #     latency:
+        #       msg_rate_per_second: 10000
+        #       msg_payload_size_bytes: 1000
+
         # - name: test_vpn_stats_client_connections
         #   description: "test vpn stats - get pub-sub client connections"
         #   load:

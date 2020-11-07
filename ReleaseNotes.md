@@ -1,5 +1,31 @@
 # Release Notes
 
+## Version: 0.6.0
+Release Purpose: Analytics & Report Generation
+
+#### New
+**analytics module**
+* based on jupyter notebooks
+* **analytics/notebooks/run-analysis.ipynb**
+  - production notebook to analyze a single run and generate a report
+* **analytics/auto-run**
+  - sample script to analyze and generate html reports for all runs in **test-results/stats/{infrastructure-id}** folders
+* **test-results/analysis**
+  - contains 1 html report file per run analyzed
+
+#### Changes
+
+* **uc-non-persistent/test-results/stats/{infrastructure-id}/{run-id}/meta.json**
+  - added inventory used for reporting on runs
+  - added region to _env_ section
+* **uc-non-persistent/infrastructure/standalone/{aws|azure}/{terraform-scripts}**
+  - added region info to _*.env_ output file
+
+**_Note: These changes require a re-run of the tests for the analytics to work._**
+
+* **uc-non-persistent/infrastructure/standalone/_run.destroy-all.sh**
+  - destroys each infrastructure sequentially instead of in parallel (issues experienced with parallel destroy)
+
 ## Version: 0.5.3
 Release Purpose: Maintenance Load
 

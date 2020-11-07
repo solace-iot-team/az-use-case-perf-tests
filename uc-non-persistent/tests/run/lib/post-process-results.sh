@@ -41,7 +41,7 @@ fi
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 resultDirBase="$usecaseHome/test-results/stats/$UC_NON_PERSISTENT_INFRASTRUCTURE"
 resultDir="$resultDirBase/run.current"
-resultDirLatest="$resultDirBase/run.latest"
+# resultDirLatest="$resultDirBase/run.latest"
 
 mkdir $resultDir > /dev/null 2>&1
 
@@ -60,10 +60,10 @@ echo ">>> move result dir to run id"
 finalResultDir="$resultDirBase/run.$RUN_ID"
 mv $resultDir $finalResultDir
 if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - moving resultDir=$resultDir."; echo; exit 1; fi
-cd $resultDirBase
-rm -f $resultDirLatest
-ln -s $finalResultDir $resultDirLatest
-cd $scriptDir
+# cd $resultDirBase
+# rm -f $resultDirLatest
+# ln -s $finalResultDir $resultDirLatest
+# cd $scriptDir
 
 ###
 # The End.
