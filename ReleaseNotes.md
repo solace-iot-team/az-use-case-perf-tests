@@ -28,8 +28,13 @@ Release Purpose: Analytics & Report Generation
 
 #### Known Issues
 * **uc-non-persistent/infrastructure/standalone/_run.destroy-al.sh**
-  - destroy 2 azure infrastructures results almost always in an error when destroying the second one
-  - terraform output:
+  - destroy azure infrastructures results almost always in an error
+  - terraform errro output examples:
+
+
+````code
+  [1m[31mError: [0m[0m[1mError waiting for update of Network Interface "test1-sdkperf-nic-1" (Resource Group "test1-sdkperf_resgrp"): Code="OperationNotAllowed" Message="Operation 'startTenantUpdate' is not allowed on VM 'test1-sdkperf-node-1' since the VM is marked for deletion. You can only retry the Delete operation (or wait for an ongoing one to complete)." Details=[][0m
+````
 
 ````code
   ESC[1mESC[31mError: ESC[0mESC[0mESC[1mError deleting Network Security Group "2-auto-sdkperf_secgrp" (Resource Group "2-auto-sdkperf_resgrp"): network.SecurityGroupsClient#Delete: Failure sending request: StatusCode=400 -- Original Error: Code="NetworkSecurityGroupOldReferencesNotCleanedUp" Message="Network security group 2-auto-sdkperf_secgrp cannot be deleted because old references for the following Nics: (\n/subscriptions/837ffe8b-4d6f-4611-908e-bbfd4106a53a/resourceGroups/2-auto-sdkperf_resgrp/providers/Microsoft.Network/networkSecurityGroups/2-auto-sdkperf_secgrp:/subscriptions/837ffe8b-4d6f-4611-908e-bbfd4106a53a/resourceGroups/2-auto-sdkperf_resgrp/providers/Microsoft.Network/networkInterfaces/2-auto-sdkperf-nic-1) and Subnet: (\n/subscriptions/837ffe8b-4d6f-4611-908e-bbfd4106a53a/resourceGroups/2-auto-sdkperf_resgrp/providers/Microsoft.Network/networkSecurityGroups/2-auto-sdkperf_secgrp:) have not been released yet." Details=[]ESC[0m
@@ -37,6 +42,7 @@ Release Purpose: Analytics & Report Generation
   ESC[0mESC[0mESC[0m
   >>> ERROR - 1 - _run.destroy.sh - executing terraform
 ````
+
 
 
 ## Version: 0.5.3
