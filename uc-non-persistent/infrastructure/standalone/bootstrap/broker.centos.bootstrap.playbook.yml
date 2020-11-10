@@ -14,6 +14,7 @@
         name: bootstrap
   vars:
     deployed_dir: "{{USE_CASE_DIR}}/infrastructure/standalone/.deployed"
+    manifest_dest: "{{ MANIFEST_DEST }}"
 
   tasks:
 
@@ -47,6 +48,12 @@
         manifest: "{{lookup('file', '{{deployed_dir}}/manifest.json')}}"
     - set_fact:
         docker_image: "{{manifest[0].RepoTags[0]}}"
+
+    - name: "Copy Broker Manifest to Destination"
+      copy:
+        content: "{{ manifest }}"
+        dest: "{{ manifest_dest }}"
+      delegate_to: localhost
 
     - name: "Centos Bootstrap: AWS Setup Swap Tasks"
       include_tasks: ./tasks/aws.centos.bootstrap.yml
