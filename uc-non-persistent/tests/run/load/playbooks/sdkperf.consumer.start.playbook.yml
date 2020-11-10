@@ -7,10 +7,15 @@
 - name: "SDKPerf Start Consumers"
   hosts: sdkperf_consumers
   gather_facts: no
+  # # DEBUG: use serial:1 for easier debugging of round_robin strategy
+  # serial: 1
   pre_tasks:
     - include_vars:
         file: "{{ RUN_SPEC_FILE }}"
         name: run_spec
+    - include_vars:
+        file: "{{ INVENTORY_FILE }}"
+        name: inventory
     - include_vars:
         file: "load.vars.yml"
         name: load
@@ -28,6 +33,11 @@
       debug:
         msg:
           - "RUN_LOG_FILE_BASE={{ RUN_LOG_FILE_BASE }}"
+
+    - name: "Check consumer_distribution_strategy"
+      fail:
+        msg: "consumer_distribution_strategy: choices=['carbon_copy' | 'round_robin']. invalid option: '{{ run_spec.load.subscribe.consumer_distribution_strategy }}'"
+      when: run_spec.load.subscribe.consumer_distribution_strategy  != 'carbon_copy' and run_spec.load.subscribe.consumer_distribution_strategy  != 'round_robin'
 
     - name: "Set SDKPerf Parameters"
       set_fact:
@@ -57,11 +67,26 @@
       meta: end_play
       when: not run_spec.load.subscribe.consumers or run_spec.load.subscribe.consumers == ''
 
-    - name: "Iterate over Consumers"
+    - name: "Carbon-Copy: Iterate over Consumers"
       include_tasks: ./tasks/consumer.start.yml
       loop: "{{ run_spec.load.subscribe.consumers }}"
       loop_control:
         index_var: consumer_num
         loop_var: consumer
+      when: run_spec.load.subscribe.consumer_distribution_strategy  == 'carbon_copy'
+
+    - set_fact:
+        num_consumer_nodes: "{{ inventory.sdkperf_consumers.num_consumer_nodes}}"
+
+    - name: "Round-Robin: Iterate over Consumers"
+      include_tasks: ./tasks/round-robin.consumer.start.yml
+      loop: "{{ run_spec.load.subscribe.consumers }}"
+      loop_control:
+        index_var: consumer_num
+        loop_var: consumer
+      when: run_spec.load.subscribe.consumer_distribution_strategy  == 'round_robin'
+
+
+
 ###
 # The End.

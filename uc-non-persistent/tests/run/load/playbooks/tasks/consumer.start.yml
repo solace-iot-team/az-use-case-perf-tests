@@ -11,7 +11,7 @@
 # SDKPerf does not start sometimes on a fresh infrastructure.
 # Log file is empty
 # Retry until it has started successfully.
-# TODO: successfuly start check could be enhanced by checking the client connection exists on broker.
+# TODO: successful start check could be enhanced by checking the client connection exists on broker.
 # ##########################################################################################################
 
   - name: "Settings"
@@ -30,8 +30,10 @@
       - name: "Starting Consumer"
         debug:
           msg:
-            - "try: {{ retry_count }}"
+            - "------------------------------------------------------------------------------------"
             - "starting consumer {{ consumer.consumer_id }} on {{ inventory_hostname }}"
+            - "try: {{ retry_count }}"
+            - "------------------------------------------------------------------------------------"
 
       - name: "Run Consumer 'sdkperf' {{ consumer.consumer_id }}"
         # NOTE: binding sdkperf to a cpu ==> max limit of consumers is the cpu count
