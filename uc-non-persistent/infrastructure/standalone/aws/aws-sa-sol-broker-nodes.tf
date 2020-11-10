@@ -14,7 +14,7 @@
 ####################################################################################################
 
 resource "aws_instance" "solace-broker-nodes" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   placement_group        = aws_placement_group.sdkperf_placement_grp.id #placement group defined in aws-sa-sdkperf-nodes.tf
   ami                    = var.centOS_ami[var.aws_region]
@@ -23,7 +23,7 @@ resource "aws_instance" "solace-broker-nodes" {
   subnet_id              = var.subnet_id == "" ? aws_subnet.sdkperf_subnet[0].id : var.subnet_id
   vpc_security_group_ids = var.solacebroker_secgroup_ids == [""] ? ["${aws_security_group.solacebroker_secgroup[0].id}"] : var.solacebroker_secgroup_ids
 
-  instance_type          = var.sol_messaging_vm_type
+  instance_type          = var.solace_broker_vm_type
   # with placement_group VMs should end in same availablity zone anyways
   #availability_zone      = "${var.aws_region}a"
 
