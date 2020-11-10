@@ -28,6 +28,8 @@
     - include_vars:
         file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.env.json"
         name: test_env
+    - set_fact:
+        test_broker_manifest_file: "{{ SHARED_SETUP_DIR }}/{{ infrastructure }}.broker.manifest.json"
 
   tasks:
 
@@ -52,6 +54,19 @@
         module: file
         path: "{{result_dir}}"
         state: directory
+
+    - name: "Ensure manifest exists"
+      stat:
+        path: "{{ test_broker_manifest_file }}"
+      register: manifest_stat
+      delegate_to: localhost
+    - fail:
+          msg: "{{ test_broker_manifest_file }} does not exist"
+      when: manifest_stat.stat.exists == false
+
+    - name: "Read manifest"
+      set_fact:
+        test_broker_manifest: "{{ lookup('file', test_broker_manifest_file) | from_json }}"
 
     - name: "Ensure Client Username is Enabled"
       solace_client_username:
