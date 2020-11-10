@@ -20,18 +20,30 @@ variable "tag_owner" {
   type = string
   description = "owner used for tagging"
 }
-variable "sol_messaging_vm_type" {
+variable "solace_broker_vm_type" {
   type = string
   # default = "m5a.4xlarge"    # (16 CPUs  64G RAM - AMD Powered General Purpose)
   default = "m5a.8xlarge"    # (32 CPUs  128G RAM - AMD Powered General Purpose)
   description = "the VM size for the solace broker node"
 }
-
-variable "sdkperf_vm_type" {
+variable "latency_node_vm_type" {
   type = string
   default = "m5a.xlarge" # (4 CPUs, 16 GB RAM)
   # default = "m5a.xlarge"    # (2 CPUs  8G RAM - General Purpose)
-  description = "the VM size for the sdk perf nodes"
+}
+variable "publisher_node_vm_type" {
+  type = string
+  default = "m5a.xlarge" # (4 CPUs, 16 GB RAM)
+  # default = "m5a.xlarge"    # (2 CPUs  8G RAM - General Purpose)
+}
+variable "consumer_node_vm_type" {
+  type = string
+  default = "m5a.xlarge" # (4 CPUs, 16 GB RAM)
+  # default = "m5a.xlarge"    # (2 CPUs  8G RAM - General Purpose)
+}
+variable "consumer_node_vm_count" {
+  type = string
+  default = "2"
 }
 
 #
@@ -49,16 +61,7 @@ variable "tag_days" {
   default = "1"
 }
 
-# sdkperf nodes count
-variable "sdkperf_nodes_count" {
-    default = "4"
-    type        = string
-    description = "The number of sdkperf nodes to be created."
-}
-
-# Solace Brokers
-# nodes count
-variable "solace_broker_count" {
+variable "solace_broker_vm_count" {
     default = "1"
     type        = string
     description = "The number of Solace Broker nodes to be created."
