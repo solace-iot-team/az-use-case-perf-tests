@@ -79,7 +79,8 @@
           "ansible_user": "${admin_username}",
           "ansible_python_interpreter": "/usr/bin/python",
           "boxname":"${node.tags.Name}",
-          "sdkperf_root": "/opt/sdkperf"
+          "sdkperf_root": "/opt/sdkperf",
+          "consumer_node_number": "${node.tags.consumer_node_number}"
         },
 
       %{ endfor ~}

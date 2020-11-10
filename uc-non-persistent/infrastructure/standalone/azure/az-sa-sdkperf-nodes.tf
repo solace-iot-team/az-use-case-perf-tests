@@ -253,6 +253,7 @@ resource "azurerm_linux_virtual_machine" "consumer-nodes" {
     Owner   = var.tag_owner
     Purpose = "sdkperf benchmarking - consumer node"
     Days    = var.tag_days
+    consumer_node_number = "${count.index}"
   }
 
 # Do not flag the azurerm_linux_virtual_machine resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
