@@ -14,7 +14,6 @@ resource "local_file" "inventory_file" {
       publisher_nodes = aws_instance.publisher-nodes.*
       consumer_nodes = aws_instance.consumer-nodes.*
       broker_node = aws_instance.solace-broker-nodes[0]
-
     }
   )
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"

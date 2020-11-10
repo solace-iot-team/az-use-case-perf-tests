@@ -69,6 +69,7 @@
   },
 
   "sdkperf_consumers": {
+    "num_consumer_nodes": ${length(consumer_nodes)},
     "hosts": {
 
       %{ for node in consumer_nodes ~}
