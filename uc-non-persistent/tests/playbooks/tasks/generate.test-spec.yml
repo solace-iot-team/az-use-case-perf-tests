@@ -51,7 +51,7 @@
         latency:
           msg_rate_per_second: "{{ run_spec.monitors.latency.msg_rate_per_second | default(test_spec.run_specs.run_defaults.monitors.latency.msg_rate_per_second) }}"
           msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency.msg_payload_size_bytes) }}"
-          lpm: "{{ run_spec.monitors.latency.lpm | default(test_spec.run_specs.run_defaults.monitors.latency.lpm) }}"
+          lpm: true
           sdkperf_node_to_broker:
             include: "{{ run_spec.monitors.latency.sdkperf_node_to_broker.include | default(test_spec.run_specs.run_defaults.monitors.latency.sdkperf_node_to_broker.include) }}"
           broker_node_to_broker:
