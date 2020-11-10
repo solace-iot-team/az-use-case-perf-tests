@@ -38,6 +38,7 @@
       run_load:
         include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include) }}"
         subscribe:
+          consumer_distribution_strategy: "{{ run_spec.load.subscribe.consumer_distribution_strategy | default(test_spec.run_specs.run_defaults.load.subscribe.consumer_distribution_strategy) }}"
           consumers: "{{ run_spec.load.subscribe.consumers | default(test_spec.run_specs.run_defaults.load.subscribe.consumers) }}"
         publish:
           publishers: "{{ run_spec.load.publish.publishers | default(test_spec.run_specs.run_defaults.load.publish.publishers) }}"
