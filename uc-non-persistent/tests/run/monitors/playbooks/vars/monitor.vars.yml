@@ -18,8 +18,8 @@ vpn_stats:
       averageTxByteRate,
       averageTxMsgRate,
       rate
-    select_client_connection_stats: >-
-      clientName
+    select_client_stats:
+      - clientName
 latency:
     topic_prefix: "private/direct/latency"
     warmup_secs: 10
