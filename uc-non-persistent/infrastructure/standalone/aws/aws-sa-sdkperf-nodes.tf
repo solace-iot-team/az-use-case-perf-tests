@@ -118,6 +118,7 @@ resource "aws_instance" "consumer-nodes" {
     Owner   = var.tag_owner
     Purpose = "sdkperf benchmarking - consumer node"
     Days    = var.tag_days
+    consumer_node_number = "${count.index}"
   }
 
 # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
