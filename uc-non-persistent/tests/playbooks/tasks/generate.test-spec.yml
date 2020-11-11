@@ -31,7 +31,10 @@
     set_fact:
       run_general:
         description: "{{ run_spec.description | default(run_spec.name) | string }}"
-        test_spec_name: "{{ test_spec.name }}"
+        use_case: "{{ test_spec.use_case }}"
+        test_spec:
+          name: "{{ test_spec.name }}"
+          descr: "{{ test_spec.description }}"
 
   - name: "Compose Run Spec: Load for {{run_spec_id}}"
     set_fact:
