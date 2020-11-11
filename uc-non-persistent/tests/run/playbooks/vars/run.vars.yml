@@ -10,17 +10,19 @@
   select_client_connection_stats:
     - rxDiscardedMsgCount
     - txDiscardedMsgCount
-    - rxMsgCount
-    - txMsgCount
+    - dataRxMsgCount
+    - dataTxMsgCount
     - clientAddress
     - clientName
+    - platform
+    - uptime
+
     # - rxMsgRate
     # - rxByteRate
     # - rxByteCount
     # - txMsgRate
     # - txByteRate
     # - txByteCount
-    # - uptime
 
 ###
 # The End.

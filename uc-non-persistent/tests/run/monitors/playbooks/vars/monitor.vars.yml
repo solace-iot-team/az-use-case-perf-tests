@@ -19,6 +19,13 @@ vpn_stats:
       averageTxMsgRate
     select_client_stats:
       - clientName
+      - clientAddress
+      - rxDiscardedMsgCount
+      - txDiscardedMsgCount
+      - dataRxMsgCount
+      - dataTxMsgCount
+      - platform
+      - uptime
       # NOTE: not useful, vpn stats collection not sync'ed with publisher/consumer start/stop
       # - dataRxMsgCount
       # - dataTxMsgCount
