@@ -75,18 +75,19 @@
         loop_var: consumer
       when: run_spec.load.subscribe.consumer_distribution_strategy  == 'carbon_copy'
 
-    - set_fact:
-        num_consumer_nodes: "{{ inventory.sdkperf_consumers.num_consumer_nodes}}"
+    - name: "Round-Robin: Block"
+      block:
+        - set_fact:
+            num_consumer_nodes: "{{ inventory.sdkperf_consumers.num_consumer_nodes}}"
 
-    - name: "Round-Robin: Iterate over Consumers"
-      include_tasks: ./tasks/round-robin.consumer.start.yml
-      loop: "{{ run_spec.load.subscribe.consumers }}"
-      loop_control:
-        index_var: consumer_num
-        loop_var: consumer
+        - name: "Round-Robin: Iterate over Consumers"
+          include_tasks: ./tasks/round-robin.consumer.start.yml
+          loop: "{{ run_spec.load.subscribe.consumers }}"
+          loop_control:
+            index_var: consumer_num
+            loop_var: consumer
+
       when: run_spec.load.subscribe.consumer_distribution_strategy  == 'round_robin'
-
-
 
 ###
 # The End.
