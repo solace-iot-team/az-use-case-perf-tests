@@ -45,17 +45,28 @@
         path: "{{result_dir}}"
         state: directory
 
-    - name: "Get Client Connections - Start"
+    - name: "Get Client Connections - Consumers"
       solace_get_vpn_clients:
         query_params:
           where:
-            - "clientUsername=={{ broker_pubsub.client_user_name }}"
+            - "clientName==*consumer*"
           select: "{{ run.select_client_connection_stats }}"
       register: clients_result
-
     - set_fact:
-        number_connected_clients_end: "{{ clients_result.result_list_count }}"
-        connected_client_list_end: "{{ clients_result.result_list }}"
+        num_consumers: "{{ clients_result.result_list_count }}"
+        consumer_list: "{{ clients_result.result_list }}"
+
+    - name: "Get Client Connections - Publishers"
+      solace_get_vpn_clients:
+        query_params:
+          where:
+            - "clientName==*publisher*"
+          select: "{{ run.select_client_connection_stats }}"
+      register: clients_result
+    - set_fact:
+        num_publishers: "{{ clients_result.result_list_count }}"
+        publisher_list: "{{ clients_result.result_list }}"
+
     - set_fact:
         run_end_ts_epoch_secs: "{{lookup('pipe','date -u +%s')}}"
     - set_fact:

@@ -59,7 +59,6 @@
         where:
           - "clientName==*consumer*"
         select: "{{ monitor.vpn_stats.select_client_stats }}"
-          # - clientName
     register: clients_result
 
   - set_fact:
@@ -72,7 +71,6 @@
         where:
           - "clientName==*publisher*"
         select: "{{ monitor.vpn_stats.select_client_stats }}"
-          # - clientName
     register: clients_result
 
   - set_fact:

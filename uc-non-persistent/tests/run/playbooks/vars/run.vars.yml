@@ -9,18 +9,18 @@
   meta_file_name: "meta.json"
   select_client_connection_stats:
     - rxDiscardedMsgCount
-    - rxMsgCount
-    - rxMsgRate
-    - rxByteRate
-    - rxByteCount
     - txDiscardedMsgCount
+    - rxMsgCount
     - txMsgCount
-    - txMsgRate
-    - txByteRate
-    - txByteCount
     - clientAddress
     - clientName
-    - uptime
+    # - rxMsgRate
+    # - rxByteRate
+    # - rxByteCount
+    # - txMsgRate
+    # - txByteRate
+    # - txByteCount
+    # - uptime
 
 ###
 # The End.
