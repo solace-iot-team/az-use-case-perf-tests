@@ -25,17 +25,69 @@ class RunMeta():
     def run_duration(self):
         return self.ts_run_end - self.ts_run_start
 
+    def getSolacePubSubInfo(self):
+        return self.metaJson["meta"]["solace_pubsub_image"]
+
     def getEnvRegion(self):
         return self.metaJson["meta"]["env"]["region"]
 
     def getEnvZone(self):
         return self.metaJson["meta"]["env"]["zone"]
 
+    """ Client Connections """
+
     def getNumClientConnectionsAtStart(self):
-        return self.metaJson["meta"]["client_connections"]["start_test"]["number"]
+        return len(self.getStartTestConsumerList()) + len(self.getStartTestPublisherList())
 
     def getNumClientConnectionsAtEnd(self):        
-        return self.metaJson["meta"]["client_connections"]["end_test"]["number"]
+        return len(self.getEndTestConsumerList()) + len(self.getEndTestPublisherList()) 
+
+    def getStartTestPublisherList(self):
+        return self.metaJson["meta"]["client_connections"]["start_test"]["publisher_list"]
+
+    def getEndTestPublisherList(self):
+        return self.metaJson["meta"]["client_connections"]["end_test"]["publisher_list"]
+
+    def getStartTestConsumerList(self):
+        return self.metaJson["meta"]["client_connections"]["start_test"]["consumer_list"]
+
+    def getEndTestConsumerList(self):
+        return self.metaJson["meta"]["client_connections"]["end_test"]["consumer_list"]
+
+    def _getClientListAggregates(self, client_list):
+        aggregates=dict(
+            rxDiscardedMsgCount=0,
+            rxMsgCount=0,
+            txDiscardedMsgCount=0,
+            txMsgCount=0
+        )
+        for client in client_list:
+            aggregates['rxDiscardedMsgCount'] += client['rxDiscardedMsgCount']
+            aggregates['rxMsgCount'] += client['dataRxMsgCount']
+            aggregates['txDiscardedMsgCount'] += client['txDiscardedMsgCount']
+            aggregates['txMsgCount'] += client['dataTxMsgCount']
+
+        return aggregates    
+
+    def getPublisherAggregates(self):
+        end     = self._getClientListAggregates(self.getEndTestPublisherList())
+        start   = self._getClientListAggregates(self.getStartTestPublisherList())
+        return dict(
+            rxDiscardedMsgCount = end['rxDiscardedMsgCount'] - start['rxDiscardedMsgCount'],
+            rxMsgCount          = end['rxMsgCount'] - start['rxMsgCount'],
+            txDiscardedMsgCount = end['txDiscardedMsgCount'] - start['txDiscardedMsgCount'],
+            txMsgCount          = end['txMsgCount'] - start['txMsgCount']
+        )
+
+    def getConsumerAggregates(self):
+        end     = self._getClientListAggregates(self.getEndTestConsumerList())
+        start   = self._getClientListAggregates(self.getStartTestConsumerList())
+        return dict(
+            rxDiscardedMsgCount = end['rxDiscardedMsgCount'] - start['rxDiscardedMsgCount'],
+            rxMsgCount          = end['rxMsgCount'] - start['rxMsgCount'],
+            txDiscardedMsgCount = end['txDiscardedMsgCount'] - start['txDiscardedMsgCount'],
+            txMsgCount          = end['txMsgCount'] - start['txMsgCount']
+        )
 
     def getRunSpecDescription(self):
         return self.metaJson["meta"]["run_spec"]["general"]["description"]
@@ -85,59 +137,51 @@ class RunMeta():
             return "n/a"    
         return len(self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumers"])
 
+    def getNodeSpec(self, node): 
+        if self.cloud_provider == "azure":
+            return f"size: {node['size']}"
+        elif self.cloud_provider == "aws":
+            return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
+        else:    
+            return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
+
     def getNumBrokerNodes(self):
         return len(self.metaJson["meta"]["nodes"]["broker_nodes"])
 
-    def getBrokerNodeDetails(self, public_ip):
-        broker_nodes = self.metaJson["meta"]["nodes"]["broker_nodes"]
-        # there can only be 1
-        if len(broker_nodes) != 1:
-            raise PerfError("[ERROR] - found more than 1 broker_node in nodes")
-        if broker_nodes[0]["public_ip"] != public_ip:
-            raise PerfError("[ERROR] - broker node public ip does not match inventory public_ip")
-        return broker_nodes[0]
+    # def getBrokerNode(self, public_ip):
+    #     broker_nodes = self.metaJson["meta"]["nodes"]["broker_nodes"]
+    #     # there can only be 1
+    #     if len(broker_nodes) != 1:
+    #         raise PerfError("[ERROR] - found more than 1 broker_node in nodes")
+    #     if broker_nodes[0]["public_ip"] != public_ip:
+    #         raise PerfError("[ERROR] - broker node public ip does not match inventory public_ip")
+    #     return broker_nodes[0]
 
     def getBrokerNodeSpec(self):
-        public_ip = self.metaJson["meta"]["inventory"]["all"]["hosts"]["broker_centos"]["ansible_host"]
-        node = self.getBrokerNodeDetails(public_ip)
-        if self.cloud_provider == "azure":
-            return f"size: {node['size']}"
-        elif self.cloud_provider == "aws":
-            return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
-        else:    
-            return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
-
-    def getMonitorNodeDetails(self, public_ip):
-        sdkperf_nodes = self.metaJson["meta"]["nodes"]["sdkperf_nodes"]
-        return [x for x in sdkperf_nodes if x["public_ip"] == public_ip][0]
+        # public_ip = self.metaJson["meta"]["inventory"]["all"]["hosts"]["broker_centos"]["ansible_host"]
+        # node = self.getBrokerNode(public_ip)
+        node = self.metaJson["meta"]["nodes"]["broker_nodes"][0]
+        return self.getNodeSpec(node)
 
     def getMonitorNodeSpec(self):
-        sdkperf_latency_hosts = self.metaJson["meta"]["inventory"]["sdkperf_latency"]["hosts"]
-        # assuming here there is only 1
-        if len(sdkperf_latency_hosts) != 1:
-            raise PerfError("[ERROR] - found more than 1 sdkperf_latency host in inventory")
-        monitor_node_public_ip = sdkperf_latency_hosts[list(sdkperf_latency_hosts)[0]]["ansible_host"]
-        node = self.getMonitorNodeDetails(monitor_node_public_ip)
-        if self.cloud_provider == "azure":
-            return f"size: {node['size']}"
-        elif self.cloud_provider == "aws":
-            return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
-        else:    
-            return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
-
-    def getPublisherNodeSpec(self):
-        # lazy, assuming they are the same
-        return self.getMonitorNodeSpec()
+        node = self.metaJson["meta"]["nodes"]["latency_nodes"][0]
+        return self.getNodeSpec(node)
 
     def getNumPublisherNodes(self):
-        return len(self.metaJson["meta"]["inventory"]["sdkperf_publishers"]["hosts"])
+        #  -1:NOT_A_HOST
+        return len(self.metaJson["meta"]["inventory"]["sdkperf_publishers"]["hosts"])-1
 
-    def getConsumerNodeSpec(self):
-        # lazy, assuming they are the same
-        return self.getMonitorNodeSpec()
+    def getPublisherNodeSpec(self):
+        node = self.metaJson["meta"]["nodes"]["publisher_nodes"][0]
+        return self.getNodeSpec(node)
 
     def getNumConsumerNodes(self):
-        return len(self.metaJson["meta"]["inventory"]["sdkperf_consumers"]["hosts"])
+        #  -1:NOT_A_HOST
+        return len(self.metaJson["meta"]["inventory"]["sdkperf_consumers"]["hosts"])-1
+
+    def getConsumerNodeSpec(self):
+        node = self.metaJson["meta"]["nodes"]["consumer_nodes"][0]
+        return self.getNodeSpec(node)
 
     """ Run Spec General """
     def getRunSpecGeneral(self):
@@ -180,7 +224,11 @@ class RunMeta():
 
     def getUseCaseAsMarkdown(self):
         md = f"""
-## Use Case: {self.metaJson["meta"]["use_case"]}
+## Use Case: {self.metaJson["meta"]["run_spec"]["general"]["use_case"]["display_name"]} ({self.metaJson["meta"]["run_spec"]["general"]["use_case"]["name"]})
+
+Test Specification: 
+{self.getRunSpecGeneral()["test_spec"]["descr"]}.
+({self.getRunSpecGeneral()["test_spec"]["name"]})
         """
         return md
 
@@ -190,16 +238,15 @@ class RunMeta():
 
 ## Run Settings
 * Description: "{self.getRunSpecDescription()}"
-* test spec id: ({self.getRunSpecGeneral()["test_spec_name"]})
 
 |General                    |                                                   | | Infrastructure:           | cloud provider:{self.cloud_provider}                                        |      |   |  
 |:--------------------------|:--------------------------------------------------|-|:--------------------------|:----------------------------------------------------------------------------|:-----|:--|
 |Run name:                  |{self.run_name}                                    | |{self.infrastructure}      |region: {self.getEnvRegion()}, zone: {self.getEnvZone()}                     |      |   |                                              
-|Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>spec: {self.getBrokerNodeSpec()}       |      |   |
-|Run Start:                 |{self.ts_run_start}                                | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>spec:{self.getPublisherNodeSpec()}  |      |   |
-|Run End:                   |{self.ts_run_end}                                  | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>spec:{self.getConsumerNodeSpec()}   |      |   |
-|Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>spec:{self.getMonitorNodeSpec()}     |      |   |  
-|Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |                           |                                                                             |      |   | 
+|Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>{self.getBrokerNodeSpec()}             |      |   |
+|Run Start:                 |{self.ts_run_start}                                | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>{self.getPublisherNodeSpec()}       |      |   |
+|Run End:                   |{self.ts_run_end}                                  | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>{self.getConsumerNodeSpec()}        |      |   |
+|Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>{self.getMonitorNodeSpec()}          |      |   |  
+|Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |Solace PubSub+             | {self.getSolacePubSubInfo()}                                                |      |   | 
 |Number of Samples:         |{self.getRunSpecParamsTotalNumSamples()}           | |                           |                                                                             |      |   | 
 
 

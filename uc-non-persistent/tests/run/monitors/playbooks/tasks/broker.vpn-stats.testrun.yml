@@ -53,29 +53,30 @@
       return_content: yes
     register: vpn_stats_result
 
-  - name: "Get Client Connections - Consumer"
-    solace_get_vpn_clients:
-      query_params:
-        where:
-          - "clientName==*consumer*"
-        select: "{{ monitor.vpn_stats.select_client_stats }}"
-    register: clients_result
-
-  - set_fact:
-      num_consumers: "{{ clients_result.result_list_count }}"
-      consumer_list: "{{ clients_result.result_list }}"
-
-  - name: "Get Client Connections - Publishers"
-    solace_get_vpn_clients:
-      query_params:
-        where:
-          - "clientName==*publisher*"
-        select: "{{ monitor.vpn_stats.select_client_stats }}"
-    register: clients_result
-
-  - set_fact:
-      num_publishers: "{{ clients_result.result_list_count }}"
-      publisher_list: "{{ clients_result.result_list }}"
+    # NOTE: not required for each run
+  # - name: "Get Client Connections - Consumer"
+  #   solace_get_vpn_clients:
+  #     query_params:
+  #       where:
+  #         - "clientName==*consumer*"
+  #       select: "{{ monitor.vpn_stats.select_client_stats }}"
+  #   register: clients_result
+  #
+  # - set_fact:
+  #     num_consumers: "{{ clients_result.result_list_count }}"
+  #     consumer_list: "{{ clients_result.result_list }}"
+  #
+  # - name: "Get Client Connections - Publishers"
+  #   solace_get_vpn_clients:
+  #     query_params:
+  #       where:
+  #         - "clientName==*publisher*"
+  #       select: "{{ monitor.vpn_stats.select_client_stats }}"
+  #   register: clients_result
+  #
+  # - set_fact:
+  #     num_publishers: "{{ clients_result.result_list_count }}"
+  #     publisher_list: "{{ clients_result.result_list }}"
 
     # artificial pause for timing calculations - call is too fast
   - pause:

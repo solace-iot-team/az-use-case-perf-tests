@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
 from ._constants import *
@@ -12,6 +13,7 @@ class BrokerSample(BaseSample):
 
     def __init__(self,run, sample_json):
         BaseSample.__init__(self, run)
+        # self.sampleJson = sample_json
         self.read_metrics(sample_json)
 
     def export_all_metrics(self) -> list:
@@ -40,3 +42,12 @@ class BrokerSample(BaseSample):
             row['value'] = self.__getattribute__(d_metric_property[metric])
             rows.append(row)
         return rows
+
+    # def getConsumerList(self):
+    #     return self.sampleJson['client_connections']['consumer_list']    
+
+    # def getPublisherList(self):
+    #     return self.sampleJson['client_connections']['publisher_list']      
+
+### 
+# The End.              

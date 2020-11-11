@@ -31,13 +31,11 @@
     },
     "client_connections": {
       "start_test": {
-        "number": {{ number_connected_clients_start }},
-        "list": {{ connected_client_list_start | to_nice_json }}
+        "consumer_list": {{ consumer_list | to_nice_json }},
+        "publisher_list": {{ publisher_list | to_nice_json }},
+        "client_list": {{ client_list | to_nice_json }}
       },
-      "end_test": {
-        "number": -1,
-        "list": []
-      }
+      "end_test": {}
     }
   }
 }
