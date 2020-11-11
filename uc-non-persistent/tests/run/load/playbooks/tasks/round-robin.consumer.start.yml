@@ -11,19 +11,17 @@
       msg: "Round Robin - Start Consumer Algo"
 
   - set_fact:
-      consumer_num_1: "{{ consumer_num + 1 }}"
-      consumer_node_num_1: "{{ consumer_node_number|int + 1 }}"
+      r: "{{ consumer_num|int % num_consumer_nodes|int }}"
 
   - set_fact:
-      div: "{{ consumer_num_1|int / num_consumer_nodes|int }}"
-      r: "{{ consumer_num_1|int % num_consumer_nodes|int }}"
-
-  - set_fact:
-      start_consumer: "{{ True if (r == consumer_node_num_1) or (r == '0' and consumer_node_num_1 == num_consumer_nodes)  else False }}"
+      start_consumer: "{{ True if (r == consumer_node_number) else False }}"
 
   # - debug:
-  #     msg: "start_consumer = {{ start_consumer }}"
-
+  #     msg:
+  #       - "consumer_node_number={{ consumer_node_number }}, consumer_num={{ consumer_num }}"
+  #       - "start_consumer={{ start_consumer }}"
+  #       - "r={{ r }}"
+  #
   # - debug:
   #     msg:
   #       - "------------------------------------------------------------------------------------"
