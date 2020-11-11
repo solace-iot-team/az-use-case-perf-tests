@@ -6,8 +6,10 @@
 ---
   test_spec:
     name: devel_tp_001
-    use_case: uc_non_persistent
-    description: "tp-001"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+    description: "tp-001: artificial test for base line comparison"
     infrastructure_list:
       - cloud_provider: azure
         config: devel1-standalone
@@ -112,7 +114,8 @@
           publish:
             publishers:
               - publisher_id: publisher_1
-                number_of_topics: 40
+                # number_of_topics: 40
+                number_of_topics: 10
                 topic_prefix: "markets/pub-1"
             client_connection_count: 1
             msg_payload_size_bytes: 100
@@ -132,7 +135,7 @@
       runs:
 
         - name: base_run
-          description: "base run: 1 publisher, 40 consumers, 40 topics, fan-out=1:1, 50 msgs/sec, 100 bytes"
+          description: "base run: 1 publisher, 40 consumers, 40 topics, fan-out=1:1, 50K msgs/sec, 100 bytes"
 
 
 ###
