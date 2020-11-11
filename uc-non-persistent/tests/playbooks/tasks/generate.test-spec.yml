@@ -31,7 +31,9 @@
     set_fact:
       run_general:
         description: "{{ run_spec.description | default(run_spec.name) | string }}"
-        use_case: "{{ test_spec.use_case }}"
+        use_case:
+          name: "{{ test_spec.use_case.name }}"
+          display_name: "{{ test_spec.use_case.display_name }}"
         test_spec:
           name: "{{ test_spec.name }}"
           descr: "{{ test_spec.description }}"
