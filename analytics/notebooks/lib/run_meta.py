@@ -18,6 +18,10 @@ class RunMeta():
         self.ts_run_start = to_date(metaJson["meta"]["run_start_time"], perf_meta_date_ts_pattern)
         self.ts_run_end = to_date(metaJson["meta"]["run_end_time"], perf_meta_date_ts_pattern)
         self.metaJson = metaJson
+        self.startPublisherList = self.createStartPublisherList(metaJson)
+        self.endPublisherList = self.createEndPublisherList(metaJson)
+        self.startConsumerList = self.createStartConsumerList(metaJson)
+        self.endConsumerList = self.createEndConsumerList(metaJson)
 
     def __str__(self):
         return f'[RunMeta: [infrastructure: {self.infrastructure}] [run_id: {self.run_id}] [run_duration: {self.run_duration()}]]'
@@ -36,6 +40,34 @@ class RunMeta():
 
     """ Client Connections """
 
+    def _createClientList(self, name_list, client_list):
+        _clientList = []
+        for name in name_list:
+            for client in client_list:
+                if client['clientName'] == name['clientName']:
+                    _clientList.append(client)
+        return _clientList         
+
+    def createStartPublisherList(self, metaJson):
+        nameList = metaJson['meta']['client_connections']['start_test']['publisher_list']
+        clientList = metaJson['meta']['client_connections']['start_test']['client_list']
+        return self._createClientList(nameList, clientList)
+
+    def createEndPublisherList(self, metaJson):
+        nameList = metaJson['meta']['client_connections']['end_test']['publisher_list']
+        clientList = metaJson['meta']['client_connections']['end_test']['client_list']
+        return self._createClientList(nameList, clientList)
+
+    def createStartConsumerList(self, metaJson):
+        nameList = metaJson['meta']['client_connections']['start_test']['consumer_list']
+        clientList = metaJson['meta']['client_connections']['start_test']['client_list']
+        return self._createClientList(nameList, clientList)
+
+    def createEndConsumerList(self, metaJson):
+        nameList = metaJson['meta']['client_connections']['end_test']['consumer_list']
+        clientList = metaJson['meta']['client_connections']['end_test']['client_list']
+        return self._createClientList(nameList, clientList)
+
     def getNumClientConnectionsAtStart(self):
         return len(self.getStartTestConsumerList()) + len(self.getStartTestPublisherList())
 
@@ -43,29 +75,33 @@ class RunMeta():
         return len(self.getEndTestConsumerList()) + len(self.getEndTestPublisherList()) 
 
     def getStartTestPublisherList(self):
-        return self.metaJson["meta"]["client_connections"]["start_test"]["publisher_list"]
+        return self.startPublisherList
 
     def getEndTestPublisherList(self):
-        return self.metaJson["meta"]["client_connections"]["end_test"]["publisher_list"]
+        return self.endPublisherList
 
     def getStartTestConsumerList(self):
-        return self.metaJson["meta"]["client_connections"]["start_test"]["consumer_list"]
+        return self.startConsumerList
 
     def getEndTestConsumerList(self):
-        return self.metaJson["meta"]["client_connections"]["end_test"]["consumer_list"]
+        return self.endConsumerList
 
     def _getClientListAggregates(self, client_list):
         aggregates=dict(
             rxDiscardedMsgCount=0,
             rxMsgCount=0,
             txDiscardedMsgCount=0,
-            txMsgCount=0
+            txMsgCount=0,
+            averageRxMsgRate=0,
+            averageTxMsgRate=0
         )
         for client in client_list:
             aggregates['rxDiscardedMsgCount'] += client['rxDiscardedMsgCount']
             aggregates['rxMsgCount'] += client['dataRxMsgCount']
             aggregates['txDiscardedMsgCount'] += client['txDiscardedMsgCount']
             aggregates['txMsgCount'] += client['dataTxMsgCount']
+            aggregates['averageRxMsgRate'] += client['averageRxMsgRate']
+            aggregates['averageTxMsgRate'] += client['averageTxMsgRate']
 
         return aggregates    
 
@@ -73,10 +109,12 @@ class RunMeta():
         end     = self._getClientListAggregates(self.getEndTestPublisherList())
         start   = self._getClientListAggregates(self.getStartTestPublisherList())
         return dict(
-            rxDiscardedMsgCount = end['rxDiscardedMsgCount'] - start['rxDiscardedMsgCount'],
-            rxMsgCount          = end['rxMsgCount'] - start['rxMsgCount'],
-            txDiscardedMsgCount = end['txDiscardedMsgCount'] - start['txDiscardedMsgCount'],
-            txMsgCount          = end['txMsgCount'] - start['txMsgCount']
+            rxDiscardedMsgCount = end['rxDiscardedMsgCount']   - start['rxDiscardedMsgCount'],
+            rxMsgCount          = end['rxMsgCount']            - start['rxMsgCount'],
+            txDiscardedMsgCount = end['txDiscardedMsgCount']   - start['txDiscardedMsgCount'],
+            txMsgCount          = end['txMsgCount']            - start['txMsgCount'],
+            meanRxMsgRate       = end['averageRxMsgRate'],
+            meanTxMsgRate       = end['averageTxMsgRate']
         )
 
     def getConsumerAggregates(self):
@@ -86,9 +124,29 @@ class RunMeta():
             rxDiscardedMsgCount = end['rxDiscardedMsgCount'] - start['rxDiscardedMsgCount'],
             rxMsgCount          = end['rxMsgCount'] - start['rxMsgCount'],
             txDiscardedMsgCount = end['txDiscardedMsgCount'] - start['txDiscardedMsgCount'],
-            txMsgCount          = end['txMsgCount'] - start['txMsgCount']
+            txMsgCount          = end['txMsgCount'] - start['txMsgCount'],
+            meanRxMsgRate       = end['averageRxMsgRate'],
+            meanTxMsgRate       = end['averageTxMsgRate']
         )
 
+    def getConsumerNamesValues4Plotting(self):
+        start_list = self.getStartTestConsumerList()
+        end_list   = self.getEndTestConsumerList()
+        names = []
+        values = []
+        for consumer_start, consumer_end  in zip(start_list, end_list):
+            name=consumer_end['clientName']
+            # NOTE: very brittle, assumes the following structure: 
+            # sdkperf-load@devel1-consumer-node-1-consumer_2-000001
+            parts = name.split("-")
+            # import logging, sys
+            # logging.debug(f"name={name}")
+            # logging.debug(f"parts = {parts}")
+            names.append(f"node-{parts[4]}:{parts[5]}")
+            val = consumer_end['dataTxMsgCount'] - consumer_start['dataTxMsgCount']
+            values.append(val)
+        return names, values
+    
     def getRunSpecDescription(self):
         return self.metaJson["meta"]["run_spec"]["general"]["description"]
     
@@ -148,18 +206,7 @@ class RunMeta():
     def getNumBrokerNodes(self):
         return len(self.metaJson["meta"]["nodes"]["broker_nodes"])
 
-    # def getBrokerNode(self, public_ip):
-    #     broker_nodes = self.metaJson["meta"]["nodes"]["broker_nodes"]
-    #     # there can only be 1
-    #     if len(broker_nodes) != 1:
-    #         raise PerfError("[ERROR] - found more than 1 broker_node in nodes")
-    #     if broker_nodes[0]["public_ip"] != public_ip:
-    #         raise PerfError("[ERROR] - broker node public ip does not match inventory public_ip")
-    #     return broker_nodes[0]
-
     def getBrokerNodeSpec(self):
-        # public_ip = self.metaJson["meta"]["inventory"]["all"]["hosts"]["broker_centos"]["ansible_host"]
-        # node = self.getBrokerNode(public_ip)
         node = self.metaJson["meta"]["nodes"]["broker_nodes"][0]
         return self.getNodeSpec(node)
 

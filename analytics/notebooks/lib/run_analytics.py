@@ -203,3 +203,16 @@ class RunAnalytics():
         else:
             target[the_key]=list()
             target[the_key].append(the_value)
+
+    def export_consumer_messages_received_as_dataframe(self):
+        names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
+        return pd.DataFrame(
+            data=dict(
+                consumer_names=names,
+                messages_received=values
+            )
+        )
+
+
+###
+# The End.            
