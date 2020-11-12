@@ -83,8 +83,8 @@ class BrokerSeries(BaseSeries):
         publisher_aggregates = self.run.run_meta.getPublisherAggregates()
         consumer_aggregates = self.run.run_meta.getConsumerAggregates()
         load_fan_out_ratio = 0.0
-        if consumer_aggregates["txMsgCount"] > 0:
-            load_fan_out_ratio  = publisher_aggregates["rxMsgCount"] / consumer_aggregates["txMsgCount"]
+        if consumer_aggregates["rxMsgCount"] > 0:
+            load_fan_out_ratio  = publisher_aggregates["txMsgCount"] / consumer_aggregates["rxMsgCount"]
 
 
         md = f"""
