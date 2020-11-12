@@ -6,23 +6,32 @@
 ---
   test_spec:
     name: "{test-spec-name}"
-    use_case: uc_non_persistent
+    description: "{description}"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+
+    # list of infrastructures the tests are run on in parallel
     infrastructure_list:
       - cloud_provider: "{cloud_provider}"
         config: "{prefix}-standalone"
       - cloud_provider: "{cloud_provider}"
         config: "{prefix}-standalone"
+
     run_specs:
+
       run_params:
         total_num_samples: {number of samples}
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
+
       run_defaults:
         load:
           include: true
           subscribe:
-            # start all consumers on each consumer node
-            # NOTE: consumers cannot be overridden in run
+            # carbon_copy: all consumers are stood up on each consumer node - a copy
+            # round_robin: consumers are stoop up on the nodes in a round robin fashion
+            consumer_distribution_strategy: {carbon_copy|round_robin}
             consumers:
               - consumer_id: consumer_0
                 topic_list: markets/exchange-0/>,markets/exchange-1/>
@@ -34,7 +43,6 @@
                 topic_list: markets/exchange-2/>,markets/exchange-3/>
           publish:
             # start all publishers on each publisher node
-            # NOTE: publishers cannot be overridden in run
             publishers:
               - publisher_id: exch_0
                 number_of_topics: 500000
@@ -57,9 +65,8 @@
               include: true
             broker_node_to_broker:
               include: true
-            msg_rate_per_second: 1000 # define a max of 10000
-            msg_payload_size_bytes: 100 # define a max of 10K
-            lpm: true
+            msg_rate_per_second: 1000
+            msg_payload_size_bytes: 100
           ping:
             include: true
           vpn_stats:
@@ -67,8 +74,7 @@
       runs:
         - name: {run-name-0}
           description: "{run description}"
-          load:
-            include: false
+
         - name: {run-name-1}
           description: "{run description}"
           load:
@@ -86,11 +92,13 @@
                 - publisher_id: exch_3
                   number_of_topics: 10
                   topic_prefix: "markets/exchange-3"
+
         - name: {run-name-2}
           description: "{run description}"
           monitors:
             latency:
               msg_payload_size_bytes: 200
+
         - name: {run-name-3}
           description: "{run description}"
           monitors:
