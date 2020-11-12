@@ -19,7 +19,7 @@
         config: devel1-standalone
     run_specs:
       run_params:
-        total_num_samples: 1 # 3
+        total_num_samples: 3
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60 # 60
       run_defaults:
@@ -30,24 +30,24 @@
             consumers:
               - consumer_id: consumer_1
                 topic_list: markets/pub-1/000001
-              # - consumer_id: consumer_2
-              #   topic_list: markets/pub-1/000002
-              # - consumer_id: consumer_3
-              #   topic_list: markets/pub-1/000003
-              # - consumer_id: consumer_4
-              #   topic_list: markets/pub-1/000004
-              # - consumer_id: consumer_5
-              #   topic_list: markets/pub-1/000005
-              # - consumer_id: consumer_6
-              #   topic_list: markets/pub-1/000006
-              # - consumer_id: consumer_7
-              #   topic_list: markets/pub-1/000007
-              # - consumer_id: consumer_8
-              #   topic_list: markets/pub-1/000008
-              # - consumer_id: consumer_9
-              #   topic_list: markets/pub-1/000009
-              # - consumer_id: consumer_10
-              #   topic_list: markets/pub-1/000010
+              - consumer_id: consumer_2
+                topic_list: markets/pub-1/000002
+              - consumer_id: consumer_3
+                topic_list: markets/pub-1/000003
+              - consumer_id: consumer_4
+                topic_list: markets/pub-1/000004
+              - consumer_id: consumer_5
+                topic_list: markets/pub-1/000005
+              - consumer_id: consumer_6
+                topic_list: markets/pub-1/000006
+              - consumer_id: consumer_7
+                topic_list: markets/pub-1/000007
+              - consumer_id: consumer_8
+                topic_list: markets/pub-1/000008
+              - consumer_id: consumer_9
+                topic_list: markets/pub-1/000009
+              - consumer_id: consumer_10
+                topic_list: markets/pub-1/000010
 
               # - consumer_id: consumer_11
               #   topic_list: markets/pub-1/000011
@@ -115,11 +115,11 @@
             publishers:
               - publisher_id: publisher_1
                 # number_of_topics: 40
-                number_of_topics: 1
+                number_of_topics: 10
                 topic_prefix: "markets/pub-1"
             client_connection_count: 1
             msg_payload_size_bytes: 100
-            msg_rate_per_second: 1 #50000
+            msg_rate_per_second: 100 #50000
         monitors:
           latency:
             sdkperf_node_to_broker:

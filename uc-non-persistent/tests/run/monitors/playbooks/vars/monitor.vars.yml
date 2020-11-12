@@ -24,6 +24,8 @@ vpn_stats:
       - txDiscardedMsgCount
       - dataRxMsgCount
       - dataTxMsgCount
+      - averageRxMsgRate
+      - averageTxMsgRate
       - platform
       - uptime
       # NOTE: not useful, vpn stats collection not sync'ed with publisher/consumer start/stop
