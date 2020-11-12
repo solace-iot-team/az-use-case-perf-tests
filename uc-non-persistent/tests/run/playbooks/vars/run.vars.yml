@@ -12,6 +12,8 @@
     - txDiscardedMsgCount
     - dataRxMsgCount
     - dataTxMsgCount
+    - averageRxMsgRate
+    - averageTxMsgRate
     - clientAddress
     - clientName
     - platform
