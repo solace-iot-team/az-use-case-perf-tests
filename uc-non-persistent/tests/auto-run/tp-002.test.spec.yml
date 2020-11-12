@@ -59,8 +59,8 @@
                 topic_prefix: "markets/exchange-3"
             client_connection_count: 1
             msg_payload_size_bytes: 100
-            # 500K msgs / sec per publisher
-            msg_rate_per_second: 500000
+            # 250K msgs / sec per publisher
+            msg_rate_per_second: 250000
         monitors:
           latency:
             sdkperf_node_to_broker:
@@ -76,10 +76,10 @@
       runs:
 
         - name: base_run
-          description: "base run: 4 pubs, 4 cons/node, 2m topics, 4m msgs/sec, 100 bytes"
+          description: "base run: 4 pubs, 4 cons/node, 2m topics, 1m msgs/sec, 100 bytes"
 
         - name: 8consumers_run
-          description: "run: 4 pubs, 8 cons/node, 2m topics, 4m msgs/sec, 100 bytes"
+          description: "run: 4 pubs, 8 cons/node, 2m topics, 1m msgs/sec, 100 bytes"
           subscribe:
             # stand up all consumers on all nodes
             consumer_distribution_strategy: carbon_copy
@@ -103,7 +103,7 @@
                 topic_list: markets/exchange-2/>,markets/exchange-3/>
 
         - name: 500bytes_run
-          description: "500bytes run: 4 pubs, 4 cons/node, 2m topics, 4m msgs/sec, 500 bytes"
+          description: "500bytes run: 4 pubs, 4 cons/node, 2m topics, 1m msgs/sec, 500 bytes"
           publish:
             msg_payload_size_bytes: 500
           monitors:
@@ -111,7 +111,7 @@
               msg_payload_size_bytes: 500
 
         - name: 1000bytes_run
-          description: "1000bytes run: 4 pubs, 4 cons/node, 2m topics, 4m msgs/sec, 1000 bytes"
+          description: "1000bytes run: 4 pubs, 4 cons/node, 2m topics, 1m msgs/sec, 1000 bytes"
           publish:
             msg_payload_size_bytes: 1000
           monitors:
