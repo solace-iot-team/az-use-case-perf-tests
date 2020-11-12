@@ -43,11 +43,5 @@ class BrokerSample(BaseSample):
             rows.append(row)
         return rows
 
-    # def getConsumerList(self):
-    #     return self.sampleJson['client_connections']['consumer_list']    
-
-    # def getPublisherList(self):
-    #     return self.sampleJson['client_connections']['publisher_list']      
-
 ### 
 # The End.              
