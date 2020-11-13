@@ -2,12 +2,12 @@
 
 Exmaples for running analytics and creating reports for test results.
 
-## Customize Run Script
+## Customize Run Script: uc-non-persistent
 
 Create a copy or modify:
 
 ````bash
-vi run.auto.1.fg.sh
+vi run.uc-non-persistent.auto.fg.sh
 # customize settings
 ````
 
@@ -31,7 +31,7 @@ infrastructureIds=(
 )
 ````
 
-Scripts loops through `infrastructureIds` to looks for test results in `$TEST_RESULTS_DIR/$infrastructureId`. 
+Scripts loops through `infrastructureIds` to looks for test results in `$TEST_RESULTS_DIR/$infrastructureId`.
 
 ---
 The End.
