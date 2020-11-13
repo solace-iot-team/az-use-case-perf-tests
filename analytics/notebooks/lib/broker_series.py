@@ -101,6 +101,9 @@ Description: {self.run.run_meta.getRunSpecDescription()}
 |:-------------------------------------------------------------------|:-------------------------------------:|:----------------------------------------------:|:---------------------------------------:|:--------------------------:|
 |publishers ({len(self.run.run_meta.getEndTestPublisherList())})     |{publisher_aggregates["rxMsgCount"]:,} |{publisher_aggregates["rxDiscardedMsgCount"]:,} |{publisher_aggregates["meanRxMsgRate"]}  |1                           |
 |consumers ({len(self.run.run_meta.getEndTestConsumerList())})       |{consumer_aggregates["txMsgCount"]:,}  |{consumer_aggregates["txDiscardedMsgCount"]:,}  |{consumer_aggregates["meanTxMsgRate"]}   |{load_fan_out_ratio:.2f}    |
+
+_Note: Run metrics are taken in-flight, therefor they do not match exactly._
+        
         """
         
         return md
