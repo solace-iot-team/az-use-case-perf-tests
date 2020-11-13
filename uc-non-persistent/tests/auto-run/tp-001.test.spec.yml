@@ -14,8 +14,8 @@
     infrastructure_list:
       - cloud_provider: azure
         config: 1-auto-standalone
-      - cloud_provider: azure
-        config: 2-auto-standalone
+      # - cloud_provider: azure
+      #   config: 2-auto-standalone
       - cloud_provider: aws
         config: 1-auto-standalone
 
@@ -143,16 +143,18 @@
 
         - name: 500bytes_run
           description: "500bytes run: 1 publisher, 40 consumers, 40 topics, fan-out=1:1, 50K msgs/sec, 500 bytes"
-          publish:
-            msg_payload_size_bytes: 500
+          load:
+            publish:
+              msg_payload_size_bytes: 500
           monitors:
             latency:
               msg_payload_size_bytes: 500
 
         - name: 1000bytes_run
           description: "1000bytes run: 1 publisher, 40 consumers, 40 topics, fan-out=1:1, 50K msgs/sec, 1000 bytes"
-          publish:
-            msg_payload_size_bytes: 1000
+          load:
+            publish:
+              msg_payload_size_bytes: 1000
           monitors:
             latency:
               msg_payload_size_bytes: 1000
