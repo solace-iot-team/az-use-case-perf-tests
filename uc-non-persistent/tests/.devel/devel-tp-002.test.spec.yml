@@ -5,7 +5,7 @@
 
 ---
   test_spec:
-    name: auto_tp_002
+    name: devel_tp_002
     description: "tp-002: mdd test"
     use_case:
       name: uc_non_persistent
@@ -14,10 +14,10 @@
     infrastructure_list:
       - cloud_provider: azure
         config: 1-auto-standalone
-      - cloud_provider: azure
-        config: 2-auto-standalone
-      - cloud_provider: aws
-        config: 1-auto-standalone
+      # - cloud_provider: azure
+      #   config: 2-auto-standalone
+      # - cloud_provider: aws
+      #   config: 1-auto-standalone
 
     run_specs:
 
@@ -75,8 +75,8 @@
             include: true
       runs:
 
-        - name: base_run
-          description: "base run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
+        # - name: base_run
+        #   description: "base run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
 
         - name: 8consumers_run
           description: "8 consumers run: 4 pubs, 8 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
