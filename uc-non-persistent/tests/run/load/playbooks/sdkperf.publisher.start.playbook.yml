@@ -20,6 +20,10 @@
 
   tasks:
 
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
     - name: "Set SDKPerf Parameters"
       set_fact:
         sdkperf_exe: "{{sdkperf_root}}/sdkperf/sdkperf_c.sh"

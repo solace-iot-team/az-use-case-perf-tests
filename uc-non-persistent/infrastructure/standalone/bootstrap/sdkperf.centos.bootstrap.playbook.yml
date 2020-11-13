@@ -8,6 +8,7 @@
 ---
 - name: "SDKPerf Centos Bootstrap"
   hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  gather_facts: no
   pre_tasks:
     - include_vars:
         file: bootstrap.vars.yml
@@ -16,6 +17,10 @@
     deployed_dir: "{{USE_CASE_DIR}}/infrastructure/standalone/.deployed"
 
   tasks:
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
     - name: "Ensure {{ PROJECT_DIR }} exists"
       local_action:
         module: file

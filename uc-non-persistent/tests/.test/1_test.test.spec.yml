@@ -6,7 +6,11 @@
 ---
   test_spec:
     name: 1_test
-    use_case: uc_non_persistent
+    description: "various tests"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+
     infrastructure_list:
       - cloud_provider: azure
         config: test1-standalone
@@ -14,17 +18,18 @@
       #   config: test2-standalone
       - cloud_provider: aws
         config: test1-standalone
+
     run_specs:
+
       run_params:
         total_num_samples: 3
-        # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
+
       run_defaults:
         load:
           include: true
           subscribe:
-            # start all consumers on each consumer node
-            # NOTE: consumers cannot be overridden in run
+            consumer_distribution_strategy: carbon_copy
             consumers:
               - consumer_id: consumer_0
                 topic_list: markets/exchange-0/>,markets/exchange-1/>
@@ -35,8 +40,6 @@
               - consumer_id: consumer_3
                 topic_list: markets/exchange-2/>,markets/exchange-3/>
           publish:
-            # start all publishers on each publisher node
-            # NOTE: publishers cannot be overridden in run
             publishers:
               - publisher_id: exch_0
                 number_of_topics: 100
@@ -50,18 +53,17 @@
               - publisher_id: exch_3
                 number_of_topics: 100
                 topic_prefix: "markets/exchange-3"
-            client_connection_count: 1 # 1 || 10 || 100 || 1000 || etc...
-            msg_payload_size_bytes: 100 # 100 || 1000 || 10000 || etc...
-            msg_rate_per_second: 15000
+            client_connection_count: 1
+            msg_payload_size_bytes: 100
+            msg_rate_per_second: 1000
         monitors:
           latency:
             sdkperf_node_to_broker:
               include: true
             broker_node_to_broker:
               include: true
-            msg_rate_per_second: 1000 # define a max of 10000
-            msg_payload_size_bytes: 100 # define a max of 10K
-            lpm: true
+            msg_rate_per_second: 1000
+            msg_payload_size_bytes: 100
           ping:
             include: true
           vpn_stats:
@@ -122,6 +124,13 @@
           monitors:
             latency:
               msg_payload_size_bytes: 200
+
+        - name: round_robin
+          description: "round robin"
+          load:
+            subscribe:
+              consumer_distribution_strategy: round_robin
+
 
 ###
 # The End.

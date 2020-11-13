@@ -19,6 +19,9 @@ import numpy as np
 import pandas as pd
 
 
+CHECK_PASSING_MD="**<span style='color:green'>passing</span>**"
+CHECK_FAILING_MD="**<span style='color:red'>failing</span>**"
+
 d_latency_percentile = {
     # k_latency_00_05th : 0.005,
     # k_latency_01_th : 0.01,
@@ -203,3 +206,29 @@ class RunAnalytics():
         else:
             target[the_key]=list()
             target[the_key].append(the_value)
+
+    def export_consumer_messages_received_as_dataframe(self):
+        names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
+        return pd.DataFrame(
+            data=dict(
+                consumer_names=names,
+                messages_received=values
+            )
+        )
+
+    def getChecksAsMarkdown(self):
+
+        num_discarded_messages = 0
+        if self.run.broker_series and self.run.broker_series.aggregates:
+            num_discarded_messages += self.run.broker_series.aggregates["vpn"]["discard_rx_msg_count"] + self.run.broker_series.aggregates["vpn"]["discard_tx_msg_count"]
+        num_discarded_messages += self.run.run_meta.getPublisherAggregates()["rxDiscardedMsgCount"]
+        num_discarded_messages += self.run.run_meta.getConsumerAggregates()["txDiscardedMsgCount"]
+        zeroMessageLossCheckResult = CHECK_FAILING_MD if num_discarded_messages > 0 else CHECK_PASSING_MD
+
+        md = f"""
+Checks: zero message loss:{zeroMessageLossCheckResult}
+        """
+        return md
+
+###
+# The End.            

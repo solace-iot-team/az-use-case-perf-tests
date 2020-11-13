@@ -5,8 +5,8 @@
       "infrastructure": "${cloud_provider}.${tag_name_prefix}-standalone",
       "cloud_provider": "${cloud_provider}",
       "broker_pubsub": {
-        "public_ip_address": "${solace_broker_nodes[0].public_ip}",
-        "private_ip_address": "${solace_broker_nodes[0].private_ip}",
+        "public_ip_address": "${broker_node.public_ip}",
+        "private_ip_address": "${broker_node.private_ip}",
         "vpn_name": "sdkperf",
         "client_user_name": "testUsr",
         "client_user_name_pwd": "solace123"
@@ -14,16 +14,16 @@
     },
     "hosts": {
       "broker_centos": {
-        "ansible_host": "${solace_broker_nodes[0].public_ip}",
+        "ansible_host": "${broker_node.public_ip}",
         "ansible_user": "${admin_username}",
         "ansible_become": true,
         "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"broker-1",
+        "boxname":"${broker_node.tags.Name}",
         "sdkperf_root": "/opt/sdkperf"
       },
       "broker_pubsub": {
         "ansible_connection": "local",
-        "sempv2_host": "${solace_broker_nodes[0].public_ip}",
+        "sempv2_host": "${broker_node.public_ip}",
         "sempv2_port": 8080,
         "sempv2_is_secure_connection": false,
         "sempv2_username": "admin",
@@ -33,44 +33,63 @@
       }
     }
   },
-  "sdkperf_publishers": {
-    "hosts": {
-      "sdkperf_publisher_vm_0": {
-        "ansible_host": "${sdk_perf_nodes[0].public_ip}",
-        "ansible_user": "${admin_username}",
-        "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"publisher-1",
-        "sdkperf_root": "/opt/sdkperf"
-      }
-    }
-  },
-  "sdkperf_consumers": {
-    "hosts": {
-      "sdkperf_consumer_vm_1": {
-        "ansible_host": "${sdk_perf_nodes[1].public_ip}",
-        "ansible_user": "${admin_username}",
-        "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"consumer-1",
-        "sdkperf_root": "/opt/sdkperf"
-      },
-      "sdkperf_consumer_vm_2": {
-        "ansible_host": "${sdk_perf_nodes[2].public_ip}",
-        "ansible_user": "${admin_username}",
-        "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"consumer-2",
-        "sdkperf_root": "/opt/sdkperf"
-      }
-    }
-  },
+
   "sdkperf_latency": {
     "hosts": {
-      "sdkperf_latency_vm_3": {
-        "ansible_host": "${sdk_perf_nodes[3].public_ip}",
-        "ansible_user": "${admin_username}",
-        "ansible_python_interpreter": "/usr/bin/python",
-        "boxname":"latency-1",
-        "sdkperf_root": "/opt/sdkperf"
+        "${latency_node.tags.Name}": {
+          "ansible_host": "${latency_node.public_ip}",
+          "ansible_user": "${admin_username}",
+          "ansible_python_interpreter": "/usr/bin/python",
+          "boxname":"${latency_node.tags.Name}",
+          "sdkperf_root": "/opt/sdkperf"
+        }
+    }
+  },
+
+  "sdkperf_publishers": {
+    "hosts": {
+
+      %{ for node in publisher_nodes ~}
+
+        "${node.tags.Name}": {
+          "ansible_host": "${node.public_ip}",
+          "ansible_user": "${admin_username}",
+          "ansible_python_interpreter": "/usr/bin/python",
+          "boxname":"${node.tags.Name}",
+          "sdkperf_root": "/opt/sdkperf"
+        },
+
+      %{ endfor ~}
+
+      "NOT_A_HOST":{
+        "ansible_connection": "local"
       }
+
+    }
+  },
+
+  "sdkperf_consumers": {
+    "num_consumer_nodes": ${length(consumer_nodes)},
+    "hosts": {
+
+      %{ for node in consumer_nodes ~}
+
+        "${node.tags.Name}": {
+          "ansible_host": "${node.public_ip}",
+          "ansible_user": "${admin_username}",
+          "ansible_python_interpreter": "/usr/bin/python",
+          "boxname":"${node.tags.Name}",
+          "sdkperf_root": "/opt/sdkperf",
+          "consumer_node_number": "${node.tags.consumer_node_number}"
+        },
+
+      %{ endfor ~}
+
+      "NOT_A_HOST":{
+        "ansible_connection": "local"
+      }
+
     }
   }
+
 }

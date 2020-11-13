@@ -31,13 +31,19 @@
     set_fact:
       run_general:
         description: "{{ run_spec.description | default(run_spec.name) | string }}"
-        test_spec_name: "{{ test_spec.name }}"
+        use_case:
+          name: "{{ test_spec.use_case.name }}"
+          display_name: "{{ test_spec.use_case.display_name }}"
+        test_spec:
+          name: "{{ test_spec.name }}"
+          descr: "{{ test_spec.description }}"
 
   - name: "Compose Run Spec: Load for {{run_spec_id}}"
     set_fact:
       run_load:
         include: "{{ run_spec.load.include | default(test_spec.run_specs.run_defaults.load.include) }}"
         subscribe:
+          consumer_distribution_strategy: "{{ run_spec.load.subscribe.consumer_distribution_strategy | default(test_spec.run_specs.run_defaults.load.subscribe.consumer_distribution_strategy) }}"
           consumers: "{{ run_spec.load.subscribe.consumers | default(test_spec.run_specs.run_defaults.load.subscribe.consumers) }}"
         publish:
           publishers: "{{ run_spec.load.publish.publishers | default(test_spec.run_specs.run_defaults.load.publish.publishers) }}"
@@ -51,7 +57,7 @@
         latency:
           msg_rate_per_second: "{{ run_spec.monitors.latency.msg_rate_per_second | default(test_spec.run_specs.run_defaults.monitors.latency.msg_rate_per_second) }}"
           msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency.msg_payload_size_bytes) }}"
-          lpm: "{{ run_spec.monitors.latency.lpm | default(test_spec.run_specs.run_defaults.monitors.latency.lpm) }}"
+          lpm: true
           sdkperf_node_to_broker:
             include: "{{ run_spec.monitors.latency.sdkperf_node_to_broker.include | default(test_spec.run_specs.run_defaults.monitors.latency.sdkperf_node_to_broker.include) }}"
           broker_node_to_broker:

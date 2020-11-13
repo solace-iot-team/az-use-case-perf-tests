@@ -7,20 +7,24 @@
 ---
 
   meta_file_name: "meta.json"
-  select_client_connection_stats: >-
-    rxDiscardedMsgCount,
-    rxMsgCount,
-    rxMsgRate,
-    rxByteRate,
-    rxByteCount,
-    txDiscardedMsgCount,
-    txMsgCount,
-    txMsgRate,
-    txByteRate,
-    txByteCount,
-    clientAddress,
-    clientName,
-    uptime
+  select_client_connection_stats:
+    - rxDiscardedMsgCount
+    - txDiscardedMsgCount
+    - dataRxMsgCount
+    - dataTxMsgCount
+    - averageRxMsgRate
+    - averageTxMsgRate
+    - clientAddress
+    - clientName
+    - platform
+    - uptime
+
+    # - rxMsgRate
+    # - rxByteRate
+    # - rxByteCount
+    # - txMsgRate
+    # - txByteRate
+    # - txByteCount
 
 ###
 # The End.

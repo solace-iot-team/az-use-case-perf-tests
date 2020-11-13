@@ -1,0 +1,38 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  - name: "=========================================================================================================="
+    debug:
+      msg: "Round Robin - Start Consumer Algo"
+
+  - set_fact:
+      r: "{{ consumer_num|int % num_consumer_nodes|int }}"
+
+  - set_fact:
+      start_consumer: "{{ True if (r == consumer_node_number) else False }}"
+
+  # - debug:
+  #     msg:
+  #       - "consumer_node_number={{ consumer_node_number }}, consumer_num={{ consumer_num }}"
+  #       - "start_consumer={{ start_consumer }}"
+  #       - "r={{ r }}"
+  #
+  # - debug:
+  #     msg:
+  #       - "------------------------------------------------------------------------------------"
+  #       - "round-robin: starting consumer={{ consumer.consumer_id }} on node={{ inventory_hostname }}"
+  #       - "------------------------------------------------------------------------------------"
+  #   when: start_consumer
+
+  - name: "Start Consumer Tasks"
+    include: ./tasks/consumer.start.yml
+    when: start_consumer
+
+
+###
+# The End.

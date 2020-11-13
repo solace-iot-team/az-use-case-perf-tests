@@ -15,6 +15,11 @@ variable "az_region" {
   # default = "Japan East"
   default = "West Europe"
 }
+variable "zone" {
+  type = string
+  description = "availability zone. should match the controller zone."
+  default = "1"
+}
 variable "tag_name_prefix" {
   type = string
   description = "unique prefix applied to all resources"
@@ -31,28 +36,26 @@ variable "solace_broker_node_vm_size" {
   # default = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 max IOPS)
   # default = "Standard_D8s_v3"      # (8 Cores, 32GB RAM, 12800 max IOPS)
 }
-variable "sdk_perf_nodes_vm_size" {
+variable "latency_node_vm_size" {
   type = string
-  description = "the VM size for the sdk perf nodes"
   default = "Standard_F4s_v2"
-  # default = "Standard_F4s_v2" # (4 CPUs, 8 GB RAM, max IOPS: 6400)
-  # default = "Standard_F4s" # (4 CPUs, 8 GB RAM, max IOPS: 12800)
-  # default = "Standard_B1ms"
-  # default = "Standard_B4ms" # (4 CPUs, 16 GB RAM, max IOPS: 2880)
 }
-variable "zone" {
+variable "publisher_node_vm_size" {
   type = string
-  description = "availability zone. should match the controller zone."
-  default = "1"
+  default = "Standard_F4s_v2"
 }
+variable "consumer_node_vm_size" {
+  type = string
+  default = "Standard_F4s_v2"
+}
+variable "consumer_node_vm_count" {
+  type = string
+  default = "2"
+}
+
 #
 # END CUSTOMIZATION
 ############################################################################################################
-
-
-
-
-
 
 
 ############################################################################################################
@@ -64,34 +67,20 @@ variable "zone" {
 variable "cloud_provider" {
   default = "azure"
 }
-
 variable "tag_days" {
   default = "1"
 }
-
-# sdkperf nodes count
-variable "sdkperf_nodes_count" {
-    default = "4"
-    type        = string
-    description = "The number of sdkperf nodes to be created."
-}
-
-# solace broker nodes count
-variable "solace_broker_count" {
+variable "solace_broker_vm_count" {
     default = "1"
     type        = string
     description = "The number of Solace Broker nodes to be created."
 }
-
-
 variable "az_resgrp_name" {
   default = ""
   #default = "subnet-0db7d4f1da1d01bd8"
   type        = string
   description = "The Azure Resource Group Name to be used for containing the resources - Leave the value empty for automatically creating one."
 }
-
-
 variable "subnet_id" {
   default = ""
   #default = "subnet-0db7d4f1da1d01bd8"

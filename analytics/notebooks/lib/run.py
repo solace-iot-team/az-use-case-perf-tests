@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------------------------
 # MIT License
 # Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
 # ---------------------------------------------------------------------------------------------
 
 import array as arr
@@ -32,7 +33,7 @@ class Run(CommonBase):
         self._extract_metadata()
 
     def __str__(self):
-        return f'[PerfRun: {self.run_meta}  [sucess: {self.success}] [latencies-processed: {self.samples_processed}]]'
+        return f'[PerfRun: {self.run_meta}  [success: {self.success}] [latencies-processed: {self.samples_processed}]]'
 
     def _extract_metadata(self):
         """
@@ -48,6 +49,10 @@ class Run(CommonBase):
         self.check_folder_exists(logs_path, True, "logs folder does not exist")
         success_log = self.files_in_folder_by_pattern(logs_path, perf_run_pattern_success_log_file)
         self.success = len(success_log) == 1
+        if not self.success:
+            import logging
+            logging.error(f"run was not successful - check error logs")
+
 
     def _extract_stats(self):
         """

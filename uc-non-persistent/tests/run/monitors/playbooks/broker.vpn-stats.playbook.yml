@@ -8,6 +8,15 @@
 - name: "Broker VPN Statistics"
   hosts: broker_pubsub
   gather_facts: no
+  module_defaults:
+    solace_get_vpn_clients:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+      msg_vpn: "{{ broker_pubsub.vpn_name }}"
   pre_tasks:
     - include_vars:
         file: "{{RUN_SPEC_FILE}}"

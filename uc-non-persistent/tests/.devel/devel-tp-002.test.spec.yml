@@ -1,0 +1,132 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  test_spec:
+    name: devel_tp_002
+    description: "tp-002: mdd test"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+
+    infrastructure_list:
+      - cloud_provider: azure
+        config: 1-auto-standalone
+      # - cloud_provider: azure
+      #   config: 2-auto-standalone
+      # - cloud_provider: aws
+      #   config: 1-auto-standalone
+
+    run_specs:
+
+      run_params:
+        total_num_samples: 10
+        # sample_duration_secs: min: 45 secs, max: 120 secs
+        sample_duration_secs: 60
+
+      run_defaults:
+        load:
+          include: true
+          subscribe:
+            # stand up all consumers on all nodes
+            consumer_distribution_strategy: carbon_copy
+            consumers:
+              - consumer_id: consumer_0
+                topic_list: markets/exchange-0/>,markets/exchange-1/>
+              - consumer_id: consumer_1
+                topic_list: markets/exchange-0/>,markets/exchange-1/>
+              - consumer_id: consumer_2
+                topic_list: markets/exchange-2/>,markets/exchange-3/>
+              - consumer_id: consumer_3
+                topic_list: markets/exchange-2/>,markets/exchange-3/>
+          publish:
+            # each publisher simulates a feedhandler for an exchange
+            # 500K topics per exchange
+            publishers:
+              - publisher_id: exch_0
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-0"
+              - publisher_id: exch_1
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-1"
+              - publisher_id: exch_2
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-2"
+              - publisher_id: exch_3
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-3"
+            client_connection_count: 1
+            msg_payload_size_bytes: 100
+            # 150K msgs / sec per publisher
+            msg_rate_per_second: 150000
+        monitors:
+          latency:
+            sdkperf_node_to_broker:
+              include: true
+            broker_node_to_broker:
+              include: true
+            msg_rate_per_second: 1000
+            msg_payload_size_bytes: 100
+          ping:
+            include: true
+          vpn_stats:
+            include: true
+      runs:
+
+        # - name: base_run
+        #   description: "base run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
+
+        - name: 8consumers_run
+          description: "8 consumers run: 4 pubs, 8 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
+          load:
+            subscribe:
+              # stand up all consumers on all nodes
+              consumer_distribution_strategy: carbon_copy
+              consumers:
+                - consumer_id: consumer_0
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_1
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_2
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
+                - consumer_id: consumer_3
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
+
+                - consumer_id: consumer_4
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_5
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+                - consumer_id: consumer_6
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
+                - consumer_id: consumer_7
+                  topic_list: markets/exchange-2/>,markets/exchange-3/>
+
+        - name: 500bytes_run
+          description: "500bytes run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 500 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 500
+          monitors:
+            latency:
+              msg_payload_size_bytes: 500
+
+        - name: 1000bytes_run
+          description: "1000bytes run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 1000 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 1000
+          monitors:
+            latency:
+              msg_payload_size_bytes: 1000
+
+        - name: broker_overload
+          description: "broker overload run: 4 pubs, 4 consumers/node, 2m topics, 1m msgs/sec, 100 bytes"
+          load:
+            publish:
+              msg_rate_per_second: 250000
+
+
+###
+# The End.

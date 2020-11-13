@@ -7,10 +7,13 @@ resource "local_file" "inventory_file" {
   content = templatefile("../templates/shared-setup/aws.inventory.tpl",
     {
       admin_username = var.ssh_user
-      sdk_perf_nodes = aws_instance.sdkperf-nodes.*
-      solace_broker_nodes = aws_instance.solace-broker-nodes.*
       cloud_provider = var.cloud_provider
       tag_name_prefix = var.tag_name_prefix
+
+      latency_node = aws_instance.latency-nodes[0]
+      publisher_nodes = aws_instance.publisher-nodes.*
+      consumer_nodes = aws_instance.consumer-nodes.*
+      broker_node = aws_instance.solace-broker-nodes[0]
     }
   )
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.inventory.json"
@@ -22,11 +25,17 @@ resource "local_file" "inventory_file" {
 
 resource "null_resource" "trigger_bootstrap" {
   triggers = {
-    node_ids = "${join(",", aws_instance.solace-broker-nodes.*.id, aws_instance.sdkperf-nodes.*.id)}"
+    always_run = "${timestamp()}"
+    tag_name_prefix = "${var.tag_name_prefix}"
   }
   provisioner "local-exec" {
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
     command = "../bootstrap/_run.bootstrap.sh aws.${var.tag_name_prefix}-standalone"
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+    command = "../bootstrap/_run.bootstrap.destroy.sh azure.${self.triggers.tag_name_prefix}-standalone"
   }
   depends_on = [
       local_file.inventory_file

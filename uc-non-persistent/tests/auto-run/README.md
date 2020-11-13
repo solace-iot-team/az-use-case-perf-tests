@@ -9,6 +9,8 @@ Exmaples for running tests.
 
 ### Examples:
   * `1_auto.test.spec.yml`
+  * `tp-001.test.spec.yml`
+  * `tp-002.test.spec.yml`
 
 ### Create a new Test Spec:
 
@@ -26,7 +28,7 @@ vi {new-spec-id}.test.spec.yml
 ````bash
 vi run.sh
   # customize with the {new-spec-id}
-  
+
 ./run.sh
 tail -f logs/run.sh.out
 
