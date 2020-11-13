@@ -59,8 +59,8 @@
                 topic_prefix: "markets/exchange-3"
             client_connection_count: 1
             msg_payload_size_bytes: 100
-            # 150K msgs / sec per publisher
-            msg_rate_per_second: 150000
+            # 100K msgs / sec per publisher
+            msg_rate_per_second: 100000
         monitors:
           latency:
             sdkperf_node_to_broker:
@@ -76,10 +76,10 @@
       runs:
 
         - name: base_run
-          description: "base run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
+          description: "base run: 4 pubs, 4 consumers/node, 2m topics, 400K msgs/sec, 100 bytes"
 
         - name: 8consumers_run
-          description: "8 consumers run: 4 pubs, 8 consumers/node, 2m topics, 600K msgs/sec, 100 bytes"
+          description: "8 consumers run: 4 pubs, 8 consumers/node, 2m topics, 400K msgs/sec, 100 bytes"
           load:
             subscribe:
               # stand up all consumers on all nodes
@@ -104,7 +104,7 @@
                   topic_list: markets/exchange-2/>,markets/exchange-3/>
 
         - name: 500bytes_run
-          description: "500bytes run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 500 bytes"
+          description: "500bytes run: 4 pubs, 4 consumers/node, 2m topics, 400K msgs/sec, 500 bytes"
           load:
             publish:
               msg_payload_size_bytes: 500
@@ -113,7 +113,7 @@
               msg_payload_size_bytes: 500
 
         - name: 1000bytes_run
-          description: "1000bytes run: 4 pubs, 4 consumers/node, 2m topics, 600K msgs/sec, 1000 bytes"
+          description: "1000bytes run: 4 pubs, 4 consumers/node, 2m topics, 400K msgs/sec, 1000 bytes"
           load:
             publish:
               msg_payload_size_bytes: 1000
@@ -122,10 +122,10 @@
               msg_payload_size_bytes: 1000
 
         - name: broker_overload
-          description: "broker overload run: 4 pubs, 4 consumers/node, 2m topics, 1m msgs/sec, 100 bytes"
+          description: "broker overload run: 4 pubs, 4 consumers/node, 2m topics, 800K msgs/sec, 100 bytes"
           load:
             publish:
-              msg_rate_per_second: 250000
+              msg_rate_per_second: 200000
 
 
 ###
