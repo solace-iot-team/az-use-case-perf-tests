@@ -16,10 +16,22 @@ vpn_stats:
       averageRxByteRate,
       averageRxMsgRate,
       averageTxByteRate,
-      averageTxMsgRate,
-      rate
-    select_client_connection_stats: >-
-      clientName
+      averageTxMsgRate
+    select_client_stats:
+      - clientName
+      - clientAddress
+      - rxDiscardedMsgCount
+      - txDiscardedMsgCount
+      - dataRxMsgCount
+      - dataTxMsgCount
+      - averageRxMsgRate
+      - averageTxMsgRate
+      - platform
+      - uptime
+      # NOTE: not useful, vpn stats collection not sync'ed with publisher/consumer start/stop
+      # - dataRxMsgCount
+      # - dataTxMsgCount
+
 latency:
     topic_prefix: "private/direct/latency"
     warmup_secs: 10

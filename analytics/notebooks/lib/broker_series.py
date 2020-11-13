@@ -12,8 +12,6 @@ from .constants import *
 from .perf_error import PerfError
 
 
-import logging
-
 class BrokerSeries(BaseSeries):
 
     def __init__(self, run):
@@ -45,39 +43,67 @@ class BrokerSeries(BaseSeries):
             raise PerfError(f'BrokerSeries - sample_num: {sample_num} not found')
 
     def calculateAggregates(self):
-        discard_rx_msg_count = 0
-        discard_tx_msg_count = 0 
-        rx_msg_count = 0
-        tx_msg_count = 0
-        avg_tx_msg_rate = 0
-        avg_rx_msg_rate = 0
-        for sample in self.list_samples:
-            discard_rx_msg_count += sample.broker_discard_rx_msg_count
-            discard_tx_msg_count += sample.broker_discard_tx_msg_count
-            rx_msg_count += sample.broker_rx_msg_count
-            tx_msg_count += sample.broker_tx_msg_count
-            avg_tx_msg_rate += sample.broker_avg_tx_msg_rate
-            avg_rx_msg_rate += sample.broker_avg_rx_msg_rate
-   
+        vpn_discard_rx_msg_count = 0
+        vpn_discard_tx_msg_count = 0 
+        vpn_rx_msg_count         = 0
+        vpn_tx_msg_count         = 0
+        vpn_avg_tx_msg_rate      = 0
+        vpn_avg_rx_msg_rate      = 0
+        fan_out_ratio            = float(0)   
+
+        if self.list_samples and len(self.list_samples) > 0:   
+            #  NOTE: last stat contains the aggregates already
+            sample = self.list_samples[-1]
+            vpn_discard_rx_msg_count    = sample.broker_discard_rx_msg_count
+            vpn_discard_tx_msg_count    = sample.broker_discard_tx_msg_count
+            vpn_rx_msg_count            = sample.broker_rx_msg_count
+            vpn_tx_msg_count            = sample.broker_tx_msg_count
+            vpn_avg_tx_msg_rate         = sample.broker_avg_tx_msg_rate
+            vpn_avg_rx_msg_rate         = sample.broker_avg_rx_msg_rate
+            
+        if vpn_rx_msg_count > 0:
+            fan_out_ratio           = vpn_tx_msg_count/vpn_rx_msg_count
+
+        vpn=dict(
+            fan_out_ratio           = fan_out_ratio,
+            rx_msg_count            = vpn_rx_msg_count,
+            tx_msg_count            = vpn_tx_msg_count,
+            discard_rx_msg_count    = vpn_discard_rx_msg_count,
+            discard_tx_msg_count    = vpn_discard_tx_msg_count,
+            avg_rx_msg_rate_per_sec = vpn_avg_rx_msg_rate,
+            avg_tx_msg_rate_per_sec = vpn_avg_tx_msg_rate
+        )
         return dict(
-            fan_out_ratio=tx_msg_count/rx_msg_count,
-            rx_msg_count=rx_msg_count,
-            tx_msg_count=tx_msg_count,
-            discard_rx_msg_count=discard_rx_msg_count,
-            discard_tx_msg_count=discard_tx_msg_count,
-            avg_rx_msg_rate_per_sec=avg_rx_msg_rate/len(self.list_samples),
-            avg_tx_msg_rate_per_sec=avg_tx_msg_rate/len(self.list_samples)
+            vpn=vpn
         )
 
     def getOverviewAsMarkdown(self):
 
-        md = f"""
-## Run Overview
+        # aggregates are most accurate from meta: end - start
+        publisher_aggregates = self.run.run_meta.getPublisherAggregates()
+        consumer_aggregates = self.run.run_meta.getConsumerAggregates()
+        load_fan_out_ratio = 0.0
+        if publisher_aggregates["rxMsgCount"] > 0:
+            load_fan_out_ratio  = consumer_aggregates["txMsgCount"] / publisher_aggregates["rxMsgCount"]
 
-|  |Messages|Discarded|Rates (1/sec)|Fan Out|
-|--|:------:|:-------:|:-----------:|:-----:|
-|received:| {self.aggregates["rx_msg_count"]:,}  | {self.aggregates["discard_rx_msg_count"]:,}  | {self.aggregates["avg_rx_msg_rate_per_sec"]:,.0f} |1|
-|sent:   |  {self.aggregates["tx_msg_count"]:,}  | {self.aggregates["discard_tx_msg_count"]:,}  | {self.aggregates["avg_tx_msg_rate_per_sec"]:,.0f} |{self.aggregates["fan_out_ratio"]:.2f}|
+
+        md = f"""
+## Run Metrics Summary
+
+Description: {self.run.run_meta.getRunSpecDescription()}
+
+|Monitors        |Messages|Discarded|Rate (1/sec)|Fan Out|
+|:---------------|:------:|:-------:|:-----------:|:-----:|
+|broker received:| {self.aggregates["vpn"]["rx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_rx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_rx_msg_rate_per_sec"]:,.0f} |1|
+|broker sent:    | {self.aggregates["vpn"]["tx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_tx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_tx_msg_rate_per_sec"]:,.0f} |{self.aggregates["vpn"]["fan_out_ratio"]:.2f}|
+
+|Load                                                                |Messages                               |Discarded                                       |Rate (1/sec)                             |Fan Out                     |
+|:-------------------------------------------------------------------|:-------------------------------------:|:----------------------------------------------:|:---------------------------------------:|:--------------------------:|
+|publishers ({len(self.run.run_meta.getEndTestPublisherList())})     |{publisher_aggregates["rxMsgCount"]:,} |{publisher_aggregates["rxDiscardedMsgCount"]:,} |{publisher_aggregates["meanRxMsgRate"]}  |1                           |
+|consumers ({len(self.run.run_meta.getEndTestConsumerList())})       |{consumer_aggregates["txMsgCount"]:,}  |{consumer_aggregates["txDiscardedMsgCount"]:,}  |{consumer_aggregates["meanTxMsgRate"]}   |{load_fan_out_ratio:.2f}    |
+
+_Note: Run metrics are taken in-flight, therefor they do not match exactly._
+        
         """
         
         return md

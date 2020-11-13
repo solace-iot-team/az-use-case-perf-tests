@@ -17,23 +17,25 @@
 
     "env": {{test_env.env | to_nice_json }},
 
+    "solace_pubsub_image": "{{ test_broker_manifest[0].RepoTags[0] }}",
+
     "run_spec": {{ run_spec | to_nice_json }},
 
     "inventory": {{ test_inventory | to_nice_json }},
 
     "nodes": {
       "broker_nodes": {{ test_broker_nodes.broker_nodes | to_nice_json }},
-      "sdkperf_nodes": {{ test_sdkperf_nodes.sdkperf_nodes | to_nice_json }}
+      "latency_nodes": {{ test_sdkperf_nodes.latency_nodes | to_nice_json }},
+      "publisher_nodes": {{ test_sdkperf_nodes.publisher_nodes | to_nice_json }},
+      "consumer_nodes": {{ test_sdkperf_nodes.consumer_nodes | to_nice_json }},
     },
     "client_connections": {
       "start_test": {
-        "number": {{ number_connected_clients_start }},
-        "list": {{ connected_client_list_start | to_nice_json }}
+        "consumer_list": {{ consumer_list | to_nice_json }},
+        "publisher_list": {{ publisher_list | to_nice_json }},
+        "client_list": {{ client_list | to_nice_json }}
       },
-      "end_test": {
-        "number": -1,
-        "list": []
-      }
+      "end_test": {}
     }
   }
 }

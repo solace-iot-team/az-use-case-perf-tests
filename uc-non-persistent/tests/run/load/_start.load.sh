@@ -59,7 +59,8 @@ echo "# Starting Consumers ..."
                     --private-key $privateKeyFile \
                     $playbook \
                     --extra-vars "RUN_SPEC_FILE=$RUN_SPEC_FILE" \
-                    --extra-vars "RUN_LOG_FILE_BASE=$RUN_LOG_FILE_BASE"
+                    --extra-vars "RUN_LOG_FILE_BASE=$RUN_LOG_FILE_BASE" \
+                    --extra-vars "INVENTORY_FILE=$inventoryFile"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

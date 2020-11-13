@@ -1,5 +1,46 @@
 # Release Notes
 
+## Version: 0.7.0
+Release Purpose: Consumer Deployment Strategy
+
+_Note: This release contains breaking changes._
+
+**Infrastructure:**
+
+* **uc-non-persistent/infrastructure/_run.apply.sh**
+  - mandatory removal of `terraform taint` for bootstrap resource
+    - now solved in terraform script itself with `always_run = "${timestamp()}"`
+* **uc-non-persistent/infrastructure/{aws|azure}**
+  - bootstrap.tf
+    - triggers always
+    - includes a bootstrap destroy provisioner
+    - _note: do not use terraform taint command any more!_
+* **uc-non-persistent/infrastructure/{aws|azure}/{aws-variables.tf|az-variables.tf}**
+  - added more variables for various types of nodes: publisher, consumer, latency
+* **uc-non-persistent/infrastructure/bootstrap/_run.bootstrap.destroy.sh & bootstrap.destroy.playbook.yml**
+  - called from terraform script `{aws|az}-bootstrap.tf`
+    - cleans up bootstrap, manifest file in shared-setup
+* **uc-non-persistent/shared-setup**
+  - new file: `{infrastructureId}.broker.manifest.json`
+    - used for reporting, contains the broker version
+
+**Tests:**
+* **uc-non-persistent/tests/auto-run/template.{spec-id}.test.spec.yml**
+  - removed `lpm` from configuration (it is always set to true now)
+  - added: `load.subscribe.consumer_distribution_strategy=[round_robin | carbon_copy ]`
+* **uc-non-persistent/test-results/stats**:
+  - `meta.json` contains the broker image used
+* **uc-non-persistent/tests/auto-run/tp-001.test.spec.yml**
+  - example implementation of test case tp-001
+* **uc-non-persistent/tests/auto-run/tp-002.test.spec.yml**
+  - example implementation of test case tp-002
+
+**Analytics:**
+* introduced check for zero-message-loss
+* added bar chart of consumer/node distribution and total message numbers received
+* various minor changes and fixes
+
+
 ## Version: 0.6.0
 Release Purpose: Analytics & Report Generation
 

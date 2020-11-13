@@ -6,10 +6,13 @@
 resource "local_file" "inventory_file" {
   content = templatefile("../templates/shared-setup/az.inventory.tpl",
     {
-      sdk_perf_nodes = azurerm_linux_virtual_machine.sdkperf-nodes.*
-      solace_broker_nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
       cloud_provider = var.cloud_provider
       tag_name_prefix = var.tag_name_prefix
+
+      latency_node = azurerm_linux_virtual_machine.latency-nodes[0]
+      publisher_nodes = azurerm_linux_virtual_machine.publisher-nodes.*
+      consumer_nodes = azurerm_linux_virtual_machine.consumer-nodes.*
+      broker_node = azurerm_linux_virtual_machine.solace-broker-nodes[0]
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.inventory.json"
@@ -22,18 +25,22 @@ resource "local_file" "inventory_file" {
 
 resource "null_resource" "trigger_bootstrap" {
   triggers = {
-    node_ids = "${join(",", azurerm_linux_virtual_machine.solace-broker-nodes.*.id, azurerm_linux_virtual_machine.sdkperf-nodes.*.id)}"
+    always_run      = "${timestamp()}"
+    tag_name_prefix = "${var.tag_name_prefix}"
   }
   provisioner "local-exec" {
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
     command = "../bootstrap/_run.bootstrap.sh azure.${var.tag_name_prefix}-standalone"
-    # command = "echo 'now bootstrap ...'"
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
+    command = "../bootstrap/_run.bootstrap.destroy.sh azure.${self.triggers.tag_name_prefix}-standalone"
   }
   depends_on = [
       local_file.inventory_file
     ]
 }
-
 
 ###
 # The End.

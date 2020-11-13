@@ -72,7 +72,8 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --private-key $privateKeyFile \
                     $playbook \
                     --extra-vars "PROJECT_DIR=$projectHome" \
-                    --extra-vars "USE_CASE_DIR=$usecaseHome"
+                    --extra-vars "USE_CASE_DIR=$usecaseHome" \
+                    --extra-vars "MANIFEST_DEST=$sharedSetupDir/$UC_NON_PERSISTENT_INFRASTRUCTURE.broker.manifest.json"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 

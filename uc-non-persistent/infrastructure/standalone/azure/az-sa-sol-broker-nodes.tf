@@ -6,7 +6,7 @@
 
 resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
 
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   name                   = "${var.tag_name_prefix}-solacebroker-node-${count.index}"
   #If a Resource Group was specified we'll query its Location and use it, otherwise use the location of the Res Group that was just created
@@ -69,7 +69,7 @@ resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
 }
 
 resource "azurerm_managed_disk" "solace-broker-datadisk" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   name                 = "${var.tag_name_prefix}-solacebroker-node-${count.index}-datadisk"
   location             = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
@@ -89,7 +89,7 @@ resource "azurerm_managed_disk" "solace-broker-datadisk" {
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "solace-broker-datadisk-attach" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   managed_disk_id    = azurerm_managed_disk.solace-broker-datadisk[count.index].id
   virtual_machine_id = azurerm_linux_virtual_machine.solace-broker-nodes[count.index].id
@@ -101,7 +101,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "solace-broker-datadisk-
 }
 
 resource "azurerm_network_interface" "solacebroker-nodes-nic" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   name                   = "${var.tag_name_prefix}-solacebroker-nic-${count.index}"
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
@@ -126,7 +126,7 @@ resource "azurerm_network_interface" "solacebroker-nodes-nic" {
 }
 
 resource "azurerm_public_ip" "solacebroker-nodes-pubip" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   name                = "${var.tag_name_prefix}-solacebroker-pubip-${count.index}"
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
@@ -146,7 +146,7 @@ resource "azurerm_public_ip" "solacebroker-nodes-pubip" {
 
 #Asociate the VM NIC to the Sec Group created
 resource "azurerm_network_interface_security_group_association" "solacebroker-nodes-secgrp_association" {
-  count = var.solace_broker_count
+  count = var.solace_broker_vm_count
 
   network_interface_id      = azurerm_network_interface.solacebroker-nodes-nic[count.index].id
   network_security_group_id = azurerm_network_security_group.solacebroker_secgrp.id
