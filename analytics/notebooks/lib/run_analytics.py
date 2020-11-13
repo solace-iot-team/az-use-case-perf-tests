@@ -217,10 +217,13 @@ class RunAnalytics():
         )
 
     def getChecksAsMarkdown(self):
-        publisher_aggregates = self.run.run_meta.getPublisherAggregates()
-        consumer_aggregates = self.run.run_meta.getConsumerAggregates()
-        isMessageLoss = (publisher_aggregates["rxDiscardedMsgCount"] + consumer_aggregates["txDiscardedMsgCount"]) > 0
-        zeroMessageLossCheckResult = CHECK_FAILING_MD if isMessageLoss else CHECK_PASSING_MD
+
+        num_discarded_messages = 0
+        if self.run.broker_series and self.run.broker_series.aggregates:
+            num_discarded_messages += self.run.broker_series.aggregates["vpn"]["discard_rx_msg_count"] + self.run.broker_series.aggregates["vpn"]["discard_tx_msg_count"]
+        num_discarded_messages += self.run.run_meta.getPublisherAggregates()["rxDiscardedMsgCount"]
+        num_discarded_messages += self.run.run_meta.getConsumerAggregates()["txDiscardedMsgCount"]
+        zeroMessageLossCheckResult = CHECK_FAILING_MD if num_discarded_messages > 0 else CHECK_PASSING_MD
 
         md = f"""
 Checks: zero message loss:{zeroMessageLossCheckResult}

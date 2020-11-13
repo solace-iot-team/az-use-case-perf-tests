@@ -199,6 +199,11 @@ class RunMeta():
             return "n/a"    
         return len(self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumers"])
 
+    def getRunSpecLoadSubscribeDistributionStrategy(self):
+        if not self.getRuncSpecLoadIsIncluded():
+            return "n/a"    
+        return self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumer_distribution_strategy"]
+
     def getNodeSpec(self, node): 
         if self.cloud_provider == "azure":
             return f"size: {node['size']}"
@@ -321,6 +326,7 @@ Cloud Provider: **{self.getDisplayNameCloudProvider()}**
 | - Rate (1/sec):       |{self.getRunSpecLoadPublishTotalMsgRatePerSec()}       | |**Ping**       | included:                 |**{self.getRuncSpecMonitorPingIsIncluded()}**                    |  
 | - Topics:             |{self.getRunSpecLoadPublishTotalNumberOfTopics()}      | |**Broker VPN** | included:                 |**{self.getRuncSpecMonitorVpnIsIncluded()}**                     |  
 |Consumers:             |{self.getRunSpecLoadSubscribeTotalNumberOfConsumers()} | |               |                           |                                                                 |   
+| - deploy strategy:    |{self.getRunSpecLoadSubscribeDistributionStrategy()}   | |               |                           |                                                                 |   
 
             """
         return md    
