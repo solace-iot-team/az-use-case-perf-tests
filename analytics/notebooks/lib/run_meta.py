@@ -273,6 +273,14 @@ class RunMeta():
     def getRuncSpecMonitorVpnIsIncluded(self):
         return self.metaJson["meta"]["run_spec"]["monitors"]["vpn_stats"]["include"]
 
+    def getDisplayNameCloudProvider(self):
+        if self.cloud_provider == "azure": 
+            return "Azure"
+        elif self.cloud_provider == "aws":
+            return "AWS"
+        else:    
+            return self.cloud_provider
+
     def getUseCaseAsMarkdown(self):
         md = f"""
 ## Use Case: {self.metaJson["meta"]["run_spec"]["general"]["use_case"]["display_name"]} ({self.metaJson["meta"]["run_spec"]["general"]["use_case"]["name"]})
@@ -280,6 +288,8 @@ class RunMeta():
 Test Specification: 
 {self.getRunSpecGeneral()["test_spec"]["descr"]}.
 ({self.getRunSpecGeneral()["test_spec"]["name"]})
+
+Cloud Provider: **{self.getDisplayNameCloudProvider()}**
         """
         return md
 

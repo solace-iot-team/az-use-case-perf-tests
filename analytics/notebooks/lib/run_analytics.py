@@ -19,6 +19,9 @@ import numpy as np
 import pandas as pd
 
 
+CHECK_PASSING_MD="**<span style='color:green'>passing</span>**"
+CHECK_FAILING_MD="**<span style='color:red'>failing</span>**"
+
 d_latency_percentile = {
     # k_latency_00_05th : 0.005,
     # k_latency_01_th : 0.01,
@@ -213,6 +216,16 @@ class RunAnalytics():
             )
         )
 
+    def getChecksAsMarkdown(self):
+        publisher_aggregates = self.run.run_meta.getPublisherAggregates()
+        consumer_aggregates = self.run.run_meta.getConsumerAggregates()
+        isMessageLoss = (publisher_aggregates["rxDiscardedMsgCount"] + consumer_aggregates["txDiscardedMsgCount"]) > 0
+        zeroMessageLossCheckResult = CHECK_FAILING_MD if isMessageLoss else CHECK_PASSING_MD
+
+        md = f"""
+Checks: zero message loss:{zeroMessageLossCheckResult}
+        """
+        return md
 
 ###
 # The End.            
