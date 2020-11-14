@@ -60,7 +60,7 @@
             client_connection_count: 1
             msg_payload_size_bytes: 100
             # 100K msgs / sec per publisher
-            msg_rate_per_second: 100000
+            msg_rate_per_second: 50000
         monitors:
           latency:
             sdkperf_node_to_broker:
@@ -76,7 +76,7 @@
       runs:
 
         - name: soak_run
-          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 400K msgs/sec, 100 bytes"
+          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 100 bytes"
 
 
 ###
