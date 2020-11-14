@@ -59,16 +59,16 @@ jobs:
         if: github.actor != 'ricardojosegomezulmkex'
         run: |
           echo "not authorized"
-          echo "##[set-output is_authorized=false;]
+          echo '::set-output name=IS_AUTHORIZED::false'
           exit 1
         id: auth
 
 # DEBUG: EXIT
       - name: DEVEL - TEST
-        if: ${{ always() && steps.auth.outputs.is_authorized == 'false' }}
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED == 'false' }}
         run: |
           echo "TEST: NOT AUTHORIZED "
-          
+
 
 
       - name: Print test env
