@@ -11,15 +11,15 @@
       display_name: "Market Data Distribution"
     description: "tp-001: artificial test for base line comparison"
     infrastructure_list:
-      # - cloud_provider: azure
-      #   config: devel1-standalone
+      - cloud_provider: azure
+        config: devel1-standalone
       # - cloud_provider: azure
       #   config: devel2-standalone
-      - cloud_provider: aws
-        config: devel1-standalone
+      # - cloud_provider: aws
+      #   config: devel1-standalone
     run_specs:
       run_params:
-        total_num_samples: 3
+        total_num_samples: 2
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60 # 60
       run_defaults:
@@ -119,17 +119,17 @@
                 topic_prefix: "markets/pub-1"
             client_connection_count: 1
             msg_payload_size_bytes: 100
-            msg_rate_per_second: 100 #50000
+            msg_rate_per_second: 10 #50000
         monitors:
           latency:
             sdkperf_node_to_broker:
-              include: false
+              include: true
             broker_node_to_broker:
-              include: false
+              include: true
             msg_rate_per_second: 1 # 1000
             msg_payload_size_bytes: 100
           ping:
-            include: false
+            include: true
           vpn_stats:
             include: true
       runs:
