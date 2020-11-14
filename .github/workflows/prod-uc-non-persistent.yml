@@ -49,14 +49,14 @@ env:
   TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
-  run_tests:
+  run_prod:
 
     runs-on: ubuntu-18.04
 
     steps:
 
       - name: Check Auth
-        if: github.actor != 'ricardojosegomezulmkex'
+        if: github.actor != 'ricardojosegomezulmke'
         run: |
           echo "not authorized"
           echo '::set-output name=IS_AUTHORIZED::false'
