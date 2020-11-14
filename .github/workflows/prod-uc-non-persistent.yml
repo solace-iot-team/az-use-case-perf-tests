@@ -102,6 +102,10 @@ jobs:
           cd
 
 # DEBUG: EXIT
+      - name: DEVEL - Cancel Workflow
+        if: ${{ always() }}
+        uses: andymckay/cancel-action@0.2
+
       - name: DEVEL - EXIT
         run: exit 1
 
