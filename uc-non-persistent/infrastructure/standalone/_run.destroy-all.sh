@@ -19,11 +19,6 @@ source $projectHome/.lib/functions.sh
   if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:LOG_DIR"; exit 1; fi
   if [ -z "$TF_VARIABLES_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:TF_VARIABLES_DIR"; exit 1; fi
 
-  # if [ -z "$TERRAFORM_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_DIR"; exit 1; fi
-  # if [ -z "$TERRAFORM_VAR_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:VARIABLES_FILE"; exit 1; fi
-  # if [ -z "$TERRAFORM_STATE_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_STATE_FILE"; exit 1; fi
-  # if [ -z "$TF_LOG_PATH" ]; then echo ">>> ERROR: - $scriptName - missing env var:TF_LOG_PATH"; exit 1; fi
-
 ##############################################################################################################################
 # Call scripts
 
