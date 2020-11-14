@@ -63,11 +63,9 @@ jobs:
           exit 1
         id: auth
 
-# DEBUG: EXIT
-      - name: DEVEL - TEST
+      - name: Cancel Workflow
         if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED == 'false' }}
-        run: |
-          echo "TEST: NOT AUTHORIZED "
+        uses: andymckay/cancel-action@0.2
 
 
 
