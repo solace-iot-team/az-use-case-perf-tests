@@ -22,7 +22,7 @@
     run_specs:
 
       run_params:
-        total_num_samples: 300
+        total_num_samples: 3
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
 
