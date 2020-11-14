@@ -160,6 +160,7 @@ class RunMeta():
     def getRunSpecParamsTotalNumSamples(self):
         return self.metaJson["meta"]["run_spec"]["params"]["total_num_samples"]
 
+    """ Load """
     def getRuncSpecLoadIsIncluded(self):
         return self.metaJson["meta"]["run_spec"]["load"]["include"]
 
