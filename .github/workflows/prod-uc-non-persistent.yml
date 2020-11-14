@@ -402,7 +402,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           VIEW_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
         with:
-          filename: .github/failed-test-template.md
+          filename: .github/failed-prod-template.md
 
 ###
 # The End.
