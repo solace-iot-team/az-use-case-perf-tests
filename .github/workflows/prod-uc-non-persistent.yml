@@ -101,15 +101,6 @@ jobs:
           ls -la
           cd
 
-# DEBUG: EXIT
-      - name: DEVEL - Cancel Workflow
-        if: ${{ always() }}
-        uses: andymckay/cancel-action@0.2
-
-      - name: DEVEL - EXIT
-        run: exit 1
-
-
       - name: Azure Login
         # https://github.com/marketplace/actions/azure-login
         uses: azure/login@v1
@@ -245,19 +236,6 @@ jobs:
               ls -la && \
               echo "terraform initialized"
           "
-
-      ###############
-      # Example of how to log into Azure manually
-      # - name: Controller - Bootstrap - Azure login
-      #   run: |
-      #     ssh controller "\
-      #         az login --service-principal \
-      #           --username ${{ secrets.AZURE_CLIENT_ID }} \
-      #           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
-      #           --tenant ${{ secrets.AZURE_TENANT_ID }}
-      #
-      #         echo "azure login succeeded"
-      #     "
 
       - name: Controller - Infra Apply - Link Docker Image into Repo
         run: |
