@@ -59,7 +59,6 @@
                 topic_prefix: "markets/exchange-3"
             client_connection_count: 1
             msg_payload_size_bytes: 100
-            # 100K msgs / sec per publisher
             msg_rate_per_second: 50000
         monitors:
           latency:
