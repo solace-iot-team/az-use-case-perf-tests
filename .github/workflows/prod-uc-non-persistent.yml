@@ -34,7 +34,7 @@ env:
 
   TEST_REPO_TESTS_DIR: uc-non-persistent/tests/auto-run
   TEST_REPO_TESTS_LOGS_DIR: logs
-  TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
+  TEST_REPO_TESTS_RUN_SCRIPT: run.tp-003.fg.sh
   TEST_REPO_TEST_RESULTS_DIR: uc-non-persistent/test-results/stats
   TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
   TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
