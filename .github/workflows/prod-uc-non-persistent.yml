@@ -67,8 +67,6 @@ jobs:
         if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED == 'false' }}
         uses: andymckay/cancel-action@0.2
 
-
-
       - name: Print test env
         if: env.DEBUG_FLAG == 'true'
         run: |
@@ -306,7 +304,7 @@ jobs:
           "
 
       - name: Controller - Download Test Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TESTS_DIR }}/${{ env.TEST_REPO_TESTS_LOGS_DIR }}
@@ -316,7 +314,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Test Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TEST_RESULTS_DIR }}
@@ -338,7 +336,7 @@ jobs:
           "
 
       - name: Controller - Download Analytics Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_DIR }}/${{ env.TEST_REPO_ANALYTICS_LOGS_DIR }}
@@ -348,7 +346,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Analytics Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_RESULTS_DIR }}
@@ -358,7 +356,7 @@ jobs:
           sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Infra Destroy
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         run: |
           ssh controller "
 
@@ -383,7 +381,7 @@ jobs:
           "
 
       - name: Controller - Infra - Download Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
@@ -393,7 +391,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Archive Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}
         uses: actions/upload-artifact@v2
@@ -403,7 +401,7 @@ jobs:
           if-no-files-found: error
 
       - name: Teardown Controller
-        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' && env.DEBUG_FLAG == 'false' }}
         run: |
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
           az group delete \
@@ -413,7 +411,7 @@ jobs:
 
       - name: Check - Test - Create Issue if FAILED
       # https://github.com/JasonEtco/create-an-issue
-        if: failure()
+        if: ${{ failure() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
