@@ -107,7 +107,7 @@ jobs:
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
 
-      - name: Create Azure Resource Group
+      - name: Controller - Create Azure Resource Group
         run: |
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
           AZURE_PROJECT_TAG="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}"
@@ -117,7 +117,7 @@ jobs:
             --tags project=$AZURE_PROJECT_TAG \
             --verbose
 
-      - name: Standup Controller
+      - name: Controller - Standup
         id: azure_deploy
         # https://github.com/marketplace/actions/deploy-azure-resource-manager-arm-template
         uses: azure/arm-deploy@v1.0.1
