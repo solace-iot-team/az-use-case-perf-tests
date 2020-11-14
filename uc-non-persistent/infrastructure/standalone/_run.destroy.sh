@@ -37,8 +37,7 @@ source $projectHome/.lib/functions.sh
     count=0; code=1
     until [[ $count -gt 4 || $code -eq 0 ]]; do
       echo ">>> INFO: try: $count"
-      # terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
-      echo "terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve"
+      terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
       code=$?
 
       if [[ $code != 0 ]]; then
