@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "Broker VPN Statistics"
+- name: "Broker VPN Statistics - Single"
   hosts: broker_pubsub
   gather_facts: no
   module_defaults:
@@ -31,16 +31,16 @@
       set_fact:
         result_dir: "{{ RESULT_DIR }}"
         run_id: "{{ RUN_ID }}"
-        run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
+        sample_start_ts_epoch_secs: "{{ SAMPLE_START_TS_EPOCH_SECS }}"
         stats_name: "{{ STATS_NAME }}"
 
     - name: "Settings"
       set_fact:
         min_collection_period_secs: 15
-        sampling_overhead_secs: 10
         sample_run_time_secs: "{{ run_spec.params.sample_duration_secs | int }}"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
         vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
+        sample_num: "{{ run_spec.params.total_num_samples }}"
 
     - name: "Check Local Files Exist"
       stat:
@@ -57,35 +57,14 @@
         path: "{{result_dir}}"
         state: directory
 
-    # # TEST & DEBUG
-    # - name: "TEST: Simulate delay in startup"
-    #   pause:
-    #     seconds: 15
+    - name: "Pause to give Broker time to collect all the stats"
+      pause:
+        seconds: 120
 
-    - name: "Clear VPN Stats"
-      uri:
-        # method: "PUT"
-        # uri: "http://51.136.121.254:8080/SEMP/v2/__private_action__/msgVpns/sdkperf/clearStats"
-       url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/__private_action__/msgVpns/{{ broker_pubsub.vpn_name }}/clearStats"
-       method: PUT
-       user: "{{ sempv2_username }}"
-       password: "{{ sempv2_password }}"
-       force_basic_auth: yes
-       body: "{}"
-       body_format: json
-       status_code: "200"
-       return_content: yes
-      register: result
-
-    - name: "Warmup Sample Runs"
+    - name: "Collect VPN Stats"
       include_tasks: ./tasks/broker.vpn-stats.testrun.yml
-      vars:
-        warm_up_run: true
-      with_sequence: "end=0 start=0"
+      with_sequence: "end={{ sample_num }} start={{ sample_num }}"
 
-    - name: "Starting Sample Runs"
-      include_tasks: ./tasks/broker.vpn-stats.testrun.yml
-      with_sequence: "end={{run_spec.params.total_num_samples-1}} start=0"
 
 ###
 # The End.

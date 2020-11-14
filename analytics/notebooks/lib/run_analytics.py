@@ -225,8 +225,16 @@ class RunAnalytics():
         num_discarded_messages += self.run.run_meta.getConsumerAggregates()["txDiscardedMsgCount"]
         zeroMessageLossCheckResult = CHECK_FAILING_MD if num_discarded_messages > 0 else CHECK_PASSING_MD
 
+        msg_tally = 0
+        if self.run.broker_series and self.run.broker_series.aggregates:
+            msg_tally += self.run.broker_series.aggregates["vpn"]["rx_msg_count"] \
+                            + self.run.broker_series.aggregates["vpn"]["discard_rx_msg_count"] \
+                            - self.run.broker_series.aggregates["vpn"]["discard_tx_msg_count"] \
+                            - self.run.broker_series.aggregates["vpn"]["tx_msg_count"]
+        msgTallyCheckResult = CHECK_FAILING_MD if msg_tally != 0 else CHECK_PASSING_MD
+
         md = f"""
-Checks: zero message loss:{zeroMessageLossCheckResult}
+Checks: zero-message-loss:{zeroMessageLossCheckResult} | message-tally:{msgTallyCheckResult}
         """
         return md
 
