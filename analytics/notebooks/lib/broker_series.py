@@ -92,17 +92,21 @@ class BrokerSeries(BaseSeries):
 
 Description: {self.run.run_meta.getRunSpecDescription()}
 
-|Monitors        |Messages|Discarded|Rate (1/sec)|Fan Out|
-|:---------------|:------:|:-------:|:-----------:|:-----:|
-|broker received:| {self.aggregates["vpn"]["rx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_rx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_rx_msg_rate_per_sec"]:,.0f} |1|
-|broker sent:    | {self.aggregates["vpn"]["tx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_tx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_tx_msg_rate_per_sec"]:,.0f} |{self.aggregates["vpn"]["fan_out_ratio"]:.2f}|
+|PubSub+ Broker*  |Messages|Discarded|Rate** (1/sec)    |Fan Out|
+|:---------------|:------:|:-------:|:-----------------:|:-----:|
+|received:| {self.aggregates["vpn"]["rx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_rx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_rx_msg_rate_per_sec"]:,.0f} |1|
+|sent:    | {self.aggregates["vpn"]["tx_msg_count"]:,}  | {self.aggregates["vpn"]["discard_tx_msg_count"]:,}  | {self.aggregates["vpn"]["avg_tx_msg_rate_per_sec"]:,.0f} |{self.aggregates["vpn"]["fan_out_ratio"]:.2f}|
 
-|Load                                                                |Messages                               |Discarded                                       |Rate (1/sec)                             |Fan Out                     |
-|:-------------------------------------------------------------------|:-------------------------------------:|:----------------------------------------------:|:---------------------------------------:|:--------------------------:|
-|publishers ({len(self.run.run_meta.getEndTestPublisherList())})     |{publisher_aggregates["rxMsgCount"]:,} |{publisher_aggregates["rxDiscardedMsgCount"]:,} |{publisher_aggregates["meanRxMsgRate"]}  |1                           |
-|consumers ({len(self.run.run_meta.getEndTestConsumerList())})       |{consumer_aggregates["txMsgCount"]:,}  |{consumer_aggregates["txDiscardedMsgCount"]:,}  |{consumer_aggregates["meanTxMsgRate"]}   |{load_fan_out_ratio:.2f}    |
+|Load***                                                             |Messages                               |Discarded                                       |Rate (1/sec)                                  |Fan Out                     |
+|:-------------------------------------------------------------------|:-------------------------------------:|:----------------------------------------------:|:--------------------------------------------:|:--------------------------:|
+|publishers ({len(self.run.run_meta.getEndTestPublisherList())})     |{publisher_aggregates["rxMsgCount"]:,} |{publisher_aggregates["rxDiscardedMsgCount"]:,} |{publisher_aggregates["meanRxMsgRate"]:,.0f}  |1                           |
+|consumers ({len(self.run.run_meta.getEndTestConsumerList())})       |{consumer_aggregates["txMsgCount"]:,}  |{consumer_aggregates["txDiscardedMsgCount"]:,}  |{consumer_aggregates["meanTxMsgRate"]:,.0f}   |{load_fan_out_ratio:.2f}    |
 
-_Note: Run metrics are taken in-flight, therefor they do not match exactly._
+_*: Note: Stats from broker vpn. Include latency probes, consumers, and publishers. Snapshot taken after tests complete (no traffic) and excluding publishers._
+
+_**: Note: Average rate over 60 seconds._
+
+_***: Note: Stats from publisher & consumer client connections, while both sets are still running. Therefore, message numbers may not tally up exactly._
         
         """
         

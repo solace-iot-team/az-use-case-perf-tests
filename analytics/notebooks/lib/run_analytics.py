@@ -46,6 +46,26 @@ class RunAnalytics():
     def __init__(self, run):
         self.run = run
 
+
+    def export_broker_srtt_by_consumer_as_dataframe(self):
+        """TBD"""
+        # names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
+        # many consumers, 1 metric "node-0:consumer_0"
+
+        d = {
+            'node-0:consumer_0': [0.0, 0.1],
+            'node-0:consumer_1': [1.0, 1.1]
+        }    
+        # d = {
+        #     'col1': [0.0, 0.1],
+        #     'col2': [1.0, 1.1]
+        # }    
+
+        return pd.DataFrame(
+            data=d
+        )
+
+
     def export_broker_node_distinct_latencies_as_dataframe(self, col_name:str ="run"):
        return pd.DataFrame(data={col_name: self.run.export_broker_node_distinct_latencies()})
 
@@ -225,8 +245,18 @@ class RunAnalytics():
         num_discarded_messages += self.run.run_meta.getConsumerAggregates()["txDiscardedMsgCount"]
         zeroMessageLossCheckResult = CHECK_FAILING_MD if num_discarded_messages > 0 else CHECK_PASSING_MD
 
+        # nonsense check with fan-out  
+        # msg_tally = 0
+        # if self.run.broker_series and self.run.broker_series.aggregates:
+        #     msg_tally += self.run.broker_series.aggregates["vpn"]["rx_msg_count"] \
+        #                     + self.run.broker_series.aggregates["vpn"]["discard_rx_msg_count"] \
+        #                     - self.run.broker_series.aggregates["vpn"]["discard_tx_msg_count"] \
+        #                     - self.run.broker_series.aggregates["vpn"]["tx_msg_count"]
+        # msgTallyCheckResult = CHECK_FAILING_MD if msg_tally != 0 else CHECK_PASSING_MD
+        # | message-tally:{msgTallyCheckResult}
+
         md = f"""
-Checks: zero message loss:{zeroMessageLossCheckResult}
+Checks: zero-message-loss:{zeroMessageLossCheckResult} 
         """
         return md
 

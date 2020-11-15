@@ -25,10 +25,13 @@
     when: is_warm_up_run == True
 
   - set_fact:
-      sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_run_time_secs | int)}}"
+      sample_end_ts_epoch_secs: "{{(sample_start_ts_epoch_secs | int) + (sample_duration_secs | int)}}"
       sample_start_ts_str: "{{ '%Y-%m-%d %H:%M:%S%z' | strftime(sample_start_ts_epoch_secs) }}"
       sample_file_name_ts_str: "{{ '%Y-%m-%d-%H-%M-%S%z' | strftime(sample_start_ts_epoch_secs) }}"
 
+  - name: "Wait before sampling"
+    pause:
+      seconds: "{{ wait_before_sampling_secs }}"
 
   # TEST & DEBUG
   # - debug:
@@ -53,46 +56,41 @@
       return_content: yes
     register: vpn_stats_result
 
-    # NOTE: not required for each run
-  # - name: "Get Client Connections - Consumer"
-  #   solace_get_vpn_clients:
-  #     query_params:
-  #       where:
-  #         - "clientName==*consumer*"
-  #       select: "{{ monitor.vpn_stats.select_client_stats }}"
-  #   register: clients_result
-  #
-  # - set_fact:
-  #     num_consumers: "{{ clients_result.result_list_count }}"
-  #     consumer_list: "{{ clients_result.result_list }}"
-  #
-  # - name: "Get Client Connections - Publishers"
-  #   solace_get_vpn_clients:
-  #     query_params:
-  #       where:
-  #         - "clientName==*publisher*"
-  #       select: "{{ monitor.vpn_stats.select_client_stats }}"
-  #   register: clients_result
-  #
-  # - set_fact:
-  #     num_publishers: "{{ clients_result.result_list_count }}"
-  #     publisher_list: "{{ clients_result.result_list }}"
-
-    # artificial pause for timing calculations - call is too fast
-  - pause:
-      seconds: "{{min_collection_period_secs}}"
+  - name: "Get Client Connection Stats"
+    solace_get_vpn_clients:
+      query_params:
+        where:
+          - "clientUsername=={{ broker_pubsub.client_user_name }}"
+        select: "{{ monitor.vpn_stats.select_client_stats }}"
+    register: clients_result
+  - set_fact:
+      clients: "{{ clients_result.result_list }}"
 
   - set_fact:
-      vpn_stats_output_json: "{{vpn_stats_result.json.data}}"
+      client_connection_details: "{{ [] }}"
+  - name: "Retrieve client connection details for all clients"
+    include_tasks: ./tasks/broker.vpn-stats.client_connections.yml
+    loop: "{{ clients }}"
+    loop_control:
+      index_var: client_num
+      loop_var: client
+      # output: client_connection_details
+
+  - name: "Create Client Connections Stats Entry"
+    set_fact:
+      client_connections: "{{ lookup('template', client_connections_j2_template_file) | from_json}}"
+
+  - set_fact:
+      vpn_stats_output_json: "{{ vpn_stats_result.json.data }}"
 
   - name: "Post-process vpn results"
     template:
       src: "{{ vpn_pp_j2_template_file }}"
-      dest: "{{ result_dir }}/{{stats_name}}.{{sample_file_name_ts_str}}.json"
+      dest: "{{ result_dir }}/{{ stats_name }}.{{ sample_file_name_ts_str }}.json"
     delegate_to: localhost
     when: is_warm_up_run == False
 
-  - name: "Wait for sample cyle to complete for sample={{sample_num}} (warmup={{is_warm_up_run}})"
+  - name: "Wait for sample cyle to complete for sample={{ sample_num }} (warmup={{ is_warm_up_run }})"
     block:
       - name: "get time from local host"
         shell: "date -u +%s"

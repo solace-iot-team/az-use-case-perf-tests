@@ -5,30 +5,32 @@
 
 ---
   test_spec:
-    name: auto_tp_003
+    name: devel_tp_003
     description: "tp-003: mdd soak test"
+
     use_case:
       name: uc_non_persistent
       display_name: "Market Data Distribution"
 
     infrastructure_list:
       - cloud_provider: azure
-        config: 1-auto-standalone
+        config: devel1-standalone
       # - cloud_provider: azure
-      #   config: 2-auto-standalone
-      - cloud_provider: aws
-        config: 1-auto-standalone
+      #   config: devel2-standalone
+      # - cloud_provider: aws
+      #   config: devel1-standalone
 
     run_specs:
 
       run_params:
-        total_num_samples: 120
+        total_num_samples: 3
         # sample_duration_secs: min: 45 secs, max: 120 secs
-        sample_duration_secs: 60
+        sample_duration_secs: 60 # 60
 
       run_defaults:
         load:
           include: true
+
           subscribe:
             consumer_distribution_strategy: carbon_copy
             consumers:
@@ -40,6 +42,7 @@
                 topic_list: markets/exchange-2/>,markets/exchange-3/>
               - consumer_id: consumer_3
                 topic_list: markets/exchange-2/>,markets/exchange-3/>
+
           publish:
             publishers:
               - publisher_id: exch_0
@@ -57,6 +60,7 @@
             client_connection_count: 1
             msg_payload_size_bytes: 100
             msg_rate_per_second: 50000
+
         monitors:
           latency:
             include_latency_node_to_broker: true
@@ -70,7 +74,6 @@
 
         - name: soak_run
           description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 100 bytes"
-
 
 ###
 # The End.
