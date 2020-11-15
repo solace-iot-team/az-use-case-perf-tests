@@ -1,0 +1,11 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+{
+  "clients": {{ clients | to_nice_json }},
+  "client_connection_details": {{ client_connection_details | to_nice_json }}
+}

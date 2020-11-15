@@ -58,16 +58,13 @@
             msg_rate_per_second: 1000
         monitors:
           latency:
-            sdkperf_node_to_broker:
-              include: true
-            broker_node_to_broker:
-              include: true
+            include_latency_node_to_broker: true
+            include_broker_node_to_broker: true
             msg_rate_per_second: 1000
             msg_payload_size_bytes: 100
           ping:
             include: true
-          vpn_stats:
-            include: true
+
       runs:
 
         - name: base_run
@@ -82,24 +79,20 @@
           description: "base run without broker node latency"
           monitors:
             latency:
-              broker_node_to_broker:
-                include: false
+              include_broker_node_to_broker: false
 
         - name: base_no_latency_node_latency
           description: "base run without latency node latency"
           monitors:
             latency:
-              sdkperf_node_to_broker:
-                include: false
+              include_latency_node_to_broker: false
 
         - name: base_no_latency
           description: "base run without any latency monitors"
           monitors:
             latency:
-              broker_node_to_broker:
-                include: false
-              sdkperf_node_to_broker:
-                include: false
+              include_latency_node_to_broker: false
+              include_broker_node_to_broker: false
 
         - name: topics_10k
           description: "base run with 10K topics"

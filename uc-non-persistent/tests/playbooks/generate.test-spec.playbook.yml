@@ -9,7 +9,7 @@
   hosts: localhost
   gather_facts: no
   pre_tasks:
-    - include_vars: "{{TEST_SPEC_FILE}}"
+    - include_vars: "{{ TEST_SPEC_FILE }}"
   vars:
     test_specs_j2_template_file: "./lib/test_specs.j2"
 
@@ -38,6 +38,11 @@
         module: file
         path: "{{test_specs_j2_template_file}}"
         state: file
+
+    - name: "Ensure test spec contains infrastructures"
+      fail:
+        msg: "no infrastructures found in test spec: {{ TEST_SPEC_FILE }} - type={{ test_spec.infrastructure_list | type_debug }}"
+      when: (test_spec.infrastructure_list|type_debug) == "NoneType" or ( test_spec.infrastructure_list | default([]) ) | length  == 0
 
     - name: "Settings"
       set_fact:

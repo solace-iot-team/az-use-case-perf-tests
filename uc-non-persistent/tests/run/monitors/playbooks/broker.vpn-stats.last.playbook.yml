@@ -1,0 +1,77 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Broker VPN Statistics - Single"
+  hosts: broker_pubsub
+  gather_facts: no
+  module_defaults:
+    solace_get_vpn_clients:
+      host: "{{ sempv2_host }}"
+      port: "{{ sempv2_port }}"
+      secure_connection: "{{ sempv2_is_secure_connection }}"
+      username: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      timeout: "{{ sempv2_timeout }}"
+      msg_vpn: "{{ broker_pubsub.vpn_name }}"
+  pre_tasks:
+    - include_vars:
+        file: "{{RUN_SPEC_FILE}}"
+        name: run_spec
+    - include_vars:
+        file: "monitor.vars.yml"
+        name: monitor
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+        run_id: "{{ RUN_ID }}"
+        sample_start_ts_epoch_secs: "{{ SAMPLE_START_TS_EPOCH_SECS }}"
+        stats_name: "{{ STATS_NAME }}"
+
+    - name: "Settings"
+      set_fact:
+        min_collection_period_secs: 15
+        sampling_overhead_secs: 10
+        sample_duration_secs: "{{ run_spec.params.sample_duration_secs | int }}"
+        admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
+        vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
+        client_connections_j2_template_file: "./lib/vpn_stats.client_connections.pp.j2"
+        sample_num: "{{ run_spec.params.total_num_samples }}"
+    - set_fact:
+        collection_period: "{{((sample_duration_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs)}}"
+    - set_fact:
+        # ensure we catch the latency monitors
+        wait_before_sampling_secs: "{{ collection_period|int - 3 }}"
+
+    - name: "Check Local Files Exist"
+      stat:
+        path: "{{item}}"
+      register: stat_result
+      delegate_to: localhost
+      failed_when: not stat_result.stat.exists
+      with_items:
+        - "{{vpn_pp_j2_template_file}}"
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - name: "Pause to give Broker time to collect all the stats"
+      pause:
+        seconds: 120
+
+    - name: "Collect VPN Stats"
+      include_tasks: ./tasks/broker.vpn-stats.testrun.yml
+      with_sequence: "end={{ sample_num }} start={{ sample_num }}"
+
+
+###
+# The End.

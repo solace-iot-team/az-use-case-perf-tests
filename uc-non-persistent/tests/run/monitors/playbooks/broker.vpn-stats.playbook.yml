@@ -19,7 +19,7 @@
       msg_vpn: "{{ broker_pubsub.vpn_name }}"
   pre_tasks:
     - include_vars:
-        file: "{{RUN_SPEC_FILE}}"
+        file: "{{ RUN_SPEC_FILE }}"
         name: run_spec
     - include_vars:
         file: "monitor.vars.yml"
@@ -33,17 +33,20 @@
         run_id: "{{ RUN_ID }}"
         run_start_ts_epoch_secs: "{{RUN_START_TS_EPOCH_SECS}}"
         stats_name: "{{ STATS_NAME }}"
-        # use_case: "{{monitor.general.use_case}}"
-        # cloud_provider: "{{brokerNodes.broker_nodes[0].cloud_provider}}"
-        # infrastrucure_id: "{{ INFRASTRUCTURE_ID }}"
 
     - name: "Settings"
       set_fact:
         min_collection_period_secs: 15
         sampling_overhead_secs: 10
-        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs | int }}"
+        sample_duration_secs: "{{ run_spec.params.sample_duration_secs | int }}"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
         vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
+        client_connections_j2_template_file: "./lib/vpn_stats.client_connections.pp.j2"
+    - set_fact:
+        collection_period: "{{((sample_duration_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs)}}"
+    - set_fact:
+        # ensure we catch the latency monitors
+        wait_before_sampling_secs: "{{ collection_period|int - 3 }}"
 
     - name: "Check Local Files Exist"
       stat:

@@ -9,7 +9,7 @@ on:
 
 env:
 
-  DEBUG_FLAG: ${{ true }}
+  DEBUG_FLAG: ${{ false }}
 
   TEST_CONTROLLER_ID: "wfp-azperf"
   TEST_LOCATION: "westeurope"
@@ -34,14 +34,14 @@ env:
 
   TEST_REPO_TESTS_DIR: uc-non-persistent/tests/auto-run
   TEST_REPO_TESTS_LOGS_DIR: logs
-  TEST_REPO_TESTS_RUN_SCRIPT: run.fg.sh
+  TEST_REPO_TESTS_RUN_SCRIPT: run.tp-003.fg.sh
   TEST_REPO_TEST_RESULTS_DIR: uc-non-persistent/test-results/stats
   TEST_RUNNER_ASSETS_TESTS_LOGS_DIR: tests-logs
   TEST_RUNNER_ASSETS_TEST_RESULTS_DIR: test-results
 
-  TEST_REPO_ANALYTICS_DIR: analytics/.test
+  TEST_REPO_ANALYTICS_DIR: analytics/auto-run
   TEST_REPO_ANALYTICS_LOGS_DIR: logs
-  TEST_REPO_ANALYTICS_RUN_SCRIPT: run.tp-003.fg.sh
+  TEST_REPO_ANALYTICS_RUN_SCRIPT: run.uc-non-persistent.auto.fg.sh
   TEST_REPO_ANALYTICS_RESULTS_DIR: uc-non-persistent/test-results/analysis
   TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR: analytics-logs
   TEST_RUNNER_ASSETS_ANALYTICS_RESULTS_DIR: analytics-results
@@ -49,27 +49,23 @@ env:
   TEST_ARCHIVE_RESULTS_NAME: results
 
 jobs:
-  run_tests:
+  run_prod:
 
     runs-on: ubuntu-18.04
 
     steps:
 
       - name: Check Auth
-        if: github.actor != 'ricardojosegomezulmkex'
+        if: github.actor != 'ricardojosegomezulmke'
         run: |
           echo "not authorized"
           echo '::set-output name=IS_AUTHORIZED::false'
           exit 1
         id: auth
 
-# DEBUG: EXIT
-      - name: DEVEL - TEST
+      - name: Cancel Workflow
         if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED == 'false' }}
-        run: |
-          echo "TEST: NOT AUTHORIZED "
-
-
+        uses: andymckay/cancel-action@0.2
 
       - name: Print test env
         if: env.DEBUG_FLAG == 'true'
@@ -105,18 +101,13 @@ jobs:
           ls -la
           cd
 
-# DEBUG: EXIT
-      - name: DEVEL - EXIT
-        run: exit 1
-
-
       - name: Azure Login
         # https://github.com/marketplace/actions/azure-login
         uses: azure/login@v1
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
 
-      - name: Create Azure Resource Group
+      - name: Controller - Create Azure Resource Group
         run: |
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
           AZURE_PROJECT_TAG="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}"
@@ -126,7 +117,7 @@ jobs:
             --tags project=$AZURE_PROJECT_TAG \
             --verbose
 
-      - name: Standup Controller
+      - name: Controller - Standup
         id: azure_deploy
         # https://github.com/marketplace/actions/deploy-azure-resource-manager-arm-template
         uses: azure/arm-deploy@v1.0.1
@@ -155,6 +146,16 @@ jobs:
           SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
           SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
 
+      - name: Controller - Connect SSH
+      # ensures that connection can be established
+        run: |
+          ssh controller "
+
+            touch ssh_connect_SUCCESS.log
+
+            echo "successfully connected to controller via ssh"
+
+          "
 
       - name: Controller - Set Bash Profile
         if: env.DEBUG_FLAG == 'true'
@@ -172,17 +173,6 @@ jobs:
               echo 'export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"' >> ~/.bash_profile
 
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
-
-          "
-
-      - name: Controller - Connect SSH
-      # ensures that connection can be established
-        run: |
-          ssh controller "
-
-            touch ssh_connect_SUCCESS.log
-
-            echo "successfully connected to controller via ssh"
 
           "
 
@@ -246,19 +236,6 @@ jobs:
               echo "terraform initialized"
           "
 
-      ###############
-      # Example of how to log into Azure manually
-      # - name: Controller - Bootstrap - Azure login
-      #   run: |
-      #     ssh controller "\
-      #         az login --service-principal \
-      #           --username ${{ secrets.AZURE_CLIENT_ID }} \
-      #           --password ${{ secrets.AZURE_CLIENT_SECRET }} \
-      #           --tenant ${{ secrets.AZURE_TENANT_ID }}
-      #
-      #         echo "azure login succeeded"
-      #     "
-
       - name: Controller - Infra Apply - Link Docker Image into Repo
         run: |
           ssh controller "
@@ -308,7 +285,7 @@ jobs:
           "
 
       - name: Controller - Download Test Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TESTS_DIR }}/${{ env.TEST_REPO_TESTS_LOGS_DIR }}
@@ -318,7 +295,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Test Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_TEST_RESULTS_DIR }}
@@ -340,7 +317,7 @@ jobs:
           "
 
       - name: Controller - Download Analytics Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_DIR }}/${{ env.TEST_REPO_ANALYTICS_LOGS_DIR }}
@@ -350,7 +327,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Analytics Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_ANALYTICS_RESULTS_DIR }}
@@ -360,7 +337,7 @@ jobs:
           sftp -p -r ${SSH_USER}:${REPO_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Infra Destroy
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         run: |
           ssh controller "
 
@@ -385,7 +362,7 @@ jobs:
           "
 
       - name: Controller - Infra - Download Logs
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
@@ -395,7 +372,7 @@ jobs:
           sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Archive Results
-        if: always()
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         env:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}
         uses: actions/upload-artifact@v2
@@ -405,7 +382,7 @@ jobs:
           if-no-files-found: error
 
       - name: Teardown Controller
-        if: ${{ always() && env.DEBUG_FLAG == 'false' }}
+        if: ${{ always() && steps.auth.outputs.IS_AUTHORIZED != 'false' && env.DEBUG_FLAG == 'false' }}
         run: |
           AZURE_RESOURCE_GROUP="${TEST_CONTROLLER_ID}-${TEST_AZURE_PROJECT}-rg"
           az group delete \
@@ -415,7 +392,7 @@ jobs:
 
       - name: Check - Test - Create Issue if FAILED
       # https://github.com/JasonEtco/create-an-issue
-        if: failure()
+        if: ${{ failure() && steps.auth.outputs.IS_AUTHORIZED != 'false' }}
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -425,7 +402,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           VIEW_URL: ${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}
         with:
-          filename: .github/failed-test-template.md
+          filename: .github/failed-prod-template.md
 
 ###
 # The End.

@@ -24,6 +24,7 @@ source $projectHome/.lib/functions.sh
 # Prepare
   rm -f $TF_LOG_PATH
   # export TF_LOG=INFO
+  sleepBetweenTriesSecs=300
 
 ##############################################################################################################################
 # Call scripts
@@ -32,8 +33,25 @@ source $projectHome/.lib/functions.sh
 
   cd $TERRAFORM_DIR
 
-  terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - $scriptName - executing terraform"; exit 1; fi
+    # try up to 5 times in case of error, then give up
+    count=0; code=1
+    until [[ $count -gt 4 || $code -eq 0 ]]; do
+      echo ">>> INFO: try: $count"
+      terraform destroy -state=$TERRAFORM_STATE_FILE -var-file=$TERRAFORM_VAR_FILE -auto-approve
+      code=$?
+
+      if [[ $code != 0 ]]; then
+        echo ">>> WARNING - try:$count - code=$code - $scriptName - executing terraform - sleep(secs):$sleepBetweenTriesSecs";
+        sleep $sleepBetweenTriesSecs;
+      fi
+      ((count=count+1))
+    done
+
+    if [[ $code != 0 ]]; then
+      echo ">>> ERROR - tries:$count, code=$code - $scriptName - executing terraform"; exit 1;
+    else
+      echo ">>> SUCCESS - tries:$count, code=$code - $scriptName - executing terraform";
+    fi
 
   cd $scriptDir
 

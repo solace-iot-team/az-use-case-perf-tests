@@ -5,11 +5,11 @@
 
 ---
 - name: "SDKPerf latency node to broker node"
-  hosts: "{{HOSTS}}"
+  hosts: "{{ HOSTS }}"
   gather_facts: no
   pre_tasks:
     - include_vars:
-        file: "{{RUN_SPEC_FILE}}"
+        file: "{{ RUN_SPEC_FILE }}"
         name: run_spec
     - include_vars:
         file: "monitor.vars.yml"

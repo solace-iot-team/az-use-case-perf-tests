@@ -4,8 +4,8 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "SDKPerf Stop Consumers & Publishers"
-  hosts: sdkperf_consumers:sdkperf_publishers
+- name: "SDKPerf Stop Load"
+  hosts: "{{ HOSTS }}"
   gather_facts: no
 
   tasks:
