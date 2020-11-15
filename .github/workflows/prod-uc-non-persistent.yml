@@ -9,6 +9,7 @@ on:
 
 env:
 
+  # TODO: set to false
   DEBUG_FLAG: ${{ true }}
 
   TEST_CONTROLLER_ID: "wfp-azperf"

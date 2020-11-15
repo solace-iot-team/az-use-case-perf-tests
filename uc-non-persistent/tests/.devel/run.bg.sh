@@ -11,7 +11,7 @@ usecaseHome=$projectHome/uc-non-persistent
 
 # export TEST_SPEC_FILE="$scriptDir/devel.test.spec.yml"
 # export TEST_SPEC_FILE="$scriptDir/devel2.test.spec.yml"
-export TEST_SPEC_FILE="$scriptDir/devel-tp-001.test.spec.yml"
+export TEST_SPEC_FILE="$scriptDir/devel-tp-003.test.spec.yml"
 
 export ANSIBLE_VERBOSITY=3
 

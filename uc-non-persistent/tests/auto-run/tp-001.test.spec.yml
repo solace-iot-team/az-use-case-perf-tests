@@ -125,15 +125,11 @@
             msg_rate_per_second: 50000
         monitors:
           latency:
-            sdkperf_node_to_broker:
-              include: true
-            broker_node_to_broker:
-              include: true
+            include_latency_node_to_broker: true
+            include_broker_node_to_broker: true
             msg_rate_per_second: 1000
             msg_payload_size_bytes: 100
           ping:
-            include: true
-          vpn_stats:
             include: true
 
       runs:

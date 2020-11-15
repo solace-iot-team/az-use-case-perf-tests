@@ -1,0 +1,36 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  # loop_var=client
+  # index_var: client_num
+  # output: client_connection_details: list
+
+
+  - name: "Retrieve client connection details for all clients"
+    uri:
+      # https://docs.solace.com/API-Developer-Online-Ref-Documentation/swagger-ui/monitor/index.html#/msgVpn/getMsgVpnClientConnections
+      # GET /msgVpns/{msgVpnName}/clients/{clientName}/connections?select=
+      url: "{{admin_protocol}}://{{ sempv2_host }}:{{ sempv2_port }}/SEMP/v2/monitor/msgVpns/{{ broker_pubsub.vpn_name }}/clients/{{ client.clientName }}/connections"
+      method: GET
+      user: "{{ sempv2_username }}"
+      password: "{{ sempv2_password }}"
+      force_basic_auth: yes
+      status_code: "200"
+      return_content: yes
+    register: client_connection_details_results
+
+  - set_fact:
+      client_connection_details: "{{ client_connection_details | default([]) }} + {{ client_connection_details_results.json.data }}"
+
+  # - debug:
+  #     msg:
+  #       - "new client_connection_details: type = {{ client_connection_details | type_debug }}"
+  #       - "{{ client_connection_details }}"
+
+###
+# The End.

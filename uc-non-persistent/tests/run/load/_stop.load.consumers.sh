@@ -34,13 +34,14 @@ source $projectHome/.lib/functions.sh
 cloudProvider=${UC_NON_PERSISTENT_INFRASTRUCTURE%%.*}
 privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-
+hosts="sdkperf_consumers"
 
   playbook="$scriptDir/playbooks/sdkperf.load.stop.playbook.yml"
   ansible-playbook \
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
-                    $playbook
+                    $playbook \
+                    --extra-vars "HOSTS=$hosts"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 
