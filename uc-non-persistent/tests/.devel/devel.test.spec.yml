@@ -56,16 +56,12 @@
             msg_rate_per_second: 1
         monitors:
           latency:
-            sdkperf_node_to_broker:
-              include: true
-            broker_node_to_broker:
-              include: true
+            include_latency_node_to_broker: true
+            include_broker_node_to_broker: true
             msg_rate_per_second: 1000 # define a max of 10000
             msg_payload_size_bytes: 100 # define a max of 10K
             lpm: true
           ping:
-            include: true
-          vpn_stats:
             include: true
       runs:
 
@@ -100,23 +96,17 @@
         #     include: true
         #   monitors:
         #     latency:
-        #       sdkperf_node_to_broker:
-        #         include: false
-        #       broker_node_to_broker:
-        #         include: false
+            # include_latency_node_to_broker: true
+            # include_broker_node_to_broker: true
         #     ping:
         #       include: false
         # - name: defaul_load_only
         #   description: "default load only run"
         #   monitors:
         #     latency:
-        #       sdkperf_node_to_broker:
-        #         include: false
-        #       broker_node_to_broker:
-        #         include: false
+            # include_latency_node_to_broker: true
+            # include_broker_node_to_broker: true
         #     ping:
-        #       include: false
-        #     vpn_stats:
         #       include: false
         # - name: testing_load_startup
         #   description: "testing load startup"
@@ -155,13 +145,9 @@
         #       msg_rate_per_second: 1
         #   monitors:
         #     latency:
-        #       sdkperf_node_to_broker:
-        #         include: false
-        #       broker_node_to_broker:
-        #         include: false
+            # include_latency_node_to_broker: true
+            # include_broker_node_to_broker: true
         #     ping:
-        #       include: false
-        #     vpn_stats:
         #       include: false
 
 ###

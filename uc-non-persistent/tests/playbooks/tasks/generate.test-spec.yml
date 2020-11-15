@@ -59,13 +59,15 @@
           msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency.msg_payload_size_bytes) }}"
           lpm: true
           sdkperf_node_to_broker:
-            include: "{{ run_spec.monitors.latency.sdkperf_node_to_broker.include | default(test_spec.run_specs.run_defaults.monitors.latency.sdkperf_node_to_broker.include) }}"
+            include: "{{ run_spec.monitors.latency.include_latency_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_latency_node_to_broker) }}"
           broker_node_to_broker:
-            include: "{{ run_spec.monitors.latency.broker_node_to_broker.include | default(test_spec.run_specs.run_defaults.monitors.latency.broker_node_to_broker.include) }}"
+            include: "{{ run_spec.monitors.latency.include_broker_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_broker_node_to_broker) }}"
         ping:
           include: "{{ run_spec.monitors.ping.include | default(test_spec.run_specs.run_defaults.monitors.ping.include) }}"
         vpn_stats:
-          include: "{{ run_spec.monitors.vpn_stats.include | default(test_spec.run_specs.run_defaults.monitors.vpn_stats.include) }}"
+          # include: "{{ run_spec.monitors.vpn_stats.include | default(test_spec.run_specs.run_defaults.monitors.vpn_stats.include) }}"
+          # set to as default
+          include: true
 
   - name: "Create Run Spec"
     set_fact:

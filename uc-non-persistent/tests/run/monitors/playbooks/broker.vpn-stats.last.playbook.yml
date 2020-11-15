@@ -37,10 +37,17 @@
     - name: "Settings"
       set_fact:
         min_collection_period_secs: 15
-        sample_run_time_secs: "{{ run_spec.params.sample_duration_secs | int }}"
+        sampling_overhead_secs: 10
+        sample_duration_secs: "{{ run_spec.params.sample_duration_secs | int }}"
         admin_protocol: "{{ 'https' if sempv2_is_secure_connection else 'http'}}"
         vpn_pp_j2_template_file: "./lib/vpn_stats.pp.j2"
+        client_connections_j2_template_file: "./lib/vpn_stats.client_connections.pp.j2"
         sample_num: "{{ run_spec.params.total_num_samples }}"
+    - set_fact:
+        collection_period: "{{((sample_duration_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs)}}"
+    - set_fact:
+        # ensure we catch the latency monitors
+        wait_before_sampling_secs: "{{ collection_period|int - 3 }}"
 
     - name: "Check Local Files Exist"
       stat:

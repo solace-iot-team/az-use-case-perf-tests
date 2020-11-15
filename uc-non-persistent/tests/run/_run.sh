@@ -66,8 +66,8 @@ fi
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
-  echo ">>> Stop Load ..."
-    runScriptName="_stop.load.sh"
+  echo ">>> Stop Load Publishers ..."
+    runScriptName="_stop.load.publishers.sh"
     logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
     runScript="$scriptDir/load/$runScriptName"
     nohup $runScript > $logFileName 2>&1 &
@@ -81,6 +81,13 @@ if [ "$FAILED" -eq 0 ]; then
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 fi
+
+echo ">>> Stop Load Consumers ..."
+  runScriptName="_stop.load.consumers.sh"
+  logFileName="$RUN_LOG_FILE_BASE.$runScriptName.log"
+  runScript="$scriptDir/load/$runScriptName"
+  nohup $runScript > $logFileName 2>&1 &
+  pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 
 ##############################################################################################################################
 # Post Processing of Results
