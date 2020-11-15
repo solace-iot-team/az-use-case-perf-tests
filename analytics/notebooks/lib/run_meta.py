@@ -140,12 +140,12 @@ class RunMeta():
             # sdkperf-load@devel1-consumer-node-1-consumer_2-000001
             # go from the back - user defines infrastructure name
             parts = name.split("-")
-            import logging, sys
-            logging.debug(f"name={name}")
-            logging.debug(f"parts = {parts}")
+            # import logging, sys
+            # logging.debug(f"name={name}")
+            # logging.debug(f"parts = {parts}")
             node_number = parts[len(parts)-1-2]
             consumer_name = parts[len(parts)-1-1]
-            logging.debug(f"node_number={node_number}, consumer_name={consumer_name}")
+            # logging.debug(f"node_number={node_number}, consumer_name={consumer_name}")
             names.append(f"node-{node_number}:{consumer_name}")
             val = consumer_end['dataTxMsgCount'] - consumer_start['dataTxMsgCount']
             values.append(val)
