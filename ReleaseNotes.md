@@ -1,9 +1,55 @@
 # Release Notes
 
+## Version: 0.7.1
+Release Purpose: Maintenance & Prep for Further Analysis
+
+**_Note: This release contains breaking changes._**
+
+**Infrastructure:**
+
+* **infrastructure/standalone/_run.destroy.sh**
+  - calls terraform destroy for each infrastructure up to 5 times with 5 minutes delay in case destroy was unsuccessful
+    - workaround for issue: terraform destroy not working the first time
+
+**Tests:**
+
+* **tests/auto-run/template.{spec-id}.test.spec.yml**
+  - **_breaking changes_**
+  - changed schema:
+    - deleted:
+      - monitors.vpn_stats.include - now set to true by default
+      - monitors.latency.sdkperf_node_to_broker.include
+      - monitors.latency.broker_node_to_broker.include
+    - added:
+      - monitors.latency.include_latency_node_to_broker
+      - monitors.latency.include_broker_node_to_broker
+* **test-results/stats/{infrastructure-id}/{run-id}/vpn-stats.{ts}.json**
+  - added collection of tcp stats from broker per client connection
+  - `client_connections.client_connection_details`
+    - contains tcp stats per client connection from broker
+  - `client_connections.clients`
+    - contains message stats per client from broker
+* **tests/run/_run.sh**
+  - new test teardown sequence
+    - stop publishers
+    - gather final vpn stats including client tcp connection stats
+    - stop consumers
+    - uses two new scripts: `tests/run/load/_stop.load.publishers.sh` and `test/run/load/_stop.load.consumers.sh`
+* **tests/run/_run.post-load.sh**
+  - new script, runs after load publishers & consumers are terminated
+  - retrieves final broker statistics for accurate message tally
+    - reaults in 1 additional `vpn-stats.{ts}.json file`
+  - uses:
+    - tests/run/monitors/broker.vpn-stats.last.playbook.yml
+* **tests/auto-run/tp-003.test.spec.yml**
+  - soak test spec
+  - used by `.github/workflows/prod-uc-non-persistent.yml`
+
+
 ## Version: 0.7.0
 Release Purpose: Consumer Deployment Strategy
 
-_Note: This release contains breaking changes._
+**_Note: This release contains breaking changes._**
 
 **Infrastructure:**
 
