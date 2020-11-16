@@ -147,7 +147,7 @@ for virtualMachine in ${virtualMachines[@]}; do
       --vm-name "$virtualMachine" \
       --name OmsAgentForLinux \
       --verbose)
-    code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR: - $code - $resp - $scriptName - Failed to show vm extension [OmsAgentForLinux] for vm [$virtualMachine]"; exit 1; fi
+    code=$?; if [[ $code != 0 && $code != 3 ]]; then echo ">>> ERROR: - $code - $resp - $scriptName - Failed to show vm extension [OmsAgentForLinux] for vm [$virtualMachine]"; exit 1; fi
     # exists:
     # code == 0, resp.provisioningState==Succeeded
     if [[ $code == 0 ]]; then
