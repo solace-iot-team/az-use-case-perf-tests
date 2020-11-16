@@ -21,8 +21,6 @@ location="WestEurope"
 # no underscores
 workspaceName="devel1-SDKPerfLogAnalyticsWS"
 
-workspaceName="MandalorianLogAnalytics"
-
 # Virtual machines
 # shared-setup: azure.devel1-standalone.broker-nodes.json
 #   - broker_nodes[*].name
@@ -48,7 +46,6 @@ virtualMachines=(
 # Static Settings
 
 workspaceSku="PerGB2018"
-workspaceSku="pergb2018"
 
 # ARM template and parameters files
 templateFile="./deploy-arm-template.json"
@@ -90,7 +87,7 @@ echo ">>> Check/Create Log Analytics Workspace [$workspaceName] ..."
           --resource-group $resourceGroupName \
           --template-file $templateFile \
           --parameters $parametersFile \
-          --parameters "workspaceName=$workspaceName workspaceSku=$workspaceSku location=$location" \
+          --parameters workspaceName=$workspaceName workspaceSku=$workspaceSku location=$location \
           --verbose
       code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR: - $code - $scriptName - Failed to create log analytics workspace [$workspaceName]"; exit 1; fi
   else
