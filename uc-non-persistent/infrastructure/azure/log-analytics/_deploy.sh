@@ -21,6 +21,8 @@ location="WestEurope"
 # no underscores
 workspaceName="devel1-SDKPerfLogAnalyticsWS"
 
+workspaceName="MandalorianLogAnalytics"
+
 # Virtual machines
 # shared-setup: azure.devel1-standalone.broker-nodes.json
 #   - broker_nodes[*].name
