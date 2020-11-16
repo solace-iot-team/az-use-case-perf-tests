@@ -20,9 +20,9 @@ export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 export LOG_DIR=$scriptDir/logs
 rm -f $LOG_DIR/*
 
-# ../_run.delete-all.sh > $LOG_DIR/$scriptName.out 2>&1
+../_run.delete-all.sh > $LOG_DIR/$scriptName.out 2>&1
 
-../_run.delete-all.sh
+# ../_run.delete-all.sh
 
 
 ###
