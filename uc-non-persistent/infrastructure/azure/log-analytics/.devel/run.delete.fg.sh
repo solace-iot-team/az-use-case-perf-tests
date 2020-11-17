@@ -10,9 +10,8 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
 #  format: {cloud_provider}.{config}
 export infrastructureIds=(
-  "aws.devel1"
-  "azure.devel1"
-  # "azure.devel2"
+  "azure.devel1-standalone"
+  # "azure.devel2-standalone"
 )
 
 
@@ -21,9 +20,10 @@ export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
 export LOG_DIR=$scriptDir/logs
 rm -f $LOG_DIR/*
 
-export TF_VARIABLES_DIR=$scriptDir
+../_run.delete-all.sh > $LOG_DIR/$scriptName.out 2>&1
 
-nohup ../_run.apply-all.sh > $LOG_DIR/$scriptName.out 2>&1 &
+# ../_run.delete-all.sh
+
 
 ###
 # The End.
