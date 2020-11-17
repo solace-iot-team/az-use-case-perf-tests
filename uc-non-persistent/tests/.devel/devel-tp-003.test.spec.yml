@@ -23,7 +23,7 @@
     run_specs:
 
       run_params:
-        total_num_samples: 3
+        total_num_samples: 10
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60 # 60
 
@@ -66,7 +66,7 @@
             include_latency_node_to_broker: true
             include_broker_node_to_broker: true
             msg_rate_per_second: 1000
-            msg_payload_size_bytes: 100
+            msg_payload_size_bytes: 500
           ping:
             include: true
 
