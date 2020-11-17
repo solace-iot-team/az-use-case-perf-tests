@@ -8,6 +8,7 @@
 ---
 - name: "SDKPerf Centos Bootstrap"
   hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  any_errors_fatal: true
   gather_facts: no
   pre_tasks:
     - include_vars:
@@ -32,6 +33,17 @@
         module: file
         path: "{{ USE_CASE_DIR }}"
         state: directory
+
+    - name: Change sysctl-settings
+      sysctl:
+        name: '{{ item.key }}'
+        value: '{{ item.value }}'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_dict: '{{ bootstrap.sdkperf_nodes.sysctl_conf }}'
+      when: inventory_hostname != 'broker_centos'
+      become: true
 
     - name: sdkperf | create sdkperf_group
       group:
