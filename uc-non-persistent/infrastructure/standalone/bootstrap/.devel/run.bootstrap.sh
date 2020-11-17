@@ -8,6 +8,7 @@ scriptDir=$(cd $(dirname "$0") && pwd);
 scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
 export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
+# export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.devel1-standalone"
 
 export ANSIBLE_VERBOSITY=3
 export LOG_DIR=$scriptDir/logs

@@ -75,14 +75,20 @@
         # - name: soak_run_100bytes
         #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 100 bytes"
 
-        - name: soak_run_200bytes
-          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 200 bytes"
+        - name: soak_run_100bytes_100KpSec
+          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 100K msgs/sec, 100 bytes"
           load:
             publish:
-              msg_payload_size_bytes: 200
-          monitors:
-            latency:
-              msg_payload_size_bytes: 200
+              msg_rate_per_second: 25000
+
+        # - name: soak_run_200bytes
+        #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 200 bytes"
+        #   load:
+        #     publish:
+        #       msg_payload_size_bytes: 200
+        #   monitors:
+        #     latency:
+        #       msg_payload_size_bytes: 200
 
         # - name: soak_run_500bytes
         #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 500 bytes"
