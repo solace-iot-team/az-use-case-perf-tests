@@ -19,10 +19,11 @@ class PingSample(BaseSample):
         self.ts_start = to_date(sample_json["sample_start_timestamp"], perf_latency_date_ts_pattern)
         self.sample_num = int(sample_json["sample_num"])
         self.metrics_type = sample_json["metrics_type"]
-        self.ping_rtt_avg = float(sample_json["metrics"]["rtt_avg"]["value"])
-        self.ping_rtt_max = float(sample_json["metrics"]["rtt_max"]["value"])
-        self.ping_rtt_min = float(sample_json["metrics"]["rtt_min"]["value"])
-        self.ping_rtt_mdev = float(sample_json["metrics"]["rtt_mdev"]["value"])
+        self.ping_rtt_avg = float(sample_json["metrics"]["rtt_avg"]["value"]) * 1000
+        self.ping_rtt_max = float(sample_json["metrics"]["rtt_max"]["value"]) * 1000
+        self.ping_rtt_min = float(sample_json["metrics"]["rtt_min"]["value"]) * 1000
+        self.ping_rtt_mdev = float(sample_json["metrics"]["rtt_mdev"]["value"]) * 1000
+
 
     def export_all_metrics(self) -> list:
         return self.export_metrics(c_ping_all_metrics)
