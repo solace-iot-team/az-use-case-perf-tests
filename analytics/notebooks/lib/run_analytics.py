@@ -80,6 +80,9 @@ class RunAnalytics():
     def export_broker_timedRetransmitCount_by_consumer_as_dataframe(self):
         return self._export_broker_metric_by_consumer_as_dataframe('timedRetransmitCount')
 
+    def export_broker_uptime_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('uptime')
+
     def export_broker_node_distinct_latencies_as_dataframe(self, col_name:str ="run"):
        return pd.DataFrame(data={col_name: self.run.export_broker_node_distinct_latencies()})
 
