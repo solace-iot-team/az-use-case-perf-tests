@@ -46,61 +46,39 @@ class RunAnalytics():
     def __init__(self, run):
         self.run = run
 
-    def export_broker_txQueueByteCount_by_consumer_as_dataframe(self):
-        """TBD"""
-        # names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
-        # many consumers, 1 metric "node-0:consumer_0"
+    def _export_broker_metric_by_consumer_as_dataframe(self, broker_metric, conversion_function=None):
 
         client_connection_details_series = self.run.broker_series.getSeriesOfListOfClientConnectionDetails()    
-        import logging, json
-        logging.debug(f"client_connection_details_series={json.dumps(client_connection_details_series, indent=2)}")
 
         client_list=self.run.run_meta.getConsumerNamesAsDict()
 
         for client_connection_details_sample in client_connection_details_series:
-            
-            logging.debug("======== new sample ========================")
-            logging.debug(f"sample_num={client_connection_details_sample['sample_num']}")
-            # logging.debug(f"client_connection_details_sample=\n{json.dumps(client_connection_details_sample, indent=2)}")
-            
-            
+                        
             for client_connection_detail in client_connection_details_sample["client_connection_details"]:
 
-                # logging.debug(f"client_connection_detail=\n{json.dumps(client_connection_detail, indent=2)}")
-                # logging.debug(f"client_name={client_connection_detail['clientName']}")    
-                # logging.debug(f"txQueueByteCount={client_connection_detail['txQueueByteCount']}")    
-
                 client_name = self.run.run_meta.composeDisplayClientName(client_connection_detail['clientName'])
-                logging.debug(f"client_name={client_name}")    
-                    # txQueueByteCount = client_connection_detail['txQueueByteCount']
 
                 if client_name in client_list:
-                    client_list[client_name].append(client_connection_detail['txQueueByteCount'])
-
-        logging.debug(f"client_list=\n{json.dumps(client_list, indent=2)}")
+                    if conversion_function:
+                        value = conversion_function(client_connection_detail[broker_metric])
+                    else:
+                        value = client_connection_detail[broker_metric]    
+                    client_list[client_name].append(value)
 
         return pd.DataFrame(
             data=client_list
         )
 
-    def export_broker_srtt_by_consumer_as_dataframe(self):
-        """TBD"""
-        # names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
-        # many consumers, 1 metric "node-0:consumer_0"
+    def export_broker_txQueueByteCount_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('txQueueByteCount')
 
-        d = {
-            'node-0:consumer_0': [0.0, 0.1],
-            'node-0:consumer_1': [1.0, 1.1]
-        }    
-        # d = {
-        #     'col1': [0.0, 0.1],
-        #     'col2': [1.0, 1.1]
-        # }    
+    def export_broker_smoothedRoundTripTime_by_consumer_as_dataframe(self):
+        def convert2Micros(value):
+            return value / 1000
+        return self._export_broker_metric_by_consumer_as_dataframe('smoothedRoundTripTime', convert2Micros)
 
-        return pd.DataFrame(
-            data=d
-        )
-
+    def export_broker_timedRetransmitCount_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('timedRetransmitCount')
 
     def export_broker_node_distinct_latencies_as_dataframe(self, col_name:str ="run"):
        return pd.DataFrame(data={col_name: self.run.export_broker_node_distinct_latencies()})
