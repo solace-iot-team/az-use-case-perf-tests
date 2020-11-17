@@ -18,6 +18,8 @@ source $projectHome/.lib/functions.sh
   if [ -z "$INFRASTRUCTURE_IDS" ]; then echo ">>> ERROR: - $scriptName - missing env var:INFRASTRUCTURE_IDS"; exit 1; fi
   if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:LOG_DIR"; exit 1; fi
   if [ -z "$TF_VARIABLES_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:TF_VARIABLES_DIR"; exit 1; fi
+  if [ -z "$AWS_ACCESS_KEY_ID" ]; then echo ">>> ERROR: - $scriptName - missing env var:AWS_ACCESS_KEY_ID"; exit 1; fi
+  if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then echo ">>> ERROR: - $scriptName - missing env var:AWS_SECRET_ACCESS_KEY"; exit 1; fi
 
 ##############################################################################################################################
 # Checks
