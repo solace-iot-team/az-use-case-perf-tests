@@ -30,6 +30,8 @@ class BrokerSample(BaseSample):
         self.broker_avg_rx_msg_rate = int(sample_json["metrics"]["averageRxMsgRate"])
         self.broker_discard_tx_msg_count = int(sample_json["metrics"]["discardedRxMsgCount"])
         self.broker_discard_rx_msg_count = int(sample_json["metrics"]["discardedTxMsgCount"])
+        self.clients = sample_json["client_connections"]["clients"]
+        self.client_connection_details = sample_json["client_connections"]["client_connection_details"]
 
     def export_metrics(self, list_metrics: list) -> list:
         rows = list()
@@ -42,6 +44,7 @@ class BrokerSample(BaseSample):
             row['value'] = self.__getattribute__(d_metric_property[metric])
             rows.append(row)
         return rows
+
 
 ### 
 # The End.              

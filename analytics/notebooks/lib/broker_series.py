@@ -42,6 +42,27 @@ class BrokerSeries(BaseSeries):
         except StopIteration:
             raise PerfError(f'BrokerSeries - sample_num: {sample_num} not found')
 
+    def getSeriesOfListOfClientConnectionDetails(self):
+        """Returns a list of dicts"""
+        
+        result_list = list()
+        
+        for sample in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+
+            import logging
+            logging.debug(f"sample.sample_num={sample.sample_num}")
+            # logging.debug(f"sample.client_connection_details={sample.client_connection_details}")
+
+            entry=dict(
+                sample_num=sample.sample_num,
+                client_connection_details=sample.client_connection_details
+            )
+        
+            result_list.append(entry)
+        
+        return result_list    
+
+
     def calculateAggregates(self):
         vpn_discard_rx_msg_count = 0
         vpn_discard_tx_msg_count = 0 

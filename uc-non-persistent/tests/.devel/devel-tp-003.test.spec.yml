@@ -17,13 +17,13 @@
         config: devel1-standalone
       # - cloud_provider: azure
       #   config: devel2-standalone
-      # - cloud_provider: aws
-      #   config: devel1-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
 
     run_specs:
 
       run_params:
-        total_num_samples: 10
+        total_num_samples: 5
         # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60 # 60
 
@@ -66,14 +66,50 @@
             include_latency_node_to_broker: true
             include_broker_node_to_broker: true
             msg_rate_per_second: 1000
-            msg_payload_size_bytes: 500
+            msg_payload_size_bytes: 100
           ping:
             include: true
 
       runs:
 
-        - name: soak_run
-          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 100 bytes"
+        # - name: soak_run_100bytes
+        #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 100 bytes"
+
+        - name: soak_run_200bytes
+          description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 200 bytes"
+          load:
+            publish:
+              msg_payload_size_bytes: 200
+          monitors:
+            latency:
+              msg_payload_size_bytes: 200
+
+        # - name: soak_run_500bytes
+        #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 500 bytes"
+        #   load:
+        #     publish:
+        #       msg_payload_size_bytes: 500
+        #   monitors:
+        #     latency:
+        #       msg_payload_size_bytes: 500
+
+        # - name: soak_run_1000bytes
+        #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 1000 bytes"
+        #   load:
+        #     publish:
+        #       msg_payload_size_bytes: 1000
+        #   monitors:
+        #     latency:
+        #       msg_payload_size_bytes: 1000
+
+        # - name: soak_run_2000bytes
+        #   description: "soak run: 4 pubs, 4 consumers/node, 2m topics, 200K msgs/sec, 2000 bytes"
+        #   load:
+        #     publish:
+        #       msg_payload_size_bytes: 2000
+        #   monitors:
+        #     latency:
+        #       msg_payload_size_bytes: 2000
 
 ###
 # The End.

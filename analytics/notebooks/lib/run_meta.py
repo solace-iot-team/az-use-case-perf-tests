@@ -129,24 +129,36 @@ class RunMeta():
             meanTxMsgRate       = end['averageTxMsgRate']
         )
 
+    def composeDisplayClientName(self, full_client_name):
+        # NOTE: very brittle, assumes the following structure: 
+        # sdkperf-load@devel1-consumer-node-1-consumer_2-000001
+        # go from the back - user defines infrastructure name
+        parts = full_client_name.split("-")
+        # import logging, sys
+        # logging.debug(f"name={name}")
+        # logging.debug(f"parts = {parts}")
+        node_number = parts[len(parts)-1-2]
+        client_name = parts[len(parts)-1-1]
+        # logging.debug(f"node_number={node_number}, consumer_name={consumer_name}")
+        return f"node-{node_number}:{client_name}"
+
+    def getConsumerNamesAsDict(self):
+        end_list   = self.getEndTestConsumerList()
+        names=dict()
+        for consumer in end_list:
+            name = self.composeDisplayClientName(consumer['clientName'])
+            entry=dict()
+            entry[name]=[]
+            names.update(entry)
+        return names
+
     def getConsumerNamesValues4Plotting(self):
         start_list = self.getStartTestConsumerList()
         end_list   = self.getEndTestConsumerList()
         names = []
         values = []
         for consumer_start, consumer_end  in zip(start_list, end_list):
-            name=consumer_end['clientName']
-            # NOTE: very brittle, assumes the following structure: 
-            # sdkperf-load@devel1-consumer-node-1-consumer_2-000001
-            # go from the back - user defines infrastructure name
-            parts = name.split("-")
-            # import logging, sys
-            # logging.debug(f"name={name}")
-            # logging.debug(f"parts = {parts}")
-            node_number = parts[len(parts)-1-2]
-            consumer_name = parts[len(parts)-1-1]
-            # logging.debug(f"node_number={node_number}, consumer_name={consumer_name}")
-            names.append(f"node-{node_number}:{consumer_name}")
+            names.append(self.composeDisplayClientName(consumer_end['clientName']))
             val = consumer_end['dataTxMsgCount'] - consumer_start['dataTxMsgCount']
             values.append(val)
         return names, values

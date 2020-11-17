@@ -46,6 +46,42 @@ class RunAnalytics():
     def __init__(self, run):
         self.run = run
 
+    def export_broker_txQueueByteCount_by_consumer_as_dataframe(self):
+        """TBD"""
+        # names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
+        # many consumers, 1 metric "node-0:consumer_0"
+
+        client_connection_details_series = self.run.broker_series.getSeriesOfListOfClientConnectionDetails()    
+        import logging, json
+        logging.debug(f"client_connection_details_series={json.dumps(client_connection_details_series, indent=2)}")
+
+        client_list=self.run.run_meta.getConsumerNamesAsDict()
+
+        for client_connection_details_sample in client_connection_details_series:
+            
+            logging.debug("======== new sample ========================")
+            logging.debug(f"sample_num={client_connection_details_sample['sample_num']}")
+            # logging.debug(f"client_connection_details_sample=\n{json.dumps(client_connection_details_sample, indent=2)}")
+            
+            
+            for client_connection_detail in client_connection_details_sample["client_connection_details"]:
+
+                # logging.debug(f"client_connection_detail=\n{json.dumps(client_connection_detail, indent=2)}")
+                # logging.debug(f"client_name={client_connection_detail['clientName']}")    
+                # logging.debug(f"txQueueByteCount={client_connection_detail['txQueueByteCount']}")    
+
+                client_name = self.run.run_meta.composeDisplayClientName(client_connection_detail['clientName'])
+                logging.debug(f"client_name={client_name}")    
+                    # txQueueByteCount = client_connection_detail['txQueueByteCount']
+
+                if client_name in client_list:
+                    client_list[client_name].append(client_connection_detail['txQueueByteCount'])
+
+        logging.debug(f"client_list=\n{json.dumps(client_list, indent=2)}")
+
+        return pd.DataFrame(
+            data=client_list
+        )
 
     def export_broker_srtt_by_consumer_as_dataframe(self):
         """TBD"""
