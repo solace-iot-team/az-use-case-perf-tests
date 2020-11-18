@@ -7,6 +7,7 @@
 from ._util import to_date
 from .constants import *
 from .perf_error import PerfError
+from datetime import datetime
 
 class RunMeta():
     """ RunMeta """
@@ -299,9 +300,34 @@ class RunMeta():
         else:    
             return self.cloud_provider
 
+    def getHeaderAsMarkdown(self):
+
+        md = f"""
+
+<table style="width:100%">
+  <tr>
+    <th style="text-align:left">
+    <br/>
+        Generated on: {datetime.now().strftime("%A, %d. %B %Y %I:%M%p")} 
+    </th>
+    <th style="text-align:right">
+        Copyright (c) 2020, Solace Corporation<br/>
+        Generated with: <a href="https://github.com/solace-iot-team/az-use-case-perf-tests">https://github.com/solace-iot-team/az-use-case-perf-tests</a>
+    </th>
+  </tr>
+</table>
+
+ ---
+
+# Performance Run Analysis 
+        """
+        return md
+
     def getUseCaseAsMarkdown(self):
         md = f"""
 ## Use Case: {self.metaJson["meta"]["run_spec"]["general"]["use_case"]["display_name"]} ({self.metaJson["meta"]["run_spec"]["general"]["use_case"]["name"]})
+
+[Overview](https://github.com/solace-iot-team/az-use-case-perf-tests/uc-non-persistent/doc)
 
 Test Specification: 
 {self.getRunSpecGeneral()["test_spec"]["descr"]}.

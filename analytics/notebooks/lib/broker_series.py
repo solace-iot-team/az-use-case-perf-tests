@@ -49,10 +49,6 @@ class BrokerSeries(BaseSeries):
         
         for sample in sorted(self.list_samples, key=lambda sample: sample.sample_num):
 
-            import logging
-            logging.debug(f"sample.sample_num={sample.sample_num}")
-            # logging.debug(f"sample.client_connection_details={sample.client_connection_details}")
-
             entry=dict(
                 sample_num=sample.sample_num,
                 client_connection_details=sample.client_connection_details
