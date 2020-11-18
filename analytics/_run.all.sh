@@ -63,11 +63,14 @@ if [ "$FAILED" -eq 0 ]; then
 
         export PYTHONPATH="$scriptDir/notebooks"
 
-        logFileName="$LOG_DIR/nbconvert.$runNotebookName.$infrastructureId.$runDir.log"
-        analysisOutputFileName="$ANALYSIS_OUT_DIR/$runNotebookName.$infrastructureId.$runDir.html"
+        logFileName="$LOG_DIR/nbconvert.$runNotebookName.$infrastructureId.$runDir"
+        analysisOutputFileName="$ANALYSIS_OUT_DIR/$runNotebookName.$infrastructureId.$runDir"
         # do not run all in parallel - could cause mem issues
-        jupyter nbconvert --execute $NOTEBOOK_FILE --no-input --stdout --to html 2> $logFileName 1> $analysisOutputFileName
+        jupyter nbconvert --execute $NOTEBOOK_FILE --no-input --stdout --to html 2> "$logFileName.html.log" 1> "$analysisOutputFileName.html"
         code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - notebook exit: $runNotebookName"; FAILED=1; fi
+
+        # jupyter nbconvert --execute $NOTEBOOK_FILE --no-input --stdout --to webpdf 2> "$logFileName.pdf.log" 1> "$analysisOutputFileName.pdf"
+        # code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - notebook exit: $runNotebookName"; FAILED=1; fi
 
 # DEBUG: for testing only
 # break
