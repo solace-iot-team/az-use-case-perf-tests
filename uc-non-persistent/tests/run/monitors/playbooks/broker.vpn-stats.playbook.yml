@@ -46,7 +46,7 @@
         collection_period: "{{((sample_duration_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs)}}"
     - set_fact:
         # ensure we catch the latency monitors
-        wait_before_sampling_secs: "{{ collection_period|int - 3 }}"
+        wait_before_sampling_secs: "{{ monitor.latency.warmup_secs + (collection_period|int * 0.5)|int }}"
 
     - name: "Check Local Files Exist"
       stat:

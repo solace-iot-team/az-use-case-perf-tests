@@ -6,8 +6,9 @@
 
 ---
   - set_fact:
-      sample_num: "{{item}}"
-      is_warm_up_run: "{{warm_up_run | default(False)}}"
+      sample_num: "{{ item }}"
+      is_warm_up_run: "{{ warm_up_run | default(False) }}"
+      is_timed_run: "{{ timed_run | default(True) }}"
 
   - name: "Determine Sampling Start Time"
     block:
@@ -102,7 +103,7 @@
       - name: "Check playbook execution time is within time span"
         fail:
           msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
-        when: is_warm_up_run == False and wait_secs|int < 0
+        when: is_warm_up_run == False and is_timed_run == True and wait_secs|int < 0
       - name: "Wait for sample cycle to complete, sample={{sample_num}} (warmup={{is_warm_up_run}})"
         pause:
           seconds: "{{wait_secs}}"
