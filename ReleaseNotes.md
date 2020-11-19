@@ -1,5 +1,21 @@
 # Release Notes
 
+## Version: 0.7.2
+Release Purpose: Maintenance & Analytics
+
+**BUG Fixes:**
+* **analytics**
+  - ping stats converted to micro seconds
+
+**New:**
+* **uc-non-persistent/infrastructure/standalone/bootstrap/vars/bootstrap.vars.yml**
+  - added facility to set sysctl_conf variables for vms (sysctl_conf.net.ipv4.tcp_mem: "669723 892967 1439446")
+
+* **analytics**
+  - added more detailed analytics on consumer client connections
+  - generates a header & links
+  - added histograms from raw latency metrics
+
 ## Version: 0.7.1
 Release Purpose: Maintenance & Prep for Further Analysis
 
