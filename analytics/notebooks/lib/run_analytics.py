@@ -28,7 +28,7 @@ d_latency_percentile = {
     # k_latency_00_5th : 0.05,
     # k_latency_10th : 0.10,
     # k_latency_25th : 0.25,
-    k_latency_50th : 0.5,
+    # k_latency_50th : 0.5,
     # k_latency_75th : 0.75,
     k_latency_90th : 0.90,
     k_latency_95th : 0.95,

@@ -8,6 +8,7 @@ from ._util import to_date
 from .constants import *
 from .perf_error import PerfError
 from datetime import datetime
+import pytz
 
 class RunMeta():
     """ RunMeta """
@@ -308,7 +309,7 @@ class RunMeta():
   <tr>
     <th style="text-align:left">
     <br/>
-        Generated on: {datetime.now().strftime("%A, %d. %B %Y %I:%M%p")}
+        Generated on: {datetime.now(pytz.utc).strftime("%A, %d. %B %Y %H:%M %z")}
     </th>
     <th style="text-align:right">
         Copyright (c) 2020, Solace Corporation<br/>
@@ -327,7 +328,7 @@ class RunMeta():
         md = f"""
 ## Use Case: {self.metaJson["meta"]["run_spec"]["general"]["use_case"]["display_name"]} ({self.metaJson["meta"]["run_spec"]["general"]["use_case"]["name"]})
 
-[Overview](https://github.com/solace-iot-team/az-use-case-perf-tests/uc-non-persistent/doc)
+[Overview](https://github.com/solace-iot-team/az-use-case-perf-tests/tree/master/uc-non-persistent/doc)
 
 Test Specification:
 {self.getRunSpecGeneral()["test_spec"]["descr"]}.
@@ -339,6 +340,12 @@ Cloud Provider: **{self.getDisplayNameCloudProvider()}**
 
 
     def getAsMarkdown(self):
+
+        # 2020-11-19 08:02:29+0000
+        _perf_meta_date_ts_pattern = '%Y-%m-%d %H:%M:%S%z'
+        run_start = datetime.strptime(self.metaJson["meta"]["run_start_time"], _perf_meta_date_ts_pattern)
+        run_end = datetime.strptime(self.metaJson["meta"]["run_end_time"], _perf_meta_date_ts_pattern)
+
         md = f"""
 
 ## Run Settings
@@ -348,8 +355,8 @@ Cloud Provider: **{self.getDisplayNameCloudProvider()}**
 |:--------------------------|:--------------------------------------------------|-|:--------------------------|:----------------------------------------------------------------------------|:-----|:--|
 |Run name:                  |{self.run_name}                                    | |{self.infrastructure}      |region: {self.getEnvRegion()}, zone: {self.getEnvZone()}                     |      |   |
 |Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>{self.getBrokerNodeSpec()}             |      |   |
-|Run Start:                 |{self.ts_run_start}                                | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>{self.getPublisherNodeSpec()}       |      |   |
-|Run End:                   |{self.ts_run_end}                                  | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>{self.getConsumerNodeSpec()}        |      |   |
+|Run Start:                 |{run_start}                                        | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>{self.getPublisherNodeSpec()}       |      |   |
+|Run End:                   |{run_end}                                          | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>{self.getConsumerNodeSpec()}        |      |   |
 |Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>{self.getMonitorNodeSpec()}          |      |   |
 |Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |Solace PubSub+             | {self.getSolacePubSubInfo()}                                                |      |   |
 |Number of Samples:         |{self.getRunSpecParamsTotalNumSamples()}           | |                           |                                                                             |      |   |
