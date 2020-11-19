@@ -6,7 +6,7 @@
 name: test-uc-non-persistent
 on:
   # for testing
-  workflow_dispatch:
+  # workflow_dispatch:
 
   push:
     branches:
@@ -17,9 +17,8 @@ on:
   #   branches:
   #     - master
 
-# run it manually for now until error with destroy is fixed
-  # release:
-  #   types: [published]
+  release:
+    types: [published]
 
   # TODO: fix getting the master branch
   # schedule:

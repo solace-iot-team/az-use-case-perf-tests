@@ -1,6 +1,6 @@
-# Use Case: Non-persistent
+# Use Case: Market Data Distribution (non-persistent)
 
-[Overview: Market Data Distribution](./MDD.md).
+[Overview: Use Case & Test Framework](./doc/README.md).
 
 ### Structure
 

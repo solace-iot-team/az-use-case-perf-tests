@@ -42,16 +42,33 @@ class BrokerSeries(BaseSeries):
         except StopIteration:
             raise PerfError(f'BrokerSeries - sample_num: {sample_num} not found')
 
+    def getSeriesOfListOfClientConnectionDetails(self):
+        """Returns a list of dicts"""
+
+        result_list = list()
+
+        for sample in sorted(self.list_samples, key=lambda sample: sample.sample_num):
+
+            entry=dict(
+                sample_num=sample.sample_num,
+                client_connection_details=sample.client_connection_details
+            )
+
+            result_list.append(entry)
+
+        return result_list
+
+
     def calculateAggregates(self):
         vpn_discard_rx_msg_count = 0
-        vpn_discard_tx_msg_count = 0 
+        vpn_discard_tx_msg_count = 0
         vpn_rx_msg_count         = 0
         vpn_tx_msg_count         = 0
         vpn_avg_tx_msg_rate      = 0
         vpn_avg_rx_msg_rate      = 0
-        fan_out_ratio            = float(0)   
+        fan_out_ratio            = float(0)
 
-        if self.list_samples and len(self.list_samples) > 0:   
+        if self.list_samples and len(self.list_samples) > 0:
             #  NOTE: last stat contains the aggregates already
             sample = self.list_samples[-1]
             vpn_discard_rx_msg_count    = sample.broker_discard_rx_msg_count
@@ -60,7 +77,7 @@ class BrokerSeries(BaseSeries):
             vpn_tx_msg_count            = sample.broker_tx_msg_count
             vpn_avg_tx_msg_rate         = sample.broker_avg_tx_msg_rate
             vpn_avg_rx_msg_rate         = sample.broker_avg_rx_msg_rate
-            
+
         if vpn_rx_msg_count > 0:
             fan_out_ratio           = vpn_tx_msg_count/vpn_rx_msg_count
 
@@ -107,10 +124,10 @@ _*: Note: Stats from broker vpn. Include latency probes, consumers, and publishe
 _**: Note: Average rate over 60 seconds._
 
 _***: Note: Stats from publisher & consumer client connections, while both sets are still running. Therefore, message numbers may not tally up exactly._
-        
+
         """
-        
+
         return md
 
 ###
-# The End.            
+# The End.

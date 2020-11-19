@@ -8,6 +8,7 @@
 ---
 - name: "Broker Centos Bootstrap"
   hosts: broker_centos
+  any_errors_fatal: true
   pre_tasks:
     - include_vars:
         file: bootstrap.vars.yml
@@ -54,6 +55,16 @@
         content: "{{ manifest }}"
         dest: "{{ manifest_dest }}"
       delegate_to: localhost
+
+    - name: Change sysctl-settings
+      sysctl:
+        name: '{{ item.key }}'
+        value: '{{ item.value }}'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_dict: '{{ bootstrap.broker.centos.sysctl_conf }}'
+      become: true
 
     - name: "Centos Bootstrap: AWS Setup Swap Tasks"
       include_tasks: ./tasks/aws.centos.bootstrap.yml

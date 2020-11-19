@@ -46,25 +46,42 @@ class RunAnalytics():
     def __init__(self, run):
         self.run = run
 
+    def _export_broker_metric_by_consumer_as_dataframe(self, broker_metric, conversion_function=None):
 
-    def export_broker_srtt_by_consumer_as_dataframe(self):
-        """TBD"""
-        # names, values = self.run.run_meta.getConsumerNamesValues4Plotting()
-        # many consumers, 1 metric "node-0:consumer_0"
+        client_connection_details_series = self.run.broker_series.getSeriesOfListOfClientConnectionDetails()
 
-        d = {
-            'node-0:consumer_0': [0.0, 0.1],
-            'node-0:consumer_1': [1.0, 1.1]
-        }    
-        # d = {
-        #     'col1': [0.0, 0.1],
-        #     'col2': [1.0, 1.1]
-        # }    
+        client_list=self.run.run_meta.getConsumerNamesAsDict()
+
+        for client_connection_details_sample in client_connection_details_series:
+
+            for client_connection_detail in client_connection_details_sample["client_connection_details"]:
+
+                client_name = self.run.run_meta.composeDisplayClientName(client_connection_detail['clientName'])
+
+                if client_name in client_list:
+                    if conversion_function:
+                        value = conversion_function(client_connection_detail[broker_metric])
+                    else:
+                        value = client_connection_detail[broker_metric]
+                    client_list[client_name].append(value)
 
         return pd.DataFrame(
-            data=d
+            data=client_list
         )
 
+    def export_broker_txQueueByteCount_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('txQueueByteCount')
+
+    def export_broker_smoothedRoundTripTime_by_consumer_as_dataframe(self):
+        def convert2Micros(value):
+            return value / 1000
+        return self._export_broker_metric_by_consumer_as_dataframe('smoothedRoundTripTime', convert2Micros)
+
+    def export_broker_timedRetransmitCount_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('timedRetransmitCount')
+
+    def export_broker_uptime_by_consumer_as_dataframe(self):
+        return self._export_broker_metric_by_consumer_as_dataframe('uptime')
 
     def export_broker_node_distinct_latencies_as_dataframe(self, col_name:str ="run"):
        return pd.DataFrame(data={col_name: self.run.export_broker_node_distinct_latencies()})
@@ -245,7 +262,7 @@ class RunAnalytics():
         num_discarded_messages += self.run.run_meta.getConsumerAggregates()["txDiscardedMsgCount"]
         zeroMessageLossCheckResult = CHECK_FAILING_MD if num_discarded_messages > 0 else CHECK_PASSING_MD
 
-        # nonsense check with fan-out  
+        # nonsense check with fan-out
         # msg_tally = 0
         # if self.run.broker_series and self.run.broker_series.aggregates:
         #     msg_tally += self.run.broker_series.aggregates["vpn"]["rx_msg_count"] \
@@ -256,9 +273,9 @@ class RunAnalytics():
         # | message-tally:{msgTallyCheckResult}
 
         md = f"""
-Checks: zero-message-loss:{zeroMessageLossCheckResult} 
+Checks: zero-message-loss:{zeroMessageLossCheckResult}
         """
         return md
 
 ###
-# The End.            
+# The End.

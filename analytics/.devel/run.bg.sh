@@ -10,8 +10,9 @@ projectHome=${scriptDir%/analytics/*}
 
 # settings
 
-export NOTEBOOK_NAME="devel-1.ipynb"
-export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
+# export NOTEBOOK_NAME="devel-1.ipynb"
+# export NOTEBOOK_NAME="devel-2.ipynb"
+# export NOTEBOOK_FILE="$scriptDir/$NOTEBOOK_NAME"
 
 export NOTEBOOK_NAME="run-analysis.ipynb"
 export NOTEBOOK_FILE="$projectHome/analytics/notebooks/$NOTEBOOK_NAME"
@@ -22,7 +23,7 @@ export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 
 infrastructureIds=(
-  # "aws.devel1-standalone"
+  "aws.devel1-standalone"
   "azure.devel1-standalone"
   # "azure.devel2"
 )
