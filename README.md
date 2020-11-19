@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/solace-iot-team/az-use-case-perf-tests/workflows/test-uc-non-persistent/badge.svg)](https://github.com/solace-iot-team/az-use-case-perf-tests/actions)
 
-Performance tests for Solace PubSub+ Brokers in Azure based on use case specific setup.
+Performance tests for Solace PubSub+ Brokers in Azure & AWS based on use case specific setup.
 
 [Release Notes](./ReleaseNotes.md)|
 [Report Issues](https://github.com/solace-iot-team/az-use-case-perf-tests/issues).
