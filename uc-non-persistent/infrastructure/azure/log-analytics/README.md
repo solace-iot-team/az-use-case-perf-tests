@@ -1,7 +1,5 @@
 # Azure Log Analytics
 
-> :warning: **Under Construction**
-
 Log Analytics workspace and VM extensions:
 - DependencyAgentLinux
 - OmsAgentForLinux
@@ -19,11 +17,6 @@ run.deploy.fg.sh
 cd .devel
 run.delete.fg.sh
 ````
-
-## TODO
-- hook into main azure standup flow
-- possibly better option: convert ARM & az scripts to terraform
-
 
 ---
 The End.
