@@ -1,7 +1,5 @@
 # Use Case driven Performance Tests for Solace Brokers in Azure
 
-> :warning: **Under Construction**
-
 [![Actions Status](https://github.com/solace-iot-team/az-use-case-perf-tests/workflows/test-uc-non-persistent/badge.svg)](https://github.com/solace-iot-team/az-use-case-perf-tests/actions)
 
 Performance tests for Solace PubSub+ Brokers in Azure based on use case specific setup.
