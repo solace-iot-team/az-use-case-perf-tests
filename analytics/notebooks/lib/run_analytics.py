@@ -70,13 +70,7 @@ class RunAnalytics():
         )
 
     def export_broker_txQueueByteCount_by_consumer_as_dataframe(self):
-
-        df = self._export_broker_metric_by_consumer_as_dataframe('txQueueByteCount')
-        import logging
-        logging.debug(f"df = {df}")
-        return df
-
-        # return self._export_broker_metric_by_consumer_as_dataframe('txQueueByteCount')
+        return self._export_broker_metric_by_consumer_as_dataframe('txQueueByteCount')
 
     def export_broker_smoothedRoundTripTime_by_consumer_as_dataframe(self):
         def convert2Micros(value):
