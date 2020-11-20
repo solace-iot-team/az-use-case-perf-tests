@@ -1,5 +1,16 @@
 # Release Notes
 
+## Version: 0.7.3
+Release Purpose: Maintenance Analytics
+
+**BUG Fixes:**
+* **analytics**
+  - bugs fixed when load not included in test
+
+**New:**
+* **analytics**
+  - added release version to header
+
 ## Version: 0.7.2
 Release Purpose: Maintenance & Analytics
 

@@ -301,7 +301,7 @@ class RunMeta():
         else:
             return self.cloud_provider
 
-    def getHeaderAsMarkdown(self):
+    def getHeaderAsMarkdown(self, release):
 
         md = f"""
 
@@ -314,6 +314,7 @@ class RunMeta():
     <th style="text-align:right">
         Copyright (c) 2020, Solace Corporation<br/>
         Generated with: <a href="https://github.com/solace-iot-team/az-use-case-perf-tests">https://github.com/solace-iot-team/az-use-case-perf-tests</a>
+        ({release})
     </th>
   </tr>
 </table>
