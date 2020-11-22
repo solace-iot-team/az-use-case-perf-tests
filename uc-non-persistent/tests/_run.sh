@@ -22,7 +22,7 @@ FAILED=0
 
 ##############################################################################################################################
 # Prepare
-  export TMP_DIR=$scriptDir/tmp;
+  export TMP_DIR=$LOG_DIR/tmp;
     mkdir $TMP_DIR > /dev/null 2>&1;
     rm -rf $TMP_DIR/*;
   export TEST_SPEC_DIR=$TMP_DIR/test-specs; mkdir $TEST_SPEC_DIR > /dev/null 2>&1;
