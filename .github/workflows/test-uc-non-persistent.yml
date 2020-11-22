@@ -10,9 +10,7 @@ on:
 
   push:
     branches:
-      - 'feature-wf-test**'
-      - 'mtn-wf-test**'
-      - 'feature-ts-schema'
+      # - 'feature-ts-schema'
   # pull_request:
   #   types: [opened, reopened]
   #   branches:
@@ -68,7 +66,7 @@ env:
 jobs:
   run_tests:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
 
