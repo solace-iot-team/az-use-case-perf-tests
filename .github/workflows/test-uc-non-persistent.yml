@@ -12,6 +12,7 @@ on:
     branches:
       - 'feature-wf-test**'
       - 'mtn-wf-test**'
+      - 'feature-ts-schema'
   # pull_request:
   #   types: [opened, reopened]
   #   branches:
