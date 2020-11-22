@@ -15,6 +15,7 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Environment Variables
 
+
   if [ -z "$TMP_DIR" ]; then echo ">>> ERROR: missing env var:TMP_DIR"; exit 1; fi
   if [ -z "$TEST_SPEC_FILE" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_FILE"; exit 1; fi
     x=$(assertFile "$TEST_SPEC_FILE") || exit
@@ -40,7 +41,20 @@ if [[ "$VALIDATE_SPECS" == "True" ]]; then
 
   # schema contains local refs
   cd $scriptDir/schemas
+  # cd $scriptDir
+  # export SCHEMAS_DIR="$scriptDir/schemas"
+
+  # pwd
+  # echo "jsonschema --instance $testSpecJsonFile $testSpecSchemaFile"
+
+  # jsonschema --instance /home/controller/solace-iot-team/az-use-case-perf-tests/uc-non-persistent/tests/.devel/../tmp/test-specs/devel_tp_schema_validation.test.spec.json schema.test.spec.json
+
   jsonschema --instance $testSpecJsonFile $testSpecSchemaFile
+
+
+  exit 1
+
+
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - code=$code - jsonschema: test spec=$TEST_SPEC_FILE: $scriptName"; exit 1; fi
 fi
 
