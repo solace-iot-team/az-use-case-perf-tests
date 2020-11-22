@@ -10,8 +10,6 @@
     scriptDir=$(cd $(dirname "$0") && pwd);
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
-# TODO:
-# use apt-get and apt-cache instead of apt
 
 #####################################################################################
 # Update apt
@@ -21,14 +19,10 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 CMD="sudo apt-get -y upgrade";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt-get install software-properties-common";
-echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
-
-# not for Ubuntu 20
-# CMD="sudo add-apt-repository ppa:deadsnakes/ppa -y";
+# CMD="sudo apt-get install software-properties-common";
 # echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt-get update";
+CMD="sudo apt-get update -o Acquire::Retries=3";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
@@ -37,7 +31,7 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 CMD="sudo apt-get install python3 -o Acquire::Retries=3";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt-get install python3-pip -o Acquire::Retries=3 -y";
+CMD="sudo apt-get install python3-pip -o Acquire::Retries=10 -y";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
