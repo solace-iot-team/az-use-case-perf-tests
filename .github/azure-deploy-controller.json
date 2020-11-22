@@ -192,11 +192,15 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "Canonical",
-                        "offer": "UbuntuServer",
+                        //"publisher": "Canonical",
+                        //"offer": "UbuntuServer",
                         //"sku": "18.04-LTS",
-                        "sku": "19_10-daily-gen2",
-                        "version": "latest"
+                        //"version": "latest"
+
+                       "publisher": "canonical",
+                       "offer": "0001-com-ubuntu-server-focal",
+                       "sku": "20_04-lts-gen2",
+                       "version": "latest"
                     },
                     "osDisk": {
                         "osType": "Linux",
