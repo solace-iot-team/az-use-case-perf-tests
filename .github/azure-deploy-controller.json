@@ -192,19 +192,20 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        //"publisher": "Canonical",
-                        //"offer": "UbuntuServer",
-                        //"sku": "18.04-LTS",
-                        //"version": "latest"
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+
                         //"publisher": "canonical",
                         //"offer": "0001-com-ubuntu-server-focal",
                         //"sku": "20_04-lts-gen2",
                         //"version": "latest"
 
-                       "publisher": "Canonical",
-                       "offer": "UbuntuServer",
-                       "sku": "20.04-LTS",
-                       "version": "latest"
+                       //"publisher": "Canonical",
+                       //"offer": "UbuntuServer",
+                       //"sku": "20.04-LTS",
+                       //"version": "latest"
 
 
                     },

@@ -25,8 +25,8 @@ env:
   TEST_VM_ADMIN_USERNAME: "controller"
   TEST_AZURE_PROJECT: "solace-ctrlr"
   TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
-  # TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
-  TEST_BOOTSTRAP_SH: ".github/bootstrap-controller-ubuntu20.sh"
+  TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
+  # TEST_BOOTSTRAP_SH: ".github/bootstrap-controller-ubuntu20.sh"
   TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}
   TEST_REPO_KEYS_DIR: uc-non-persistent/keys
   TEST_AZURE_KEY_FILE: azure_key
