@@ -34,7 +34,6 @@ FAILED=0
 ##############################################################################################################################
 # Call scripts
 
-
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_generate.test-spec.sh"
     echo ">>> Run: $runScriptName"

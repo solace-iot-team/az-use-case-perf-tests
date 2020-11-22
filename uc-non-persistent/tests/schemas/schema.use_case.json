@@ -1,0 +1,23 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/use_case.json",
+    "type": "object",
+    "default": {
+      "name": "uc_non_persistent",
+      "display_name": "Market Data Distribution"
+    },
+    "required": [
+        "name",
+        "display_name"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "enum": [ "uc_non_persistent" ]
+        },
+        "display_name": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}

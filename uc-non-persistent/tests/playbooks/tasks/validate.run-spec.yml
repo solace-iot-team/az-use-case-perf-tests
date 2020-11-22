@@ -1,0 +1,47 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+  - name: "Validate Run-Spec"
+    debug:
+      msg:
+        - "run_num={{run_num}}"
+        - "run="
+        - "{{run}}"
+
+  - name: "Run Settings"
+    set_fact:
+      run_name: "{{ run.key }}"
+      run_spec: "{{ run.value }}"
+  - set_fact:
+      run_spec_json_file: "{{ RUN_SPECS_DIR }}/{{ infrastructure_id }}.{{ run_name }}.json"
+      run_log_file_base: "{{ LOG_DIR }}/{{ infrastructure_id }}.{{ run_name }}"
+
+  - name: "Write Run Spec to File"
+    copy:
+      content: "{{ run_spec | to_nice_json }}"
+      dest: "{{ run_spec_json_file }}"
+    delegate_to: localhost
+
+  - name: "Validate Run Spec against schema: {{ run_spec_json_file }}"
+    shell: >
+      cd {{ spec_schemas_dir }};
+
+      jsonschema --instance {{ run_spec_json_file }} {{ run_spec_schema_file }};
+
+    delegate_to: localhost
+    register: validate_script_result
+    ignore_errors: yes
+
+  - name: "Validation Results for {{ run_spec_json_file }}"
+    fail:
+      msg: "{{ validate_script_result }}"
+    when: validate_script_result.rc > 0
+
+
+###
+# The End.

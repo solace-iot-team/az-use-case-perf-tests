@@ -1,0 +1,22 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/pubisher.json",
+    "type": "object",
+    "required": [
+      "publisher_id", "number_of_topics", "topic_prefix"
+    ],
+    "properties": {
+      "publisher_id": {
+        "$ref": "file:./schema.id.json"
+      },
+      "number_of_topics": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "topic_prefix": {
+        "type": "string",
+        "pattern": "^[-a-zA-Z0-9_/]+$"
+      }
+    },
+    "additionalProperties": false
+}

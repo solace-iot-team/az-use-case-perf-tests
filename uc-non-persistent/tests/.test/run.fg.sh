@@ -10,6 +10,8 @@ projectHome=${scriptDir%/uc-non-persistent/*}
 usecaseHome=$projectHome/uc-non-persistent
 
 export TEST_SPEC_FILE="$scriptDir/1_test.test.spec.yml"
+export GENERATE_ONLY="True"
+export VALIDATE_SPECS="True"
 
 # export ANSIBLE_VERBOSITY=0
 export ANSIBLE_VERBOSITY=3

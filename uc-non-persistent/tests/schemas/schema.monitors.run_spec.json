@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/monitors.run_spec.json",
+    "type": "object",
+    "required": [
+      "latency", "ping", "vpn_stats"
+    ],
+    "properties": {
+      "latency": {
+        "$ref": "file:./schema.monitors_latency.run_spec.json"
+      },
+      "ping": {
+        "type": "object",
+        "required": [ "include" ],
+        "properties": {
+          "include": {
+             "type": "boolean"
+          }
+        }
+      },
+      "vpn_stats": {
+        "type": "object",
+        "required": [ "include" ],
+        "properties": {
+          "include": {
+             "type": "boolean"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "additionalProperties": false
+}

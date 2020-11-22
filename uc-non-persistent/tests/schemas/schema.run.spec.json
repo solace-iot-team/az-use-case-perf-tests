@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/run_spec.json",
+    "type": "object",
+    "title": "Solace PubSub+ Performance Test Run Specification",
+    "description": "The root schema comprises the entire JSON document.",
+    "required": [
+        "general",
+        "load",
+        "monitors",
+        "params"
+    ],
+    "properties": {
+        "general": {
+            "$id": "#/properties/general",
+            "type": "object",
+            "title": "The Run Spec General Settings",
+            "required": [
+                "description",
+                "test_spec",
+                "use_case"
+            ],
+            "properties": {
+                "description": {
+                    "$id": "#/properties/general/properties/description",
+                    "type": "string"
+                },
+                "test_spec": {
+                    "$id": "#/properties/general/properties/test_spec",
+                    "type": "object",
+                    "required": [
+                      "descr",
+                      "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "$id": "#/properties/general/properties/test_spec/properties/name",
+                            "$ref": "file:./schema.id.json"
+                        },
+                        "descr": {
+                            "$id": "#/properties/general/properties/test_spec/properties/descr",
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "use_case": {
+                    "$id": "#/properties/general/properties/use_case",
+                    "$ref": "file:./schema.use_case.json"
+                }
+            },
+            "additionalProperties": false
+        },
+        "load": {
+          "$id": "#/properties/load",
+          "$ref": "file:./schema.load.run_spec.json"
+        },
+        "monitors": {
+          "$id": "#/properties/monitors",
+          "$ref": "file:./schema.monitors.run_spec.json"
+        },
+        "params": {
+          "$id": "#/properties/params",
+          "$ref": "file:./schema.run_params.json"
+        }
+    }
+}

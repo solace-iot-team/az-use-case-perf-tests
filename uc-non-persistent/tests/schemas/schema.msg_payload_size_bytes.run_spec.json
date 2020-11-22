@@ -1,0 +1,6 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/msg_payload_size_bytes.run_spec.json",
+    "type": "string",
+    "pattern": "^[0-9]+$"
+}

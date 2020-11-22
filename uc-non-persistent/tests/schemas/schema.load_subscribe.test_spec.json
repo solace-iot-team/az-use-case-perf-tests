@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/load_subscribe.test_spec.json",
+    "type": "object",
+    "properties": {
+      "consumer_distribution_strategy": {
+        "$ref": "file:./schema.consumer_distribution_strategy.json"
+      },
+      "consumers": {
+        "$ref": "file:./schema.consumers.json"
+      },
+      "additionalProperties": false
+    }
+}

@@ -22,6 +22,7 @@ source $projectHome/.lib/functions.sh
   if [ -z "$TEST_SPEC_DIR" ]; then echo ">>> ERROR: missing env var:TEST_SPEC_DIR"; exit 1; fi
   if [ -z "$SHARED_SETUP_DIR" ]; then echo ">>> ERROR: missing env var:SHARED_SETUP_DIR"; exit 1; fi
   if [ -z "$GENERATE_ONLY" ]; then GENERATE_ONLY="False"; fi
+  if [ -z "$VALIDATE_SPECS" ]; then VALIDATE_SPECS="False"; fi
 
 ##############################################################################################################################
 # Prepare
@@ -33,6 +34,8 @@ source $projectHome/.lib/functions.sh
 ############################################################################################################################
 # Generate Run Specs
 
+specSchemasDir="$scriptDir/schemas"
+runSpecSchemaFile="schema.run.spec.json"
 playbook="$scriptDir/playbooks/run.test-spec.playbook.yml"
 ansible-playbook \
                 -i $TEST_SPEC_INVENTORY_FILE  \
@@ -41,7 +44,10 @@ ansible-playbook \
                 --extra-vars "LOG_DIR=$TMP_DIR" \
                 --extra-vars "RUN_SCRIPTS_DIR=$RUN_SCRIPTS_DIR" \
                 --extra-vars "RUN_SPECS_DIR=$RUN_SPECS_DIR" \
-                --extra-vars "GENERATE_ONLY=$GENERATE_ONLY"
+                --extra-vars "GENERATE_ONLY=$GENERATE_ONLY" \
+                --extra-vars "VALIDATE_SPECS=$VALIDATE_SPECS" \
+                --extra-vars "SPEC_SCHEMAS_DIR=$specSchemasDir" \
+                --extra-vars "RUN_SPEC_SCHEMA_FILE=$runSpecSchemaFile"
 
 code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

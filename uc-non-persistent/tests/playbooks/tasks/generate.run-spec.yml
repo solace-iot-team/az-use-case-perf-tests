@@ -58,10 +58,12 @@
           msg_rate_per_second: "{{ run_spec.monitors.latency.msg_rate_per_second | default(test_spec.run_specs.run_defaults.monitors.latency.msg_rate_per_second) }}"
           msg_payload_size_bytes: "{{ run_spec.monitors.latency.msg_payload_size_bytes | default(test_spec.run_specs.run_defaults.monitors.latency.msg_payload_size_bytes) }}"
           lpm: true
-          sdkperf_node_to_broker:
-            include: "{{ run_spec.monitors.latency.include_latency_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_latency_node_to_broker) }}"
-          broker_node_to_broker:
-            include: "{{ run_spec.monitors.latency.include_broker_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_broker_node_to_broker) }}"
+          include_latency_node_to_broker: "{{ run_spec.monitors.latency.include_latency_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_latency_node_to_broker) }}"
+          include_broker_node_to_broker: "{{ run_spec.monitors.latency.include_broker_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_broker_node_to_broker) }}"
+          # sdkperf_node_to_broker:
+          #   include: "{{ run_spec.monitors.latency.include_latency_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_latency_node_to_broker) }}"
+          # broker_node_to_broker:
+          #   include: "{{ run_spec.monitors.latency.include_broker_node_to_broker | default(test_spec.run_specs.run_defaults.monitors.latency.include_broker_node_to_broker) }}"
         ping:
           include: "{{ run_spec.monitors.ping.include | default(test_spec.run_specs.run_defaults.monitors.ping.include) }}"
         vpn_stats:

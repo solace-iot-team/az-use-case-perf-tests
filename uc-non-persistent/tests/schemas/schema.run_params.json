@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/run_params.json",
+    "type": "object",
+    "title": "The run parameters",
+    "required": [
+      "total_num_samples",
+      "sample_duration_secs"
+    ],
+    "properties": {
+        "total_num_samples": {
+            "type": "integer",
+            "title": "The total number of samples",
+            "minimum": 1
+        },
+        "sample_duration_secs": {
+            "type": "integer",
+            "title": "The sample duration in seconds",
+            "minimum": 45,
+            "maximum": 120
+        }
+    },
+    "additionalProperties": false
+}

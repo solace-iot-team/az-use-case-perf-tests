@@ -1,0 +1,6 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/id.json",
+    "type": "string",
+    "pattern": "^[a-zA-Z0-9_]+$"
+}

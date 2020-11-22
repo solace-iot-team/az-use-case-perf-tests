@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/monitors_latency.run_spec.json",
+    "type": "object",
+    "required": [
+      "include_latency_node_to_broker", "include_broker_node_to_broker", "msg_rate_per_second", "msg_payload_size_bytes", "lpm"
+    ],
+    "properties": {
+      "include_latency_node_to_broker": {
+         "type": "boolean"
+      },
+      "include_broker_node_to_broker": {
+         "type": "boolean"
+      },
+      "lpm": {
+         "type": "boolean"
+      },
+      "msg_payload_size_bytes": {
+        "$ref": "file:./schema.msg_payload_size_bytes.run_spec.json"
+      },
+      "msg_rate_per_second": {
+        "$ref": "file:./schema.msg_rate_per_second.run_spec.json"
+      }
+    },
+    "additionalProperties": false
+}

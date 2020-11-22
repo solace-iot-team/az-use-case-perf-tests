@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/load.run_spec.json",
+    "type": "object",
+    "required": [
+      "include", "subscribe", "publish"
+    ],
+    "properties": {
+      "include": {
+        "type": "boolean"
+      },
+      "subscribe": {
+        "$ref": "file:./schema.load_subscribe.json"
+      },
+      "publish": {
+        "$ref": "file:./schema.load_publish.run_spec.json"
+      }
+    },
+    "additionalProperties": false
+}
