@@ -87,6 +87,9 @@ jq --version
 sudo -H python3 -m pip install yq
 yq --version
 
+sudo -H python3 -m pip install jsonschema
+jsonschema -h
+
 sudo apt install unzip
 ````
 

@@ -12,8 +12,9 @@ usecaseHome=$projectHome/uc-non-persistent
 export TEST_SPEC_FILE="$scriptDir/tp-002.test.spec.yml"
 
 export ANSIBLE_VERBOSITY=0
+export LOG_DIR=$scriptDir/logs
 
-nohup ../_run.sh > ./logs/$scriptName.out 2>&1 &
+nohup ../_run.sh > $LOG_DIR/$scriptName.out 2>&1 &
 
 ###
 # The End.

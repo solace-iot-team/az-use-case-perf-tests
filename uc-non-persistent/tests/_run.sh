@@ -18,6 +18,7 @@ FAILED=0
 # Environment Variables
 
   if [ -z "$TEST_SPEC_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TEST_SPEC_FILE"; FAILED=1; fi
+  if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:LOG_DIR"; FAILED=1; fi
 
 ##############################################################################################################################
 # Prepare
@@ -37,7 +38,7 @@ FAILED=0
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_generate.test-spec.sh"
     echo ">>> Run: $runScriptName"
-    logFileName="$TMP_DIR/$runScriptName.log"
+    logFileName="$LOG_DIR/$runScriptName.log"
     runScript="$scriptDir/$runScriptName"
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
@@ -46,7 +47,7 @@ fi
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_run.test-spec.sh"
     echo ">>> Run: $runScriptName"
-    logFileName="$TMP_DIR/$runScriptName.log"
+    logFileName="$LOG_DIR/$runScriptName.log"
     runScript="$scriptDir/$runScriptName"
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
