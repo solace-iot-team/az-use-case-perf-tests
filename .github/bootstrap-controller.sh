@@ -64,8 +64,8 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 CMD="sudo -H python3 -m pip install yq";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-# CMD="sudo -H python3 -m pip install jsonschema";
-# echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+CMD="sudo -H python3 -m pip install jsonschema";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo apt-get install unzip";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
