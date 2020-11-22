@@ -12,7 +12,7 @@
         "enum": [ "carbon_copy", "round_robin" ]
       },
       "consumers": {
-        "$ref": "file:./schema.consumers.json"
+        "$ref": "file:./schemas/schema.consumers.json"
       },
       "additionalProperties": false
     }

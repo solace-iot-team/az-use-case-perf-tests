@@ -7,7 +7,7 @@
     ],
     "properties": {
       "consumer_id": {
-        "$ref": "file:./schema.id.json"
+        "$ref": "file:./schemas/schema.id.json"
       },
       "topic_list": {
         "type": "string",

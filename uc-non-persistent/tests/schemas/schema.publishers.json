@@ -3,7 +3,7 @@
     "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/publishers.json",
     "type": "array",
     "items": {
-      "$ref": "file:./schema.publisher.json"
+      "$ref": "file:./schemas/schema.publisher.json"
     },
     "minItems": 1
 }

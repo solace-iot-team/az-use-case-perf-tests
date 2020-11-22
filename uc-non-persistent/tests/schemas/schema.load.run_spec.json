@@ -10,10 +10,10 @@
         "type": "boolean"
       },
       "subscribe": {
-        "$ref": "file:./schema.load_subscribe.json"
+        "$ref": "file:./schemas/schema.load_subscribe.json"
       },
       "publish": {
-        "$ref": "file:./schema.load_publish.run_spec.json"
+        "$ref": "file:./schemas/schema.load_publish.run_spec.json"
       }
     },
     "additionalProperties": false

@@ -15,16 +15,16 @@
           ],
           "properties": {
             "name": {
-              "$ref": "file:./schema.id.json"
+              "$ref": "file:./schemas/schema.id.json"
             },
             "description": {
               "type": "string"
             },
             "load": {
-              "$ref": "file:./schema.load.test_spec.json"
+              "$ref": "file:./schemas/schema.load.test_spec.json"
             },
             "monitors": {
-              "$ref": "file:./schema.monitors.test_spec.json"
+              "$ref": "file:./schemas/schema.monitors.test_spec.json"
             }
           },
           "additionalProperties": false
@@ -46,7 +46,7 @@
             "properties": {
                 "name": {
                     "$id": "#/properties/test_spec/properties/name",
-                    "$ref": "file:./schema.id.json",
+                    "$ref": "file:./schemas/schema.id.json",
                     "title": "The test spec name."
                 },
                 "description": {
@@ -56,7 +56,7 @@
                 },
                 "use_case": {
                     "$id": "#/properties/test_spec/properties/use_case",
-                    "$ref": "file:./schema.use_case.json",
+                    "$ref": "file:./schemas/schema.use_case.json",
                     "title": "The use case"
                 },
                 "infrastructure_list": {
@@ -64,7 +64,7 @@
                     "type": "array",
                     "title": "The list of infrastructures",
                     "items": {
-                      "$ref": "file:./schema.infrastructure.json"
+                      "$ref": "file:./schemas/schema.infrastructure.json"
                     },
                     "minItems": 1
                 },
@@ -80,7 +80,7 @@
                     "properties": {
                         "run_params": {
                             "$id": "#/properties/test_spec/properties/run_specs/properties/run_params",
-                            "$ref": "file:./schema.run_params.json"
+                            "$ref": "file:./schemas/schema.run_params.json"
                         },
                         "run_defaults": {
                             "$id": "#/properties/test_spec/properties/run_specs/properties/run_defaults",
@@ -88,10 +88,10 @@
                             "title": "Default Run Settings",
                             "properties": {
                                 "load": {
-                                  "$ref": "file:./schema.load.test_spec.json"
+                                  "$ref": "file:./schemas/schema.load.test_spec.json"
                                 },
                                 "monitors": {
-                                  "$ref": "file:./schema.monitors.test_spec.json"
+                                  "$ref": "file:./schemas/schema.monitors.test_spec.json"
                                 }
                             },
                             "additionalProperties": false

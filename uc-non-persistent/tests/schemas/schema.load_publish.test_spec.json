@@ -4,16 +4,16 @@
     "type": "object",
     "properties": {
       "publishers": {
-        "$ref": "file:./schema.publishers.json"
+        "$ref": "file:./schemas/schema.publishers.json"
       },
       "client_connection_count": {
-        "$ref": "file:./schema.client_connection_count.json"
+        "$ref": "file:./schemas/schema.client_connection_count.json"
       },
       "msg_payload_size_bytes": {
-        "$ref": "file:./schema.msg_payload_size_bytes.json"
+        "$ref": "file:./schemas/schema.msg_payload_size_bytes.json"
       },
       "msg_rate_per_second": {
-        "$ref": "file:./schema.msg_rate_per_second.json"
+        "$ref": "file:./schemas/schema.msg_rate_per_second.json"
       }
     },
     "additionalProperties": false

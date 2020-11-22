@@ -4,10 +4,10 @@
     "type": "object",
     "properties": {
       "consumer_distribution_strategy": {
-        "$ref": "file:./schema.consumer_distribution_strategy.json"
+        "$ref": "file:./schemas/schema.consumer_distribution_strategy.json"
       },
       "consumers": {
-        "$ref": "file:./schema.consumers.json"
+        "$ref": "file:./schemas/schema.consumers.json"
       },
       "additionalProperties": false
     }

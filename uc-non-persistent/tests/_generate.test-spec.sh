@@ -40,9 +40,8 @@ if [[ "$VALIDATE_SPECS" == "True" ]]; then
   echo $testSpecJson | jq . > $testSpecJsonFile
 
   # schema contains local refs
-  cd $scriptDir/schemas
-  # cd $scriptDir
-  # export SCHEMAS_DIR="$scriptDir/schemas"
+  # cd $scriptDir/schemas
+  cd $scriptDir
 
   # pwd
   # echo "jsonschema --instance $testSpecJsonFile $testSpecSchemaFile"

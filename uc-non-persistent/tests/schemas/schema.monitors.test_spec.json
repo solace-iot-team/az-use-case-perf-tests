@@ -4,7 +4,7 @@
     "type": "object",
     "properties": {
       "latency": {
-        "$ref": "file:./schema.monitors_latency.test_spec.json"
+        "$ref": "file:./schemas/schema.monitors_latency.test_spec.json"
       },
       "ping": {
         "type": "object",

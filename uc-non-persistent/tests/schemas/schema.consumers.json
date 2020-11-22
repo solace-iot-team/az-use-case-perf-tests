@@ -3,7 +3,7 @@
     "$id": "http://az-use-case-perf-tests.uc-non-persistent.com/consumers.json",
     "type": "array",
     "items": {
-      "$ref": "file:./schema.consumer.json"
+      "$ref": "file:./schemas/schema.consumer.json"
     },
     "minItems": 1
 }

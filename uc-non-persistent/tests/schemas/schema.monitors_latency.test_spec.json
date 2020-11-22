@@ -10,10 +10,10 @@
          "type": "boolean"
       },
       "msg_payload_size_bytes": {
-        "$ref": "file:./schema.msg_payload_size_bytes.json"
+        "$ref": "file:./schemas/schema.msg_payload_size_bytes.json"
       },
       "msg_rate_per_second": {
-        "$ref": "file:./schema.msg_rate_per_second.json"
+        "$ref": "file:./schemas/schema.msg_rate_per_second.json"
       }
     },
     "additionalProperties": false

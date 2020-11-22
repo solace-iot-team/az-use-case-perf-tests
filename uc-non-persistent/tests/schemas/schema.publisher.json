@@ -7,7 +7,7 @@
     ],
     "properties": {
       "publisher_id": {
-        "$ref": "file:./schema.id.json"
+        "$ref": "file:./schemas/schema.id.json"
       },
       "number_of_topics": {
         "type": "integer",

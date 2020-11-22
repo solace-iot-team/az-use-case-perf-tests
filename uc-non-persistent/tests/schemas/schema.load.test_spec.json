@@ -7,10 +7,10 @@
         "type": "boolean"
       },
       "subscribe": {
-        "$ref": "file:./schema.load_subscribe.test_spec.json"
+        "$ref": "file:./schemas/schema.load_subscribe.test_spec.json"
       },
       "publish": {
-        "$ref": "file:./schema.load_publish.test_spec.json"
+        "$ref": "file:./schemas/schema.load_publish.test_spec.json"
       }
     },
     "additionalProperties": false
