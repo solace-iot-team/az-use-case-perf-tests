@@ -56,12 +56,26 @@ fi
 ##############################################################################################################################
 # Workflow output
 
-  if [ "$FAILED" -gt 0 ]; then
-    echo ">>> FINISHED:FAILED - $scriptName";
-    exit 1
+if [ "$FAILED" -gt 0 ]; then
+  # Check for errors in the logs
+  errors=$(grep -n -e "ERROR" -e "FAILED" $LOG_DIR/*.log)
+  if [ -z "$errors" ]; then
+    echo ">>> SUCCESS: found no errors in log files"
+    touch "$LOG_DIR/$scriptName.SUCCESS.log"
   else
-    echo ">>> FINISHED:SUCCESS - $scriptName";
+    echo ">>> ERROR: found errors in log files"
+    touch "$LOG_DIR/$scriptName.ERROR.log"
+    errCount=0
+    while IFS= read line; do
+      ((errCount++))
+      echo $line >> "$LOG_DIR/$scriptName.ERROR.log"
+    done < <(printf '%s\n' "$errors")
   fi
+  echo ">>> FINISHED:FAILED - $scriptName";
+  exit 1
+else
+  echo ">>> FINISHED:SUCCESS - $scriptName";
+fi
 
 ###
 # The End.
