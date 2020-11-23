@@ -38,7 +38,7 @@ FAILED=0
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_generate.test-spec.sh"
     echo ">>> Run: $runScriptName"
-    logFileName="$LOG_DIR/$runScriptName.log"
+    logFileName="$LOG_DIR/$runScriptName.out"
     runScript="$scriptDir/$runScriptName"
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
@@ -47,7 +47,7 @@ fi
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_run.test-spec.sh"
     echo ">>> Run: $runScriptName"
-    logFileName="$LOG_DIR/$runScriptName.log"
+    logFileName="$LOG_DIR/$runScriptName.out"
     runScript="$scriptDir/$runScriptName"
     nohup $runScript > $logFileName 2>&1 &
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
@@ -57,14 +57,13 @@ fi
 # Workflow output
 
 if [ "$FAILED" -gt 0 ]; then
+  touch "$LOG_DIR/$scriptName.ERROR.log"
   # Check for errors in the logs
-  errors=$(grep -n -e "ERROR" -e "FAILED" $LOG_DIR/*.log)
+  errors=$(grep -n -e "ERROR" -e "FAILED" -e "Traceback" $LOG_DIR/*.out)
   if [ -z "$errors" ]; then
-    echo ">>> SUCCESS: found no errors in log files"
-    touch "$LOG_DIR/$scriptName.SUCCESS.log"
+    echo ">>> ERROR: found no errors in log files, but should have"
   else
     echo ">>> ERROR: found errors in log files"
-    touch "$LOG_DIR/$scriptName.ERROR.log"
     errCount=0
     while IFS= read line; do
       ((errCount++))
@@ -75,6 +74,7 @@ if [ "$FAILED" -gt 0 ]; then
   exit 1
 else
   echo ">>> FINISHED:SUCCESS - $scriptName";
+  touch "$LOG_DIR/$scriptName.SUCCESS.log"
 fi
 
 ###
