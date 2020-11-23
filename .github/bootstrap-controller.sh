@@ -10,9 +10,6 @@
     scriptDir=$(cd $(dirname "$0") && pwd);
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
-# TODO:
-# use apt-get and apt-cache instead of apt
-
 #####################################################################################
 # Update apt
 CMD="sudo apt-get update";
