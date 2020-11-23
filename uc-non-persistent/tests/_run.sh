@@ -60,8 +60,6 @@ if [ "$FAILED" -eq 0 ]; then
     pid="$!"; if wait $pid; then echo ">>> SUCCESS: $runScript"; else echo ">>> ERROR: $?: $runScript"; FAILED=1; fi
 fi
 
-exit
-
 if [ "$FAILED" -eq 0 ]; then
   runScriptName="_run.test-spec.sh"
     echo ">>> Run: $runScriptName"

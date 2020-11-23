@@ -46,8 +46,6 @@ if [[ "$VALIDATE_SPECS" == "True" ]]; then
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - code=$code - jsonschema: test spec=$TEST_SPEC_FILE: $scriptName"; exit 1; fi
 fi
 
-exit
-
 ############################################################################################################################
 # Generate Run Specs
 

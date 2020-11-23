@@ -3,7 +3,6 @@
   "$id": "http://localhost:8811/schema.test_spec.json",
   "type": "object",
   "title": "Solace PubSub+ Performance Test Specification",
-  "description": "The root schema comprises the entire JSON document.",
   "required": [
     "test_spec"
   ],

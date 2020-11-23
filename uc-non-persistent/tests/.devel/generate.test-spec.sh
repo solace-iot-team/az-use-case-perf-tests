@@ -14,6 +14,7 @@ usecaseHome=$projectHome/uc-non-persistent
 export TEST_SPEC_FILE="$scriptDir/devel-tp-schema-validation.test.spec.yml"
 
 export VALIDATE_SPECS="True"
+export SCHEMAS_DIR="$scriptDir/../tp-schemas"
 export LOG_DIR="$scriptDir/logs"
 
 export TMP_DIR="$LOG_DIR/tmp"

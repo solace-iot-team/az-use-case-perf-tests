@@ -12,8 +12,7 @@
     run_script: _run.sh
     scan_4_errors_script: "./lib/scan-4-errors.sh"
     is_validate_specs: "{{ VALIDATE_SPECS | default(False) }}"
-    spec_schemas_dir: "{{ SPEC_SCHEMAS_DIR | default('not-defined') }}"
-    run_spec_schema_file: "{{ SPEC_SCHEMAS_DIR }}/{{ RUN_SPEC_SCHEMA_FILE | default('not-defined') }}"
+    run_spec_schema_file: "{{ RUN_SPEC_SCHEMA_FILE | default('not-defined') }}"
 
   tasks:
 
@@ -26,7 +25,6 @@
           - "RUN_SPECS_DIR={{ RUN_SPECS_DIR }}"
           - "GENERATE_ONLY={{ GENERATE_ONLY }}"
           - "is_validate_specs={{ is_validate_specs }}"
-          - "spec_schemas_dir={{ spec_schemas_dir }}"
           - "run_spec_schema_file={{ run_spec_schema_file }}"
 
     # - name: "Ensure {{ scan_4_errors_script }} exists"

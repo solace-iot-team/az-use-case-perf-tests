@@ -29,8 +29,6 @@
 
   - name: "Validate Run Spec against schema: {{ run_spec_json_file }}"
     shell: >
-      cd {{ spec_schemas_dir }};
-
       jsonschema --instance {{ run_spec_json_file }} {{ run_spec_schema_file }};
 
     delegate_to: localhost
