@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://localhost:8811/schema.test_spec.json",
+  "type": "object",
+  "title": "Solace PubSub+ Performance Test Specification",
+  "description": "The root schema comprises the entire JSON document.",
+  "required": [
+    "test_spec"
+  ],
+  "definitions": {
+    "load_publish": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "publishers": {
+          "$ref": "common.json#/definitions/publishers"
+        },
+        "client_connection_count": {
+          "$ref": "common.json#/definitions/client_connection_count"
+        },
+        "msg_payload_size_bytes": {
+          "$ref": "common.json#/definitions/msg_payload_size_bytes"
+        },
+        "msg_rate_per_second": {
+          "$ref": "common.json#/definitions/msg_rate_per_second"
+        }
+      }
+    },
+    "load_subscribe": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "consumer_distribution_strategy": {
+          "$ref": "common.json#/definitions/consumer_distribution_strategy"
+        },
+        "consumers": {
+          "$ref": "common.json#/definitions/consumers"
+        }
+      }
+    },
+    "monitor_latency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "include_latency_node_to_broker": {
+          "type": "boolean"
+        },
+        "include_broker_node_to_broker": {
+          "type": "boolean"
+        },
+        "msg_payload_size_bytes": {
+          "$ref": "common.json#/definitions/msg_payload_size_bytes"
+        },
+        "msg_rate_per_second": {
+          "$ref": "common.json#/definitions/msg_rate_per_second"
+        }
+      }
+    }
+  },
+  "properties": {
+    "test_spec": {
+      "title": "The Test Specification",
+      "description": "The Test specification.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "description",
+        "use_case",
+        "infrastructure_list",
+        "run_specs"
+
+      ],
+      "properties": {
+        "name": {
+          "$ref": "common.json#/definitions/yml_id",
+          "title": "The test spec name."
+        },
+        "description": {
+          "type": "string",
+          "title": "Test spec description"
+        },
+        "use_case": {
+          "$ref": "common.json#/definitions/use_case",
+          "title": "The use case"
+        },
+        "infrastructure_list": {
+          "type": "array",
+          "title": "The list of infrastructures",
+          "items": {
+            "$ref": "common.json#/definitions/infrastructure"
+          },
+          "minItems": 1
+        },
+        "run_specs": {
+          "type": "object",
+          "title": "The list of run specifications",
+          "required": [
+            "run_params",
+            "run_defaults",
+            "runs"
+          ],
+          "properties": {
+            "run_params": {
+              "$ref": "common.json#/definitions/run_params"
+            },
+            "run_defaults": {
+              "type": "object",
+              "title": "Default Run Settings",
+              "additionalProperties": false,
+              "properties": {
+                "load": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "include": {
+                      "type": "boolean"
+                    },
+                    "subscribe": {
+                      "$ref": "#/definitions/load_subscribe"
+                    },
+                    "publish": {
+                      "$ref": "#/definitions/load_publish"
+                    }
+                  }
+                },
+                "monitors": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "latency": {
+                      "$ref": "#/definitions/monitor_latency"
+                    },
+                    "ping": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "include": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                },
+                "runs": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/run"
+                  },
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

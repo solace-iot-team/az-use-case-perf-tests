@@ -27,7 +27,10 @@ source $projectHome/.lib/functions.sh
 # Validate the test spec
 
 if [[ "$VALIDATE_SPECS" == "True" ]]; then
-  testSpecSchemaFile="$scriptDir/schemas/schema.test.spec.json"
+
+  if [ -z "$SCHEMAS_DIR" ]; then echo ">>> ERROR: missing env var:SCHEMAS_DIR"; exit 1; fi
+
+  testSpecSchemaFile="$SCHEMAS_DIR/schema.test.spec.json"
 
   testSpecJson=$(cat $TEST_SPEC_FILE | yq . )
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - code=$code - 'yq' reading test spec=$TEST_SPEC_FILE - $scriptName"; exit 1; fi
@@ -39,23 +42,11 @@ if [[ "$VALIDATE_SPECS" == "True" ]]; then
   rm -f $testSpecJsonFile
   echo $testSpecJson | jq . > $testSpecJsonFile
 
-  # schema contains local refs
-  # cd $scriptDir/schemas
-  cd $scriptDir
-
-  # pwd
-  # echo "jsonschema --instance $testSpecJsonFile $testSpecSchemaFile"
-
-  # jsonschema --instance /home/controller/solace-iot-team/az-use-case-perf-tests/uc-non-persistent/tests/.devel/../tmp/test-specs/devel_tp_schema_validation.test.spec.json schema.test.spec.json
-
   jsonschema --instance $testSpecJsonFile $testSpecSchemaFile
-
-
-  exit 1
-
-
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - code=$code - jsonschema: test spec=$TEST_SPEC_FILE: $scriptName"; exit 1; fi
 fi
+
+exit
 
 ############################################################################################################################
 # Generate Run Specs
