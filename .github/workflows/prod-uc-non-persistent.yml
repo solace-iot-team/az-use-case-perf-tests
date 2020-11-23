@@ -17,6 +17,7 @@ env:
   TEST_VM_ADMIN_USERNAME: "controller"
   TEST_AZURE_PROJECT: "solace-ctrlr"
   TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
+  TEST_SSH_CONNECT_SCRIPT: ".github/ssh-connect-controller.sh"
   TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
   TEST_RUNNER_ASSETS_DIR: remote-assets
   TEST_RUNNER_ASSETS_INFRA_DIR: infra
@@ -145,6 +146,11 @@ jobs:
           SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
           SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
           SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
+
+      - name: Controller - Connect SSH Script - retry until successful
+      # ensures that connection can be established
+        run: |
+          ${{ env.TEST_SSH_CONNECT_SCRIPT }}
 
       - name: Controller - Connect SSH
       # ensures that connection can be established

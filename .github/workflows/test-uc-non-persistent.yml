@@ -151,11 +151,10 @@ jobs:
           SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
           SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
 
-      - name: Controller - Connect SSH Script
+      - name: Controller - Connect SSH Script - retry until successful
       # ensures that connection can be established
         run: |
           ${{ env.TEST_SSH_CONNECT_SCRIPT }}
-
 
       - name: Controller - Connect SSH
       # ensures that connection can be established
