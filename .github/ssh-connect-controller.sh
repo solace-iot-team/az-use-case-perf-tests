@@ -9,7 +9,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
 
 # try 5 times with a wait
-sleepBetweenTriesSecs=300
+sleepBetweenTriesSecs=60
 count=0
 code=1
 
