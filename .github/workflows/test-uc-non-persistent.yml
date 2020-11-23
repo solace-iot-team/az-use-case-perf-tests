@@ -315,7 +315,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Test Results
         if: always()
@@ -347,7 +347,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Analytics Results
         if: always()
@@ -392,7 +392,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Archive Results
         if: always()
