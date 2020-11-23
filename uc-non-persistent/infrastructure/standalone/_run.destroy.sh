@@ -20,6 +20,9 @@ source $projectHome/.lib/functions.sh
   if [ -z "$TERRAFORM_STATE_FILE" ]; then echo ">>> ERROR: - $scriptName - missing env var:TERRAFORM_STATE_FILE"; exit 1; fi
   if [ -z "$TF_LOG_PATH" ]; then echo ">>> ERROR: - $scriptName - missing env var:TF_LOG_PATH"; exit 1; fi
 
+  if [ ! -f "$TERRAFORM_VAR_FILE" ]; then echo ">>> ERROR - $scriptName - file not found: $TERRAFORM_VAR_FILE"; exit 1; fi
+  if [ ! -f "$TERRAFORM_STATE_FILE" ]; then echo ">>> ERROR - $scriptName - file not found: $TERRAFORM_STATE_FILE"; exit 1; fi
+
 ##############################################################################################################################
 # Prepare
   rm -f $TF_LOG_PATH
