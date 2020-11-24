@@ -8,11 +8,6 @@ Performance tests for Solace PubSub+ Brokers in Azure & AWS based on use case sp
 [Report Issues](https://github.com/solace-iot-team/az-use-case-perf-tests/issues).
 
 
-
-<p align="left"><img src="./images/img-1.png" /></p>
-<p align="left"><img src="./images/img-2.png" /></p>
-
-
 <table style="width:100%">
   <tr>
     <td><p align="left"><img src="./images/img-1.png" /></p></td>
