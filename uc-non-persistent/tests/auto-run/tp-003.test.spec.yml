@@ -13,17 +13,14 @@
 
     infrastructure_list:
       - cloud_provider: azure
-        config: 1-auto-standalone
-      # - cloud_provider: azure
-      #   config: 2-auto-standalone
+        config: tp-003-standalone
       - cloud_provider: aws
-        config: 1-auto-standalone
+        config: tp-003-standalone
 
     run_specs:
 
       run_params:
         total_num_samples: 60
-        # sample_duration_secs: min: 45 secs, max: 120 secs
         sample_duration_secs: 60
 
       run_defaults:
