@@ -33,6 +33,8 @@ env:
   TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
   TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
 
+  TEST_REPO_SHARED_SETUP: uc-non-persistent/shared-setup
+
   TEST_REPO_TESTS_DIR: uc-non-persistent/tests/auto-run
   TEST_REPO_TESTS_LOGS_DIR: logs
   TEST_REPO_TESTS_RUN_SCRIPT: run.tp-003.fg.sh
@@ -277,6 +279,16 @@ jobs:
               ./${TEST_REPO_INFRA_APPLY_SCRIPT}
 
           "
+
+      - name: Controller - Infra - Download Shared Setup
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_SHARED_SETUP }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_REPO_SHARED_SETUP }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/*.json ${RUNNER_ASSET_DIR}
 
       - name: Controller - Test Runs
         run: |
