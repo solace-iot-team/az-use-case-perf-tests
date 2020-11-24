@@ -93,7 +93,7 @@
     when: is_warm_up_run == False
 
   - set_fact:
-      check_timing: "{{ True if num_clients <= check_timing_max_clients else False }}"
+      check_timing: "{{ True if num_clients|int <= check_timing_max_clients|int else False }}"
 
   - name: "Wait for sample cyle to complete for sample={{ sample_num }} (warmup={{ is_warm_up_run }})"
     block:
