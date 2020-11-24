@@ -17,8 +17,8 @@ export TEST_RESULTS_DIR="$projectHome/uc-non-persistent/test-results/stats"
 export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 
 infrastructureIds=(
-  "azure.tp-sml"
-  "aws.tp-sml"
+  "azure.tp-sml-standalone"
+  "aws.tp-sml-standalone"
 )
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
