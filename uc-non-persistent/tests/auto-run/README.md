@@ -1,6 +1,6 @@
 # Tests : Auto-Run
 
-Exmaples for running tests.
+Exmaples for running performance tests.
 
 ## Test Specs
 
