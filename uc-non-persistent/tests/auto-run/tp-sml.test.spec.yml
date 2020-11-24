@@ -71,120 +71,120 @@
         - name: small
           description: "small run: 1 publisher, 10 consumers, 10 topics, fan-out=1:1, 100K msgs/sec, 200 bytes"
 
-        # - name: medium
-        #   description: "medium run: 1 publisher, 50 consumers, 50 topics, fan-out=1:1, 100K msgs/sec, 200 bytes"
-        #   load:
-        #     publish:
-        #       publishers:
-        #         - publisher_id: publisher_1
-        #           number_of_topics: 50
-        #           topic_prefix: "markets/pub-1"
-        #     subscribe:
-        #       consumers:
-        #         - consumer_id: consumer_1
-        #           topic_list: markets/pub-1/000001
-        #         - consumer_id: consumer_2
-        #           topic_list: markets/pub-1/000002
-        #         - consumer_id: consumer_3
-        #           topic_list: markets/pub-1/000003
-        #         - consumer_id: consumer_4
-        #           topic_list: markets/pub-1/000004
-        #         - consumer_id: consumer_5
-        #           topic_list: markets/pub-1/000005
-        #         - consumer_id: consumer_6
-        #           topic_list: markets/pub-1/000006
-        #         - consumer_id: consumer_7
-        #           topic_list: markets/pub-1/000007
-        #         - consumer_id: consumer_8
-        #           topic_list: markets/pub-1/000008
-        #         - consumer_id: consumer_9
-        #           topic_list: markets/pub-1/000009
-        #         - consumer_id: consumer_10
-        #           topic_list: markets/pub-1/000010
-        #
-        #         - consumer_id: consumer_11
-        #           topic_list: markets/pub-1/000011
-        #         - consumer_id: consumer_12
-        #           topic_list: markets/pub-1/000012
-        #         - consumer_id: consumer_13
-        #           topic_list: markets/pub-1/000013
-        #         - consumer_id: consumer_14
-        #           topic_list: markets/pub-1/000014
-        #         - consumer_id: consumer_15
-        #           topic_list: markets/pub-1/000015
-        #         - consumer_id: consumer_16
-        #           topic_list: markets/pub-1/000016
-        #         - consumer_id: consumer_17
-        #           topic_list: markets/pub-1/000017
-        #         - consumer_id: consumer_18
-        #           topic_list: markets/pub-1/000018
-        #         - consumer_id: consumer_19
-        #           topic_list: markets/pub-1/000019
-        #         - consumer_id: consumer_20
-        #           topic_list: markets/pub-1/000020
-        #
-        #         - consumer_id: consumer_21
-        #           topic_list: markets/pub-1/000021
-        #         - consumer_id: consumer_22
-        #           topic_list: markets/pub-1/000022
-        #         - consumer_id: consumer_23
-        #           topic_list: markets/pub-1/000023
-        #         - consumer_id: consumer_24
-        #           topic_list: markets/pub-1/000024
-        #         - consumer_id: consumer_25
-        #           topic_list: markets/pub-1/000025
-        #         - consumer_id: consumer_26
-        #           topic_list: markets/pub-1/000026
-        #         - consumer_id: consumer_27
-        #           topic_list: markets/pub-1/000027
-        #         - consumer_id: consumer_28
-        #           topic_list: markets/pub-1/000028
-        #         - consumer_id: consumer_29
-        #           topic_list: markets/pub-1/000029
-        #         - consumer_id: consumer_30
-        #           topic_list: markets/pub-1/000030
-        #
-        #         - consumer_id: consumer_31
-        #           topic_list: markets/pub-1/000031
-        #         - consumer_id: consumer_32
-        #           topic_list: markets/pub-1/000032
-        #         - consumer_id: consumer_33
-        #           topic_list: markets/pub-1/000033
-        #         - consumer_id: consumer_34
-        #           topic_list: markets/pub-1/000034
-        #         - consumer_id: consumer_35
-        #           topic_list: markets/pub-1/000035
-        #         - consumer_id: consumer_36
-        #           topic_list: markets/pub-1/000036
-        #         - consumer_id: consumer_37
-        #           topic_list: markets/pub-1/000037
-        #         - consumer_id: consumer_38
-        #           topic_list: markets/pub-1/000038
-        #         - consumer_id: consumer_39
-        #           topic_list: markets/pub-1/000039
-        #         - consumer_id: consumer_40
-        #           topic_list: markets/pub-1/000040
-        #
-        #         - consumer_id: consumer_41
-        #           topic_list: markets/pub-1/000041
-        #         - consumer_id: consumer_42
-        #           topic_list: markets/pub-1/000042
-        #         - consumer_id: consumer_43
-        #           topic_list: markets/pub-1/000043
-        #         - consumer_id: consumer_44
-        #           topic_list: markets/pub-1/000044
-        #         - consumer_id: consumer_45
-        #           topic_list: markets/pub-1/000045
-        #         - consumer_id: consumer_46
-        #           topic_list: markets/pub-1/000046
-        #         - consumer_id: consumer_47
-        #           topic_list: markets/pub-1/000047
-        #         - consumer_id: consumer_48
-        #           topic_list: markets/pub-1/000048
-        #         - consumer_id: consumer_49
-        #           topic_list: markets/pub-1/000049
-        #         - consumer_id: consumer_50
-        #           topic_list: markets/pub-1/000050
+        - name: medium
+          description: "medium run: 1 publisher, 50 consumers, 50 topics, fan-out=1:1, 100K msgs/sec, 200 bytes"
+          load:
+            publish:
+              publishers:
+                - publisher_id: publisher_1
+                  number_of_topics: 50
+                  topic_prefix: "markets/pub-1"
+            subscribe:
+              consumers:
+                - consumer_id: consumer_1
+                  topic_list: markets/pub-1/000001
+                - consumer_id: consumer_2
+                  topic_list: markets/pub-1/000002
+                - consumer_id: consumer_3
+                  topic_list: markets/pub-1/000003
+                - consumer_id: consumer_4
+                  topic_list: markets/pub-1/000004
+                - consumer_id: consumer_5
+                  topic_list: markets/pub-1/000005
+                - consumer_id: consumer_6
+                  topic_list: markets/pub-1/000006
+                - consumer_id: consumer_7
+                  topic_list: markets/pub-1/000007
+                - consumer_id: consumer_8
+                  topic_list: markets/pub-1/000008
+                - consumer_id: consumer_9
+                  topic_list: markets/pub-1/000009
+                - consumer_id: consumer_10
+                  topic_list: markets/pub-1/000010
+
+                - consumer_id: consumer_11
+                  topic_list: markets/pub-1/000011
+                - consumer_id: consumer_12
+                  topic_list: markets/pub-1/000012
+                - consumer_id: consumer_13
+                  topic_list: markets/pub-1/000013
+                - consumer_id: consumer_14
+                  topic_list: markets/pub-1/000014
+                - consumer_id: consumer_15
+                  topic_list: markets/pub-1/000015
+                - consumer_id: consumer_16
+                  topic_list: markets/pub-1/000016
+                - consumer_id: consumer_17
+                  topic_list: markets/pub-1/000017
+                - consumer_id: consumer_18
+                  topic_list: markets/pub-1/000018
+                - consumer_id: consumer_19
+                  topic_list: markets/pub-1/000019
+                - consumer_id: consumer_20
+                  topic_list: markets/pub-1/000020
+
+                - consumer_id: consumer_21
+                  topic_list: markets/pub-1/000021
+                - consumer_id: consumer_22
+                  topic_list: markets/pub-1/000022
+                - consumer_id: consumer_23
+                  topic_list: markets/pub-1/000023
+                - consumer_id: consumer_24
+                  topic_list: markets/pub-1/000024
+                - consumer_id: consumer_25
+                  topic_list: markets/pub-1/000025
+                - consumer_id: consumer_26
+                  topic_list: markets/pub-1/000026
+                - consumer_id: consumer_27
+                  topic_list: markets/pub-1/000027
+                - consumer_id: consumer_28
+                  topic_list: markets/pub-1/000028
+                - consumer_id: consumer_29
+                  topic_list: markets/pub-1/000029
+                - consumer_id: consumer_30
+                  topic_list: markets/pub-1/000030
+
+                - consumer_id: consumer_31
+                  topic_list: markets/pub-1/000031
+                - consumer_id: consumer_32
+                  topic_list: markets/pub-1/000032
+                - consumer_id: consumer_33
+                  topic_list: markets/pub-1/000033
+                - consumer_id: consumer_34
+                  topic_list: markets/pub-1/000034
+                - consumer_id: consumer_35
+                  topic_list: markets/pub-1/000035
+                - consumer_id: consumer_36
+                  topic_list: markets/pub-1/000036
+                - consumer_id: consumer_37
+                  topic_list: markets/pub-1/000037
+                - consumer_id: consumer_38
+                  topic_list: markets/pub-1/000038
+                - consumer_id: consumer_39
+                  topic_list: markets/pub-1/000039
+                - consumer_id: consumer_40
+                  topic_list: markets/pub-1/000040
+
+                - consumer_id: consumer_41
+                  topic_list: markets/pub-1/000041
+                - consumer_id: consumer_42
+                  topic_list: markets/pub-1/000042
+                - consumer_id: consumer_43
+                  topic_list: markets/pub-1/000043
+                - consumer_id: consumer_44
+                  topic_list: markets/pub-1/000044
+                - consumer_id: consumer_45
+                  topic_list: markets/pub-1/000045
+                - consumer_id: consumer_46
+                  topic_list: markets/pub-1/000046
+                - consumer_id: consumer_47
+                  topic_list: markets/pub-1/000047
+                - consumer_id: consumer_48
+                  topic_list: markets/pub-1/000048
+                - consumer_id: consumer_49
+                  topic_list: markets/pub-1/000049
+                - consumer_id: consumer_50
+                  topic_list: markets/pub-1/000050
 
 
         # - name: large

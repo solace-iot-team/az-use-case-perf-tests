@@ -45,8 +45,10 @@
     - set_fact:
         collection_period: "{{((sample_duration_secs | int) - monitor.latency.warmup_secs - sampling_overhead_secs)}}"
     - set_fact:
-        # ensure we catch the latency monitors
-        wait_before_sampling_secs: "{{ monitor.latency.warmup_secs + (collection_period|int * 0.5)|int }}"
+        # works for low number of consumers
+        # wait_before_sampling_secs: "{{ monitor.latency.warmup_secs + (collection_period|int * 0.5)|int }}"
+        # high number of consumers --> call to get client connection details for each consumer --> high number, takes long
+        wait_before_sampling_secs: 1
 
     - name: "Check Local Files Exist"
       stat:
