@@ -92,9 +92,6 @@
     delegate_to: localhost
     when: is_warm_up_run == False
 
-  - set_fact:
-      check_timing: "{{ True if num_clients|int <= check_timing_max_clients|int else False }}"
-
   - name: "Wait for sample cyle to complete for sample={{ sample_num }} (warmup={{ is_warm_up_run }})"
     block:
       - name: "get time from local host"
@@ -107,7 +104,7 @@
       - name: "Check playbook execution time is within time span"
         fail:
           msg: "sampling execution time is too long, waiting for {{wait_secs}} is not possible. fix playbook."
-        when: check_timing == True and is_warm_up_run == False and is_timed_run == True and wait_secs|int < 0
+        when: is_warm_up_run == False and is_timed_run == True and wait_secs|int < 0
       - name: "Wait for sample cycle to complete, sample={{sample_num}} (warmup={{is_warm_up_run}})"
         pause:
           seconds: "{{wait_secs}}"

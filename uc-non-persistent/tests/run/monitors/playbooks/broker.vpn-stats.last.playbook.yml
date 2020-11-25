@@ -46,7 +46,6 @@
         wait_before_sampling_secs: 1
         # also, now we are out of sync already, don't check timing
         timed_run: False
-        check_timing_max_clients: 30
 
     - name: "Check Local Files Exist"
       stat:
