@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  test_spec:
+    name: devel_tp_opts
+    description: "devel tp-opts: azure vm optimizations"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+
+    infrastructure_list:
+      - cloud_provider: azure
+        config: devel1-standalone
+      # - cloud_provider: aws
+      #   config: devel1-standalone
+
+      # - cloud_provider: azure
+      #   config: 2-auto-standalone
+      # - cloud_provider: aws
+      #   config: 1-auto-standalone
+
+    run_specs:
+
+      run_params:
+        total_num_samples: 3
+        sample_duration_secs: 60
+
+      run_defaults:
+        load:
+          include: true
+          subscribe:
+            consumer_distribution_strategy: carbon_copy
+            consumers:
+              - consumer_id: consumer_0
+                topic_list: markets/exchange-0/>,markets/exchange-1/>
+          publish:
+            publishers:
+              - publisher_id: exch_0
+                number_of_topics: 10
+                topic_prefix: "markets/exchange-0"
+            client_connection_count: 1
+            msg_payload_size_bytes: 200
+            msg_rate_per_second: 100000
+        monitors:
+          latency:
+            include_latency_node_to_broker: true
+            include_broker_node_to_broker: true
+            msg_rate_per_second: 1000
+            msg_payload_size_bytes: 200
+          ping:
+            include: true
+
+      runs:
+
+        - name: base_run
+          description: "base run: 1 publisher, 1 consumer/node, 100 bytes"
+
+
+
+###
+# The End.
