@@ -7,6 +7,10 @@ Release Purpose: Test Spec Schema & tp-sml
 * **uc-non-persistent/tests/_run.sh**
   * env var: LOG_DIR
     - new required env var, directory for logs
+    - example: **uc-uc_non_persistent/tests/auto-run/run.tp-sml.fg.sh**
+    ````bash
+    export LOG_DIR=$scriptDir/logs
+    ````
 
 **tp-sml & tp-003:**
 * **uc-non-persistent/infrastructure/standalone/auto-run**
@@ -42,6 +46,10 @@ Release Purpose: Test Spec Schema & tp-sml
   - try multiple times with a wait in between
 * **.github/bootstrap-controller.sh**
   - upgrade jsonschema to latest version
+  - ubuntu:
+  ````bash
+  sudo -H python3 -m pip install --upgrade jsonschema
+  ````
 * **shared-setup**
   - download into results/uc-non-persistent/shared-setup
 
