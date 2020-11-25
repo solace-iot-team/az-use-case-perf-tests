@@ -45,25 +45,30 @@ resultDir="$resultDirBase/run.current"
 
 mkdir $resultDir > /dev/null 2>&1
 
+FAILED=0
+
 echo ">>> copy docker compose deployed template to result dir"
 # NOTE: this should be in shared-setup under the infrastructure id
 cp $usecaseHome/infrastructure/standalone/.deployed/*.deployed.yml "$resultDir/PubSub.docker-compose.$RUN_ID.yml"
-if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - copy docker compose template to result dir"; echo; exit 1; fi
+# do not exit, we still need the log files
+if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - copy docker compose template to result dir"; FAILED=1; fi
 
 echo ">>> copy all log files to result dir"
 mkdir $resultDir/logs > /dev/null 2>&1
 cp $RUN_LOG_FILE_BASE*.log "$resultDir/logs"
-if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - copy log files to result dir"; echo; exit 1; fi
+# do not exit, we still need the log files
+if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - copy log files to result dir"; FAILED=1; fi
 cp $LOG_DIR/ABORT.log "$resultDir/logs" > /dev/null 2>&1
 
 echo ">>> move result dir to run id"
 finalResultDir="$resultDirBase/run.$RUN_ID"
 mv $resultDir $finalResultDir
-if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - moving resultDir=$resultDir."; echo; exit 1; fi
-# cd $resultDirBase
-# rm -f $resultDirLatest
-# ln -s $finalResultDir $resultDirLatest
-# cd $scriptDir
+if [[ $? != 0 ]]; then echo ">>> ERROR - $scriptName - moving resultDir=$resultDir."; FAILED=1; fi
+
+if [ "$FAILED" -gt 0 ]; then
+  echo ">>> ERROR - $scriptName - FAILED"
+  exit 1
+fi
 
 ###
 # The End.

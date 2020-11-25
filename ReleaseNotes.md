@@ -1,5 +1,81 @@
 # Release Notes
 
+## Version: 0.7.4
+Release Purpose: Test Spec Schema & tp-sml
+
+**Breaking Change:**
+* **uc-non-persistent/tests/_run.sh**
+  * env var: LOG_DIR
+    - new required env var, directory for logs
+    - example: **uc-uc_non_persistent/tests/auto-run/run.tp-sml.fg.sh**
+    ````bash
+    export LOG_DIR=$scriptDir/logs
+    ````
+
+**tp-sml & tp-003:**
+* **uc-non-persistent/infrastructure/standalone/auto-run**
+  * **azure.tp-sml.tfvars.json**, **aws.tp-sml.tfvars.json**
+    - infrastructure specs for running tp-sml
+  * **run.apply.tp-sml.fg.sh**, **run.destroy.tp-sml.fg.sh**
+    - standup & destroy infrastructures for tp-sml
+  * **azure.tp-003.tfvars.json**, **aws.tp-003.tfvars.json**
+    - infrastructure specs for running tp-003
+  * **run.apply.tp-003.fg.sh**, **run.destroy.tp-003.fg.sh**
+    - standup & destroy infrastructures for tp-003
+* **uc-non-persistent/tests/auto-run**
+  * **tp-sml.test.spec.yml**
+    - the tp-sml test spec
+  * **run.tp-sml.fg.sh**
+    - run tp-sml spec
+  * **validate.tp-sml.fg.sh**
+    - validate the tp-sml spec only
+* **.github/workflows/prod-uc-non-persistent.yml**
+  * added workflow input: test spec id
+* **analytics/auto-run**
+  * **run.uc-uc_non_persistent.tp-003.fg.sh**
+    - run analytics against tp-003 results
+  * **run.uc-uc_non_persistent.tp-sml.fg.sh**
+    - run analytics against tp-sml results
+
+
+**Workflows:**
+* ADDED: downloading logs recursively:
+  - sftp -p ==> sftp -p -r
+* ADDED: **.github/ssh-connect-controller.sh**
+  - ISSUE: ssh connection refused to newly started controller
+  - try multiple times with a wait in between
+* **.github/bootstrap-controller.sh**
+  - upgrade jsonschema to latest version
+  - ubuntu:
+  ````bash
+  sudo -H python3 -m pip install --upgrade jsonschema
+  ````
+* **shared-setup**
+  - download into results/uc-non-persistent/shared-setup
+
+**Validation of Test Spec against Schema**
+
+Validates test specs and generated run specs against a json schema.
+* **New Environment Variables**
+  - optional, default=False
+  ````bash
+  export GENERATE_ONLY="True"
+  export VALIDATE_SPECS="True"
+  ````
+* **Installation on Mac:**
+  ````bash
+  pip3 install --upgrade jsonschema
+  jsonschema -h
+  pip3 show jsonschema
+  ````
+* **Installation on Ubuntu 18**
+  ````bash
+  sudo -H python3 -m pip install --upgrade jsonschema
+  jsonschema -h
+  pip3 show jsonschema
+  ````
+
+
 ## Version: 0.7.3
 Release Purpose: Maintenance Analytics
 

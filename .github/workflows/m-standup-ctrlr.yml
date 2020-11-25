@@ -25,7 +25,9 @@ env:
   TEST_VM_ADMIN_USERNAME: "controller"
   TEST_AZURE_PROJECT: "solace-ctrlr"
   TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
+  TEST_SSH_CONNECT_SCRIPT: ".github/ssh-connect-controller.sh"
   TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
+  # TEST_BOOTSTRAP_SH: ".github/bootstrap-controller-ubuntu20.sh"
   TEST_CONTROLLER_REPO_DIR: ${{ github.repository }}
   TEST_REPO_KEYS_DIR: uc-non-persistent/keys
   TEST_AZURE_KEY_FILE: azure_key
@@ -37,7 +39,7 @@ env:
 jobs:
   standup:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
 
@@ -108,6 +110,21 @@ jobs:
           SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
           SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
 
+      - name: Controller - Connect SSH Script - retry until successful
+      # ensures that connection can be established
+        run: |
+          ${{ env.TEST_SSH_CONNECT_SCRIPT }}
+
+      - name: Controller - Connect SSH
+      # ensures that connection can be established
+        run: |
+          ssh controller "
+
+            touch ssh_connect_SUCCESS.log
+
+            echo "successfully connected to controller via ssh"
+
+          "
 
       - name: Controller - Set Bash Profile
         run: |
@@ -124,17 +141,6 @@ jobs:
               echo 'export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"' >> ~/.bash_profile
 
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
-
-          "
-
-      - name: Controller - Connect SSH
-      # ensures that connection can be established
-        run: |
-          ssh controller "
-
-            touch ssh_connect_SUCCESS.log
-
-            echo "successfully connected to controller via ssh"
 
           "
 

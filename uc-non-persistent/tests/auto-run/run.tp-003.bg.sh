@@ -13,7 +13,9 @@ export TEST_SPEC_FILE="$scriptDir/tp-003.test.spec.yml"
 
 export ANSIBLE_VERBOSITY=0
 
-nohup ../_run.sh > ./logs/$scriptName.out 2>&1 &
+export LOG_DIR=$scriptDir/logs
+
+nohup ../_run.sh > $LOG_DIR/$scriptName.out 2>&1 &
 
 ###
 # The End.

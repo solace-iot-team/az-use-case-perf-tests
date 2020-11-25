@@ -26,11 +26,8 @@ ls ./state/*.json
 cat ./state/loginSSH.sh
 ````
 
-
-## Configure VM Using Ansible
-TBD.
 ## Configure VM Manually
-_**Note: these instructions are based on Ubuntu.**_
+_**Note: these instructions are based on Ubuntu 18.**_
 
 ### Login
 
@@ -86,6 +83,9 @@ jq --version
 
 sudo -H python3 -m pip install yq
 yq --version
+
+sudo -H python3 -m pip install --upgrade jsonschema
+jsonschema -h
 
 sudo apt install unzip
 ````

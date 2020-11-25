@@ -1,0 +1,149 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "yml_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9_]+$"
+    },
+    "client_connection_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "msg_payload_size_bytes": {
+      "type": "integer",
+      "minimum": 100
+    },
+    "msg_rate_per_second": {
+      "type": "integer",
+      "minimum": 100
+    },
+    "number_as_str": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "use_case": {
+      "type": "object",
+      "default": {
+        "name": "uc_non_persistent",
+        "display_name": "Market Data Distribution"
+      },
+      "required": [
+        "name",
+        "display_name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "uc_non_persistent"
+          ]
+        },
+        "display_name": {
+          "type": "string"
+        }
+      }
+    },
+    "infrastructure": {
+      "type": "object",
+      "required": [
+        "cloud_provider",
+        "config"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cloud_provider": {
+          "type": "string",
+          "enum": [
+            "azure",
+            "aws"
+          ]
+        },
+        "config": {
+          "type": "string"
+        }
+      }
+    },
+    "consumer": {
+      "type": "object",
+      "required": [
+        "consumer_id",
+        "topic_list"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "consumer_id": {
+          "$ref": "common.json#/definitions/yml_id"
+        },
+        "topic_list": {
+          "type": "string",
+          "pattern": "^[-a-zA-Z0-9_/>,\\*\\?]+$"
+        }
+      }
+    },
+    "consumers": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/definitions/consumer"
+      },
+      "minItems": 1
+    },
+    "consumer_distribution_strategy": {
+      "type": "string",
+      "enum": [
+        "carbon_copy",
+        "round_robin"
+      ]
+    },
+    "publisher": {
+      "type": "object",
+      "required": [
+        "publisher_id",
+        "number_of_topics",
+        "topic_prefix"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publisher_id": {
+          "$ref": "common.json#/definitions/yml_id"
+        },
+        "number_of_topics": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "topic_prefix": {
+          "type": "string",
+          "pattern": "^[-a-zA-Z0-9_/]+$"
+        }
+      }
+    },
+    "publishers": {
+      "type": "array",
+      "items": {
+        "$ref": "common.json#/definitions/publisher"
+      },
+      "minItems": 1
+    },
+    "run_params": {
+      "type": "object",
+      "required": [
+        "total_num_samples",
+        "sample_duration_secs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total_num_samples": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sample_duration_secs": {
+          "type": "integer",
+          "minimum": 45,
+          "maximum": 120
+        }
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@
 # ---------------------------------------------------------------------------------------------
 
 ---
-- name: "Pre-Run Processing"
+- name: "Post-Run Processing"
   hosts: broker_pubsub
   gather_facts: no
   module_defaults:

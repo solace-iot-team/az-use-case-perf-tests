@@ -10,15 +10,12 @@
     scriptDir=$(cd $(dirname "$0") && pwd);
     scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 
-# TODO:
-# use apt-get and apt-cache instead of apt
-
 #####################################################################################
 # Update apt
-CMD="sudo apt update";
+CMD="sudo apt-get update";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt -y upgrade";
+CMD="sudo apt-get -y upgrade";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo apt-get install software-properties-common";
@@ -27,7 +24,7 @@ echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:
 CMD="sudo add-apt-repository ppa:deadsnakes/ppa -y";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
-CMD="sudo apt update";
+CMD="sudo apt-get update";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
@@ -62,6 +59,9 @@ CMD="sudo apt-get install jq -y";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo -H python3 -m pip install yq";
+echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+
+CMD="sudo -H python3 -m pip install --upgrade jsonschema";
 echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 CMD="sudo apt-get install unzip";

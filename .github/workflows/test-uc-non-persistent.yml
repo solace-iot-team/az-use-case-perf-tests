@@ -6,12 +6,12 @@
 name: test-uc-non-persistent
 on:
   # for testing
-  workflow_dispatch:
+  # workflow_dispatch:
 
   push:
     branches:
-      - 'feature-wf-test**'
-      - 'mtn-wf-test**'
+      - 'no-branch'
+      # - 'feature-ts-schema'
   # pull_request:
   #   types: [opened, reopened]
   #   branches:
@@ -33,6 +33,7 @@ env:
   TEST_VM_ADMIN_USERNAME: "controller"
   TEST_AZURE_PROJECT: "solace-ctrlr"
   TEST_AZURE_DEPLOY_ARM_TEMPLATE: ".github/azure-deploy-controller.json"
+  TEST_SSH_CONNECT_SCRIPT: ".github/ssh-connect-controller.sh"
   TEST_BOOTSTRAP_SH: ".github/bootstrap-controller.sh"
   TEST_RUNNER_ASSETS_DIR: remote-assets
   TEST_RUNNER_ASSETS_INFRA_DIR: infra
@@ -47,6 +48,8 @@ env:
   TEST_REPO_INFRA_LOGS_DIR: logs
   TEST_REPO_INFRA_APPLY_SCRIPT: run.apply.fg.sh
   TEST_REPO_INFRA_DESTROY_SCRIPT: run.destroy.fg.sh
+
+  TEST_REPO_SHARED_SETUP: uc-non-persistent/shared-setup
 
   TEST_REPO_TESTS_DIR: uc-non-persistent/tests/.test
   TEST_REPO_TESTS_LOGS_DIR: logs
@@ -67,7 +70,7 @@ env:
 jobs:
   run_tests:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     steps:
 
@@ -150,6 +153,21 @@ jobs:
           SSH_KEY: ${{ secrets.CONTROLLER_VM_PRIVATE_KEY }}
           SSH_HOST: ${{ steps.azure_deploy.outputs.publicIPAddress }}
 
+      - name: Controller - Connect SSH Script - retry until successful
+      # ensures that connection can be established
+        run: |
+          ${{ env.TEST_SSH_CONNECT_SCRIPT }}
+
+      - name: Controller - Connect SSH
+      # ensures that connection can be established
+        run: |
+          ssh controller "
+
+            touch ssh_connect_SUCCESS.log
+
+            echo "successfully connected to controller via ssh"
+
+          "
 
       - name: Controller - Set Bash Profile
         if: env.DEBUG_FLAG == 'true'
@@ -167,17 +185,6 @@ jobs:
               echo 'export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"' >> ~/.bash_profile
 
               echo 'export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"' >> ~/.bash_profile
-
-          "
-
-      - name: Controller - Connect SSH
-      # ensures that connection can be established
-        run: |
-          ssh controller "
-
-            touch ssh_connect_SUCCESS.log
-
-            echo "successfully connected to controller via ssh"
 
           "
 
@@ -290,6 +297,16 @@ jobs:
 
           "
 
+      - name: Controller - Infra - Download Shared Setup
+        if: always()
+        env:
+          SSH_USER: ${{ env.TEST_VM_ADMIN_USERNAME }}
+          REPO_LOGS_DIR: ${{ env.TEST_CONTROLLER_REPO_DIR }}/${{ env.TEST_REPO_SHARED_SETUP }}
+          RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_REPO_SHARED_SETUP }}
+        run: |
+          mkdir -p ./${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/*.json ${RUNNER_ASSET_DIR}
+
       - name: Controller - Test Runs
         run: |
           ssh controller "
@@ -310,7 +327,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_TESTS_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Test Results
         if: always()
@@ -342,7 +359,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_ANALYTICS_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Controller - Download Analytics Results
         if: always()
@@ -387,7 +404,7 @@ jobs:
           RUNNER_ASSET_DIR: ./${{ env.TEST_RUNNER_ASSETS_DIR }}/${{ env.TEST_RUNNER_ASSETS_INFRA_DIR }}/${{ env.TEST_REPO_INFRA_LOGS_DIR }}
         run: |
           mkdir -p ./${RUNNER_ASSET_DIR}
-          sftp -p ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
+          sftp -p -r ${SSH_USER}:${REPO_LOGS_DIR}/* ${RUNNER_ASSET_DIR}
 
       - name: Archive Results
         if: always()

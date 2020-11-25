@@ -11,17 +11,21 @@
   vars:
     run_script: _run.sh
     scan_4_errors_script: "./lib/scan-4-errors.sh"
+    is_validate_specs: "{{ VALIDATE_SPECS | default(False) }}"
+    run_spec_schema_file: "{{ RUN_SPEC_SCHEMA_FILE | default('not-defined') }}"
 
   tasks:
 
     - name: "Check Env Vars"
       debug:
         msg:
-          - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
-          - "LOG_DIR={{LOG_DIR}}"
-          - "RUN_SCRIPTS_DIR={{RUN_SCRIPTS_DIR}}"
-          - "RUN_SPECS_DIR={{RUN_SPECS_DIR}}"
-          - "GENERATE_ONLY={{GENERATE_ONLY}}"
+          - "SHARED_SETUP_DIR={{ SHARED_SETUP_DIR }}"
+          - "LOG_DIR={{ LOG_DIR }}"
+          - "RUN_SCRIPTS_DIR={{ RUN_SCRIPTS_DIR }}"
+          - "RUN_SPECS_DIR={{ RUN_SPECS_DIR }}"
+          - "GENERATE_ONLY={{ GENERATE_ONLY }}"
+          - "is_validate_specs={{ is_validate_specs }}"
+          - "run_spec_schema_file={{ run_spec_schema_file }}"
 
     # - name: "Ensure {{ scan_4_errors_script }} exists"
     #   stat:
@@ -54,10 +58,25 @@
         path: "{{RUN_SPECS_DIR}}"
         state: directory
 
+    - name: "Ensure {{ run_spec_schema_file }} exists"
+      local_action:
+        module: file
+        path: "{{ run_spec_schema_file }}"
+        state: file
+      when: is_validate_specs
+
     - name: "Settings"
       set_fact:
         infrastructure_id: "{{inventory_hostname}}"
         is_run_tests: "{{ False if GENERATE_ONLY=='True' else True }}"
+
+    - name: "Validate Run Specs"
+      include_tasks: ./tasks/validate.run-spec.yml
+      loop: "{{ run_list | dict2items }}"
+      loop_control:
+        index_var: run_num
+        loop_var: run
+      when: is_validate_specs
 
     - name: "Iterate over runs"
       include_tasks: ./tasks/run.test.yml

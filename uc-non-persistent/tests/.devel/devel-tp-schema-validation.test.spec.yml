@@ -1,0 +1,146 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+  test_spec:
+    name: devel_tp_schema_validation
+    description: "tp-100: SCHEMA TEST"
+    use_case:
+      name: uc_non_persistent
+      display_name: "Market Data Distribution"
+
+    infrastructure_list:
+      # - cloud_provider: azure
+      #   config: 1-auto-standalone
+      # - cloud_provider: azure
+      #   config: 2-auto-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
+
+    run_specs:
+
+      run_params:
+        total_num_samples: 10
+        sample_duration_secs: 60
+
+      run_defaults:
+        load:
+          include: true
+          subscribe:
+            # stand up all consumers on all nodes
+            consumer_distribution_strategy: carbon_copy
+            consumers:
+              - consumer_id: consumer_0
+                topic_list: markets/exchange-0/>,markets/exchange-1/>
+              - consumer_id: consumer_1
+                topic_list: markets/exchange-0/>,markets/exchange-1/>
+          publish:
+            # each publisher simulates a feedhandler for an exchange
+            # 500K topics per exchange
+            publishers:
+              - publisher_id: exch_0
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-0"
+              - publisher_id: exch_1
+                number_of_topics: 500000
+                topic_prefix: "markets/exchange-1"
+            client_connection_count: 1
+            msg_payload_size_bytes: 100
+            # 150K msgs / sec per publisher
+            msg_rate_per_second: 150000
+        monitors:
+          latency:
+            include_latency_node_to_broker: true
+            include_broker_node_to_broker: true
+            msg_rate_per_second: 1000
+            msg_payload_size_bytes: 100
+          ping:
+            include: true
+
+      runs:
+
+        - name: all_defaults
+          description: "all_defaults"
+
+        - name: overide_load_subscribe_consumers_1
+          description: "overide_load_subscribe_consumers"
+          load:
+            subscribe:
+              consumers:
+                - consumer_id: consumer_0
+                  topic_list: markets/exchange-0/>,markets/exchange-1/>
+
+        - name: overide_load_subscribe_consumers_2
+          description: "overide_load_subscribe_consumers"
+          load:
+            subscribe:
+              consumer_distribution_strategy: round_robin
+
+        - name: overide_load_subscribe_consumers_3
+          description: "overide_load_subscribe_consumers"
+          load:
+            subscribe:
+              consumer_distribution_strategy: round_robin
+              consumers:
+                - consumer_id: consumer_0
+                  topic_list: "markets/exchange-0/>,markets/exchange-1/>"
+
+        - name: override_load_publish_1
+          description: "override load publish 1"
+          load:
+            publish:
+              client_connection_count: 2
+
+        - name: override_load_publish_2
+          description: "override load publish 2"
+          load:
+            publish:
+              client_connection_count: 2
+              publishers:
+                - publisher_id: exch_0
+                  number_of_topics: 500000
+                  topic_prefix: "markets/exchange-0"
+
+        - name: override_monitors_1
+          description: "override_monitors_1"
+          monitors:
+            latency:
+              include_latency_node_to_broker: true
+
+        - name: override_monitors_2
+          description: "override_monitors_2"
+          monitors:
+            ping:
+              include: false
+
+        - name: override_all
+          description: "override_all"
+          load:
+            include: false
+            subscribe:
+              consumer_distribution_strategy: round_robin
+              consumers:
+                - consumer_id: consumer_2
+                  topic_list: markets/exchange-2/>,markets/exchange-22/>
+            publish:
+              publishers:
+                - publisher_id: exch_2
+                  number_of_topics: 200000
+                  topic_prefix: "markets/exchange-2"
+              client_connection_count: 200
+              msg_payload_size_bytes: 2000
+              msg_rate_per_second: 2000
+          monitors:
+            latency:
+              include_latency_node_to_broker: false
+              include_broker_node_to_broker: false
+              msg_rate_per_second: 2000
+              msg_payload_size_bytes: 200
+            ping:
+              include: false
+
+
+###
+# The End.

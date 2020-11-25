@@ -66,6 +66,7 @@
     register: clients_result
   - set_fact:
       clients: "{{ clients_result.result_list }}"
+      num_clients: "{{ clients_result.result_list | length }}"
 
   - set_fact:
       client_connection_details: "{{ [] }}"

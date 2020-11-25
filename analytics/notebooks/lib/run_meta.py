@@ -279,11 +279,11 @@ class RunMeta():
 
     """ Monitor Latency Latency Node """
     def getRuncSpecMonitorLatencyLatencyNodeIsIncluded(self):
-        return self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["sdkperf_node_to_broker"]["include"]
+        return self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["include_latency_node_to_broker"]
 
     """ Monitor Latency Broker Node """
     def getRuncSpecMonitorLatencyBrokerNodeIsIncluded(self):
-        return self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["broker_node_to_broker"]["include"]
+        return self.metaJson["meta"]["run_spec"]["monitors"]["latency"]["include_broker_node_to_broker"]
 
     """ Monitor Ping """
     def getRuncSpecMonitorPingIsIncluded(self):

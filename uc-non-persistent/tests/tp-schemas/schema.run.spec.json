@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://localhost:8811/schema.run_spec.json",
+  "type": "object",
+  "title": "Solace PubSub+ Performance Test Run Specification",
+  "required": [
+    "general",
+    "load",
+    "monitors",
+    "params"
+  ],
+  "definitions": {
+    "monitor_latency": {
+      "type": "object",
+      "required": [
+        "include_latency_node_to_broker",
+        "include_broker_node_to_broker",
+        "msg_payload_size_bytes",
+        "msg_rate_per_second",
+        "lpm"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "lpm": {
+          "type": "boolean"
+        },
+        "include_latency_node_to_broker": {
+          "type": "boolean"
+        },
+        "include_broker_node_to_broker": {
+          "type": "boolean"
+        },
+        "msg_payload_size_bytes": {
+          "$ref": "common.json#/definitions/number_as_str"
+        },
+        "msg_rate_per_second": {
+          "$ref": "common.json#/definitions/number_as_str"
+        }
+      }
+    },
+    "load_subscribe": {
+      "type": "object",
+      "required": [
+        "consumer_distribution_strategy",
+        "consumers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "consumer_distribution_strategy": {
+          "$ref": "common.json#/definitions/consumer_distribution_strategy"
+        },
+        "consumers": {
+          "$ref": "common.json#/definitions/consumers"
+        }
+      }
+    },
+    "load_publish": {
+      "type": "object",
+      "required": [
+        "publishers",
+        "client_connection_count",
+        "msg_payload_size_bytes",
+        "msg_rate_per_second"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "publishers": {
+          "$ref": "common.json#/definitions/publishers"
+        },
+        "client_connection_count": {
+          "$ref": "common.json#/definitions/number_as_str"
+        },
+        "msg_payload_size_bytes": {
+          "$ref": "common.json#/definitions/number_as_str"
+        },
+        "msg_rate_per_second": {
+          "$ref": "common.json#/definitions/number_as_str"
+        }
+      }
+    }
+  },
+  "properties": {
+    "general": {
+      "$id": "#/properties/general",
+      "type": "object",
+      "title": "The Run Spec General Settings",
+      "required": [
+        "description",
+        "test_spec",
+        "use_case"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "test_spec": {
+          "type": "object",
+          "required": [
+            "descr",
+            "name"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "$ref": "common.json#/definitions/yml_id"
+            },
+            "descr": {
+              "type": "string"
+            }
+          }
+        },
+        "use_case": {
+          "$ref": "common.json#/definitions/use_case"
+        }
+      }
+    },
+    "load": {
+      "type": "object",
+      "required": [
+        "include",
+        "subscribe",
+        "publish"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "include": {
+          "type": "boolean"
+        },
+        "subscribe": {
+          "$ref": "#/definitions/load_subscribe"
+        },
+        "publish": {
+          "$ref": "#/definitions/load_publish"
+        }
+      }
+    },
+    "monitors": {
+      "type": "object",
+      "required": [
+        "latency",
+        "ping",
+        "vpn_stats"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "latency": {
+          "$ref": "#/definitions/monitor_latency"
+        },
+        "ping": {
+          "type": "object",
+          "required": [
+            "include"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "include": {
+              "type": "boolean"
+            }
+          }
+        },
+        "vpn_stats": {
+          "type": "object",
+          "required": [
+            "include"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "include": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "params": {
+      "$ref": "common.json#/definitions/run_params"
+    }
+  }
+}

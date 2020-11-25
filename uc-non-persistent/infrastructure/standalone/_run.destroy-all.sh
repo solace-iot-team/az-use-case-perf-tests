@@ -34,7 +34,7 @@ source $projectHome/.lib/functions.sh
 
       export TERRAFORM_DIR="$scriptDir/$cloudProvider"
       export TERRAFORM_VAR_FILE="$TF_VARIABLES_DIR/$infrastructureId.tfvars.json"
-      export TERRAFORM_STATE_FILE="tfstate/$infrastructureId.tfstate"
+      export TERRAFORM_STATE_FILE="$TERRAFORM_DIR/tfstate/$infrastructureId.tfstate"
 
       export TF_LOG_PATH="$LOG_DIR/$infrastructureId.$callScript.terraform.log"
 

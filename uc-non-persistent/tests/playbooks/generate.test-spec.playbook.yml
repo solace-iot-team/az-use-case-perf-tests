@@ -12,6 +12,7 @@
     - include_vars: "{{ TEST_SPEC_FILE }}"
   vars:
     test_specs_j2_template_file: "./lib/test_specs.j2"
+    is_validate_specs: "{{ VALIDATE_SPECS | default(False) }}"
 
   tasks:
 
@@ -20,6 +21,7 @@
         msg:
           - "TEST_SPEC_DIR={{TEST_SPEC_DIR}}"
           - "SHARED_SETUP_DIR={{SHARED_SETUP_DIR}}"
+          - "is_validate_specs={{is_validate_specs}}"
 
     - name: "Ensure {{ TEST_SPEC_DIR }} exists"
       local_action:
