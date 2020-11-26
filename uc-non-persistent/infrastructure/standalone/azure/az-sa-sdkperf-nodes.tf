@@ -28,7 +28,7 @@ resource "azurerm_linux_virtual_machine" "latency-nodes" {
   source_image_reference {
     publisher = "OpenLogic"
     offer     = "Centos"
-    sku       = "7.7"
+    sku       = var.source_image_reference_openlogic_centos_sku
     version   = "latest"
   }
   os_disk {
@@ -132,7 +132,7 @@ resource "azurerm_linux_virtual_machine" "publisher-nodes" {
   source_image_reference {
     publisher = "OpenLogic"
     offer     = "Centos"
-    sku       = "7.7"
+    sku       = var.source_image_reference_openlogic_centos_sku
     version   = "latest"
   }
   os_disk {
@@ -236,7 +236,7 @@ resource "azurerm_linux_virtual_machine" "consumer-nodes" {
   source_image_reference {
     publisher = "OpenLogic"
     offer     = "Centos"
-    sku       = "7.7"
+    sku       = var.source_image_reference_openlogic_centos_sku
     version   = "latest"
   }
   os_disk {

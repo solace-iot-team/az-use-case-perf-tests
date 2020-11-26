@@ -1,0 +1,29 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Bootstrap Prepare"
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  any_errors_fatal: true
+  gather_facts: no
+
+  tasks:
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
+    # adds flexibility regarding python version pre-installed on the image
+    - name: "Symlink python to python3 if not exists"
+      raw: |
+        if [ -f /usr/bin/python3 ] && [ ! -f /usr/bin/python ]; then
+          ln --symbolic /usr/bin/python3 /usr/bin/python;
+        fi
+      become: true
+
+
+###
+# The End.

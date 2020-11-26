@@ -17,6 +17,8 @@ resource "local_file" "env_file" {
       ppg = "none"
       zone = var.zone
       region = var.aws_region
+      apply_kernel_optimizations = var.apply_kernel_optimizations
+      apply_mellanox_vma = var.apply_mellanox_vma
     }
   )
   filename = "../../../shared-setup/aws.${var.tag_name_prefix}-standalone.env.json"

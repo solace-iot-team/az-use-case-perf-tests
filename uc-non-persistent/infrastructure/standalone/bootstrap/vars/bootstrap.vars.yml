@@ -11,13 +11,9 @@ broker:
     swap_file_size: 2048
     swap_file_path: /swapfile  #aws
     swappiness: "1" #aws
-    sysctl_conf:
-      # net.ipv4.tcp_mem: "3032802 4043736 6065604"
-      net.ipv4.tcp_mem: "6032802 8043736 12065604"
-
   centos_docker:
     docker_centos_users: ["centos"]
-    docker_centos_version: 19.03.5
+    docker_centos_version: latest
     docker_centos_state: started
     docker_centos_enabled: true
     docker_centos_daemon_config:
@@ -63,9 +59,6 @@ sdkperf_nodes:
   sdkperf_root: "/opt/sdkperf"
   sdkperf_log_root: "/opt/sdkperf/logs"
   sdkperf_image_src_dir: "{{PROJECT_DIR}}/bin/sdkperf"
-  sysctl_conf:
-    # net.ipv4.tcp_mem: "369723 492967 739446"
-    net.ipv4.tcp_mem: "669723 892967 1439446"
 
 
 ###

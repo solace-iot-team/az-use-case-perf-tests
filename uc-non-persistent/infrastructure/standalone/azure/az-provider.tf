@@ -56,6 +56,8 @@ resource "local_file" "env_file" {
       ppg = azurerm_proximity_placement_group.sdkperf_az_ppgrp.*
       zone = var.zone
       region = var.az_region
+      apply_kernel_optimizations = var.apply_kernel_optimizations
+      apply_mellanox_vma = var.apply_mellanox_vma
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.env.json"

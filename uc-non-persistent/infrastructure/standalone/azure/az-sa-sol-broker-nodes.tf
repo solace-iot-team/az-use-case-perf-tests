@@ -29,7 +29,7 @@ resource "azurerm_linux_virtual_machine" "solace-broker-nodes" {
   source_image_reference {
     publisher = "OpenLogic"
     offer     = "Centos"
-    sku       = "7.7"
+    sku       = var.source_image_reference_openlogic_centos_sku
     version   = "latest"
   }
 

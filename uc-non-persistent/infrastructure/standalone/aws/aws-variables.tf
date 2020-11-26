@@ -45,6 +45,22 @@ variable "consumer_node_vm_count" {
   type = string
   default = "2"
 }
+variable "apply_kernel_optimizations" {
+  type = bool
+  default = false
+  validation {
+    condition     = var.apply_kernel_optimizations == false
+    error_message = "Invalid value provided for variable apply_kernel_optimizations. Allowed values: ['false']."
+  }
+}
+variable "apply_mellanox_vma" {
+  type = bool
+  default = false
+  validation {
+    condition     = var.apply_mellanox_vma == false
+    error_message = "Invalid value provided for variable apply_mellanox_vma. Allowed values: ['false']."
+  }
+}
 
 #
 # END CUSTOMIZATION

@@ -30,7 +30,11 @@ resource "null_resource" "trigger_bootstrap" {
   }
   provisioner "local-exec" {
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
-    command = "../bootstrap/_run.bootstrap.sh aws.${var.tag_name_prefix}-standalone"
+    command = <<EOT
+      export APPLY_KERNEL_OPTIMIZATIONS=${var.apply_kernel_optimizations}
+      export APPLY_MELLANOX_VMA=${var.apply_mellanox_vma}
+      ../bootstrap/_run.bootstrap.sh aws.${var.tag_name_prefix}-standalone
+EOT
   }
   provisioner "local-exec" {
     when    = destroy

@@ -34,17 +34,6 @@
         path: "{{ USE_CASE_DIR }}"
         state: directory
 
-    - name: Change sysctl-settings
-      sysctl:
-        name: '{{ item.key }}'
-        value: '{{ item.value }}'
-        sysctl_set: yes
-        state: present
-        reload: yes
-      with_dict: '{{ bootstrap.sdkperf_nodes.sysctl_conf }}'
-      when: inventory_hostname != 'broker_centos'
-      become: true
-
     - name: sdkperf | create sdkperf_group
       group:
         name: "{{bootstrap.sdkperf_nodes.sdkperf_group}}"
