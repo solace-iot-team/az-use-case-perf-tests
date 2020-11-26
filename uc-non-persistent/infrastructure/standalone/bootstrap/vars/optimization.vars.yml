@@ -26,7 +26,6 @@ kernel:
       net.ipv4.tcp_wmem: "10240 87380 67108864"
       net.ipv4.tcp_max_syn_backlog: 1024
       net.ipv4.tcp_tw_reuse: 1
-      net.ipv4.tcp_tw_recycle: 1
       net.ipv4.tcp_timestamps: 0
       net.ipv4.tcp_syn_retries: 5
 
@@ -35,35 +34,15 @@ kernel:
       vm.dirty_bytes: 8192
       vm.dirty_background_bytes: 52428800
       vm.swappiness: 10
+
+      # these don't work here
+      # net.ipv4.tcp_tw_recycle: 1
+
 
   # key: ansible_facts.distribution + '_' + ansible_facts.distribution_major_version
   CentOS_7:
     sysctl_conf:
-      net.core.netdev_max_backlog: 1000
-      net.core.netdev_budget: 300
-      net.core.somaxconn: 128
-      net.core.busy_poll: 50
-      net.core.busy_read: 50
-      net.core.rmem_default: 67108864
-      net.core.wmem_default: 67108864
-
-      net.ipv4.tcp_fastopen: 1
-      # net.ipv4.tcp_lowlatency: 1
-      net.ipv4.tcp_sack: 1
-      net.ipv4.tcp_rmem: "10240 87380 67108864"
-      net.ipv4.tcp_wmem: "10240 87380 67108864"
-      net.ipv4.tcp_max_syn_backlog: 1024
-      net.ipv4.tcp_tw_reuse: 1
-      net.ipv4.tcp_tw_recycle: 1
-      net.ipv4.tcp_timestamps: 0
-      net.ipv4.tcp_syn_retries: 5
-
-      vm.dirty_ratio: 10
-      vm.dirty_background_ratio: 3
-      vm.dirty_bytes: 8192
-      vm.dirty_background_bytes: 52428800
-      vm.swappiness: 10
-
+      # none tested
 
 ###
 # The End.

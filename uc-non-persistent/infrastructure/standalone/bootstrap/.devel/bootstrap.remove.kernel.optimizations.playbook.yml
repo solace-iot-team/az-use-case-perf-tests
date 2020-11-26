@@ -1,0 +1,34 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Devel: Remove Kernel Optimizations"
+  # hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  hosts: sdkperf_publishers
+  any_errors_fatal: true
+  gather_facts: yes
+
+  tasks:
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
+    - name: "CHECK cloud_provider: azure only"
+      fail:
+        msg: "Optimizations only supported for cloud_provider=azure"
+      when: cloud_provider != "azure"
+
+    - name: "Remove: sysctl"
+      sysctl:
+        name: net.ipv4.tcp_tw_recycle
+        state: absent
+        reload: yes
+      become: true
+
+
+###
+# The End.

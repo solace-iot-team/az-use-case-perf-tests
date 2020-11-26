@@ -7,8 +7,7 @@
 
 ---
 - name: "Bootstrap Optimizations"
-  # hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
-  hosts: sdkperf_publishers
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
   any_errors_fatal: true
   gather_facts: yes
   pre_tasks:
@@ -32,31 +31,18 @@
         msg: "Optimizations only supported for cloud_provider=azure"
       when: cloud_provider != "azure" and (apply_kernel_optimizations|bool or apply_mellanox_vma|bool)
 
+    # - name: check some facts
+    #   debug:
+    #     msg:
+    #       - "distribution={{ ansible_facts.distribution }}"
+    #       - "distribution_major_version={{ ansible_facts.distribution_major_version }}"
+    #       - "distribution_release={{ ansible_facts.distribution_release }}"
+    #       - "distribution_version={{ ansible_facts.distribution_version }}"
 
-
-
-    - name: check some facts
-      debug:
-        msg:
-          # - "ansbile_facts="
-          # - "{{ ansible_facts }}"
-          - "distribution={{ ansible_facts.distribution }}"
-          - "distribution_major_version={{ ansible_facts.distribution_major_version }}"
-          - "distribution_release={{ ansible_facts.distribution_release }}"
-          - "distribution_version={{ ansible_facts.distribution_version }}"
-
-    # - meta: end_play
-
-    # TODO: select the kernel optimizations based on version
-            # "distribution=CentOS",
-            # "distribution_major_version=8",
-            # "distribution_release=Core",
-            # "distribution_version=8.2"
-
-
-
-
-
+    - set_fact:
+        kernel_vars_key: "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}"
+    - set_fact:
+        kernel_vars: "{{ optimization.kernel[kernel_vars_key] }}"
 
     - name: "Kernel Optimizations: sysctl"
       sysctl:
@@ -65,7 +51,7 @@
         sysctl_set: yes
         state: present
         reload: yes
-      with_dict: '{{ optimization.kernel.sysctl_conf }}'
+      with_dict: '{{ kernel_vars.sysctl_conf }}'
       when: apply_kernel_optimizations|bool
       become: true
 
