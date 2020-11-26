@@ -33,11 +33,12 @@
   tags:
     - setup
 
-# - name: install epel-release
-#   yum:
-#     name: "epel-release"
-#     update_cache: true
-#
+- name: install epel-release
+  yum:
+    name: "epel-release"
+    update_cache: true
+  become: true
+
 # - name: install htop
 #   yum:
 #     name: "htop"

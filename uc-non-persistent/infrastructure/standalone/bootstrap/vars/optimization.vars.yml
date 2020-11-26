@@ -5,8 +5,6 @@
 
 ---
 
-# TODO: select based on OS Version
-
 kernel:
   # key: ansible_facts.distribution + '_' + ansible_facts.distribution_major_version
   CentOS_8:
@@ -35,7 +33,7 @@ kernel:
       vm.dirty_background_bytes: 52428800
       vm.swappiness: 10
 
-      # these don't work here
+      # these don't work
       # net.ipv4.tcp_tw_recycle: 1
 
 
@@ -43,6 +41,12 @@ kernel:
   CentOS_7:
     sysctl_conf:
       # none tested
+
+mellanox:
+    CentOS_8:
+      OFED_DIR: "MLNX_OFED-5.1-2.5.8.0"
+      OFED_FILE: "MLNX_OFED_LINUX-5.1-2.5.8.0-rhel8.2-x86_64"
+      OFED_WORKING_DIR: "~/ofed_working_dir"
 
 ###
 # The End.
