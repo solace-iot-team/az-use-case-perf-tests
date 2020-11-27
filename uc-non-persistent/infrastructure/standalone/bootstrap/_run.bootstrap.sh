@@ -73,17 +73,16 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     $playbook
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
-##############################################################################################################################
-# Apply Optimizations
-  playbook=$(assertFile "$scriptDir/bootstrap.optimizations.playbook.yml") || exit
-  ansible-playbook \
-                    -i $inventoryFile \
-                    --private-key $privateKeyFile \
-                    $playbook \
-                    --extra-vars "APPLY_KERNEL_OPTIMIZATIONS=$APPLY_KERNEL_OPTIMIZATIONS" \
-                    --extra-vars "APPLY_MELLANOX_VMA=$APPLY_MELLANOX_VMA"
 
-  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+# ********************************************************
+# DEBUG - TODO
+
+# no bootstrapping, play with install
+
+# exit
+
+# ********************************************************
+
 
 ##############################################################################################################################
 # Run Broker VM bootstrap
@@ -110,6 +109,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+
 ##############################################################################################################################
 # Run Broker PubSub bootstrap
 
@@ -122,7 +122,20 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
-  echo ">>> SUCCESS: $scriptName"
+##############################################################################################################################
+# Apply Optimizations
+  playbook=$(assertFile "$scriptDir/bootstrap.optimizations.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    --extra-vars "APPLY_KERNEL_OPTIMIZATIONS=$APPLY_KERNEL_OPTIMIZATIONS" \
+                    --extra-vars "APPLY_MELLANOX_VMA=$APPLY_MELLANOX_VMA"
+
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+
+
+echo ">>> SUCCESS: $scriptName"
 
 
 ###

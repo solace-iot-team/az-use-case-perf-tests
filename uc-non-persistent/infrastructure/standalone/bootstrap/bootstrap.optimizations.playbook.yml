@@ -51,7 +51,7 @@
         sysctl_set: yes
         state: present
         reload: yes
-      with_dict: '{{ kernel_vars.sysctl_conf }}'
+      with_dict: '{{ kernel_vars.sysctl_conf | ternary(kernel_vars.sysctl_conf, {} ) }}'
       when: apply_kernel_optimizations|bool
       become: true
 

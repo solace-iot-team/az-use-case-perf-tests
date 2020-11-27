@@ -19,8 +19,12 @@
     # adds flexibility regarding python version pre-installed on the image
     - name: "Symlink python to python3 if not exists"
       raw: |
+        echo ">>> INFO: checking installed python version:"
         if [ -f /usr/bin/python3 ] && [ ! -f /usr/bin/python ]; then
+          echo ">>> INFO: no /usr/bin/python found. creating sym link to /usr/bin/python3"
           ln --symbolic /usr/bin/python3 /usr/bin/python;
+        else
+          echo ">>> INFO: /usr/bin/python found. no action needed"
         fi
       become: true
 

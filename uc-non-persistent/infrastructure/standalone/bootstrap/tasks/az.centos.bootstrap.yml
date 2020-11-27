@@ -33,10 +33,23 @@
   tags:
     - setup
 
+# centos 8:
+- set_fact:
+    dist_key: "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}"
+- name: install EL Repo
+  yum:
+    name: https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+    update_cache: yes
+    disable_gpg_check: yes
+    state: present
+  become: true
+  when: dist_key == "CentOS_8"
+
 - name: install epel-release
   yum:
     name: "epel-release"
     update_cache: true
+    state: latest
   become: true
 
 # - name: install htop
