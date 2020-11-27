@@ -14,8 +14,8 @@
     infrastructure_list:
       - cloud_provider: azure
         config: devel1-standalone
-      # - cloud_provider: aws
-      #   config: devel1-standalone
+      - cloud_provider: aws
+        config: devel1-standalone
 
       # - cloud_provider: azure
       #   config: 2-auto-standalone
