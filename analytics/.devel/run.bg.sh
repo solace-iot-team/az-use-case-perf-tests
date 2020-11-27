@@ -24,7 +24,7 @@ export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 
 infrastructureIds=(
   "azure.devel1-standalone"
-  # "aws.devel1-standalone"
+  "aws.devel1-standalone"
 )
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
