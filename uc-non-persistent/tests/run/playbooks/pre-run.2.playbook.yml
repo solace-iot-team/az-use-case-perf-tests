@@ -1,0 +1,59 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Pre-Run 2 Processing: Gather all facts and add to meta"
+  hosts: all
+  gather_facts: yes
+  pre_tasks:
+    - include_vars:
+        file: run.vars.yml
+        name: run
+
+  tasks:
+
+    - name: "Read & Check Environment vars"
+      set_fact:
+        result_dir: "{{ RESULT_DIR }}"
+
+    - name: "Settings"
+      set_fact:
+        meta_result_file: "{{ result_dir }}/{{ run.meta_file_name }}"
+        meta_j2_template_file: "./lib/run.pre.2.meta.j2"
+
+    - name: "Read meta from pre-run"
+      include_vars:
+        file: "{{meta_result_file}}"
+        name: pre_run_meta
+
+    - name: "Ensure {{ result_dir }} exists"
+      local_action:
+        module: file
+        path: "{{result_dir}}"
+        state: directory
+
+    - set_fact:
+        node_facts: "{{ ansible_facts }}"
+
+    - name: "Create Meta Content Additions"
+      set_fact:
+        meta_content_add: "{{ lookup('template', meta_j2_template_file ) | from_json}}"
+
+    - name: "Add Meta Content Additions"
+      set_fact:
+        final_meta:
+          meta: "{{ pre_run_meta.meta | combine(meta_content_add.meta, recursive=True)}}"
+
+    - name: "Write Test Meta Data to Results"
+      copy:
+        content: "{{ final_meta | to_nice_json(indent=2) }}"
+        dest: "{{ meta_result_file }}"
+      delegate_to: localhost
+
+    - meta: end_play  
+
+###
+# The End.
