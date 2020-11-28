@@ -20,7 +20,7 @@ export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 #  format: {cloud_provider}.{config}
 export infrastructureIds=(
   "azure.test1-standalone"
-  # "azure.test2-standalone"
+  "azure.test2-standalone"
   "aws.test1-standalone"
 )
 
