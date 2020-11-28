@@ -74,15 +74,16 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 
-# ********************************************************
-# DEBUG - TODO
+##############################################################################################################################
+# Mellanox Driver
+  playbook=$(assertFile "$scriptDir/bootstrap.opts.mellanox.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    --extra-vars "APPLY_MELLANOX_VMA=$APPLY_MELLANOX_VMA"
 
-# no bootstrapping, play with install
-
-# exit
-
-# ********************************************************
-
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 ##############################################################################################################################
 # Run Broker VM bootstrap
@@ -124,13 +125,12 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 
 ##############################################################################################################################
 # Apply Optimizations
-  playbook=$(assertFile "$scriptDir/bootstrap.optimizations.playbook.yml") || exit
+  playbook=$(assertFile "$scriptDir/bootstrap.opts.kernel.playbook.yml") || exit
   ansible-playbook \
                     -i $inventoryFile \
                     --private-key $privateKeyFile \
                     $playbook \
-                    --extra-vars "APPLY_KERNEL_OPTIMIZATIONS=$APPLY_KERNEL_OPTIMIZATIONS" \
-                    --extra-vars "APPLY_MELLANOX_VMA=$APPLY_MELLANOX_VMA"
+                    --extra-vars "APPLY_KERNEL_OPTIMIZATIONS=$APPLY_KERNEL_OPTIMIZATIONS"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 

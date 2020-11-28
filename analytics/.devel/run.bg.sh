@@ -24,6 +24,7 @@ export ANALYSIS_OUT_DIR="$projectHome/uc-non-persistent/test-results/analysis"
 
 infrastructureIds=(
   "azure.devel1-standalone"
+  "azure.devel2-standalone"
   "aws.devel1-standalone"
 )
 

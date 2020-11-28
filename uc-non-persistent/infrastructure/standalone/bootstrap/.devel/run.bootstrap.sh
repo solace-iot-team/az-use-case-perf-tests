@@ -10,8 +10,8 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 # export UC_NON_PERSISTENT_INFRASTRUCTURE="aws.devel1-standalone"
 export UC_NON_PERSISTENT_INFRASTRUCTURE="azure.devel1-standalone"
 
-export APPLY_KERNEL_OPTIMIZATIONS=true
-export APPLY_MELLANOX_VMA=false
+export APPLY_KERNEL_OPTIMIZATIONS=false
+export APPLY_MELLANOX_VMA=true
 
 export ANSIBLE_VERBOSITY=3
 export LOG_DIR=$scriptDir/logs

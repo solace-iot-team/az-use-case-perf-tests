@@ -57,7 +57,7 @@
         monitors:
           latency:
             include_latency_node_to_broker: true
-            include_broker_node_to_broker: true
+            include_broker_node_to_broker: false
             msg_rate_per_second: 1000
             msg_payload_size_bytes: 100
           ping:

@@ -16,11 +16,8 @@
         config: devel1-standalone
       - cloud_provider: aws
         config: devel1-standalone
-
-      # - cloud_provider: azure
-      #   config: 2-auto-standalone
-      # - cloud_provider: aws
-      #   config: 1-auto-standalone
+      - cloud_provider: azure
+        config: devel2-standalone
 
     run_specs:
 

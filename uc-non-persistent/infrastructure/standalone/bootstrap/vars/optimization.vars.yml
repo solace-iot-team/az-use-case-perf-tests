@@ -44,13 +44,16 @@ kernel:
   # key: ansible_facts.distribution + '_' + ansible_facts.distribution_major_version
   CentOS_7:
     sysctl_conf:
-      # none tested
+      # none testedx
 
 mellanox:
     CentOS_8:
-      OFED_DIR: "MLNX_OFED-5.1-2.5.8.0"
-      OFED_FILE: "MLNX_OFED_LINUX-5.1-2.5.8.0-rhel8.2-x86_64"
-      OFED_WORKING_DIR: "~/ofed_working_dir"
+      ofed_dir: "MLNX_OFED-5.1-2.5.8.0"
+      ofed_file: "MLNX_OFED_LINUX-5.1-2.5.8.0-rhel8.2-x86_64"
+      working_dir: "/tmp/ofed_working_dir"
+      sysctl_conf:
+        kernel.shmmax: 1000000000
+        vm.nr_hugepages: 800
 
 ###
 # The End.

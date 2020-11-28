@@ -1,0 +1,164 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Bootstrap Mellanox Drivers"
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  any_errors_fatal: true
+  gather_facts: yes
+  pre_tasks:
+    - include_vars:
+        file: optimization.vars.yml
+        name: optimization
+  vars:
+    apply_mellanox_vma: "{{ APPLY_MELLANOX_VMA | default(False) }}"
+
+  tasks:
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
+    - name: "End Play if Mellanox not selected"
+      debug:
+        msg: "Mellanox not selected"
+      when: not (apply_mellanox_vma|bool)
+    - meta: end_play
+      when: not (apply_mellanox_vma|bool)
+
+    - name: "CHECK cloud_provider: azure only"
+      fail:
+        msg: "Mellanox Drivers only supported for cloud_provider=azure"
+      when: cloud_provider != "azure"
+
+    - set_fact:
+        dist_key: "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}"
+    - set_fact:
+        mellanox_vars: "{{ optimization.mellanox[dist_key] }}"
+
+    - name: "CHECK centOS version: 8 only supported"
+      fail:
+        msg: "Mellanox Drivers only supported for centOS=8"
+      when: dist_key != "CentOS_8"
+
+    - name: "Install EL Repo"
+      yum:
+        name: https://www.elrepo.org/elrepo-release-8.el8.elrepo.noarch.rpm
+        update_cache: yes
+        disable_gpg_check: yes
+        state: present
+      become: true
+
+    - name: "Create ofed working directory"
+      file:
+        path: "{{ mellanox_vars.working_dir }}"
+        state: directory
+
+    - name: "Untar Mellanox OFED"
+      unarchive:
+        src: "http://content.mellanox.com/ofed/{{ mellanox_vars.ofed_dir }}/{{ mellanox_vars.ofed_file }}.tgz"
+        dest: "{{ mellanox_vars.working_dir }}"
+        remote_src: yes
+
+    - name: "Install SW Packages"
+      yum:
+        name:
+          - make
+          - python3-devel
+          - redhat-rpm-config
+          - rpm-build
+          - gcc
+          - tcl
+          - tk
+          - elfutils-libelf-devel
+          - kernel-rpm-macros
+          - kernel-devel
+        state: latest
+        update_cache: yes
+      become: true
+
+    - name: "Upgrade all packages"
+      yum:
+        name: "*"
+        state: latest
+      become: true
+
+      # NOTE: on centOS=8_2 : link seems ok, also version is different
+    # - name: "Fix broken Symlink"
+    #   file:
+    #     src: /usr/src/kernels/4.18.0-193.28.1.el8_2.x86_64
+    #     dest: /lib/modules/4.18.0-193.19.1.el8_2.x86_64/build
+    #     state: link
+    #     force: yes
+    #   become: true
+
+    - name: "Restart system to reboot to newest kernel"
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+
+    - name: "Wait for 10 seconds for rebooting"
+      pause:
+        seconds: 10
+
+    - name: "Wait for connection"
+      wait_for_connection:
+        connect_timeout: 10
+        sleep: 5
+        delay: 5
+        timeout: 60
+
+    - name: "Compile and install Mellanox OFED"
+      command: ./mlnxofedinstall --guest --vma --skip-repo --skip-unsupported-devices-check --add-kernel-support
+      become: yes
+      args:
+        chdir: "{{ mellanox_vars.working_dir }}/{{ mellanox_vars.ofed_file }}"
+
+    - name: "Update initramfs"
+      command: dracut -f
+      become: yes
+
+    - name: "Kernel Optimizations: sysctl"
+      sysctl:
+        name: '{{ item.key }}'
+        value: '{{ item.value }}'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_dict: '{{ mellanox_vars.sysctl_conf | ternary(mellanox_vars.sysctl_conf, {} ) }}'
+      become: true
+
+    - name: "Restart system to reboot to newest kernel"
+      shell: "sleep 5 && reboot"
+      async: 1
+      poll: 0
+
+    - name: "Wait for 10 seconds for rebooting"
+      pause:
+        seconds: 10
+
+    - name: "Wait for connection"
+      wait_for_connection:
+        connect_timeout: 10
+        sleep: 5
+        delay: 5
+        timeout: 60
+
+    # TODO: create a service and enable/start it
+
+    - name: "Start VMA daemon"
+      command: vmad
+      become: yes
+
+    # - name: "Enable & Start VMA daemon"
+    #   systemd:
+    #     name: /usr/sbin/vmad
+    #     state: started
+    #     enabled: yes
+    #   become: true
+
+###
+# The End.
