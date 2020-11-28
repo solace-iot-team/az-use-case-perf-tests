@@ -1,5 +1,33 @@
 # Release Notes
 
+## Version: 0.7.5
+Release Purpose: Azure VM Networking Optimizations
+
+_Note: Optimizations only apply to Azure._
+
+**uc-non-persistent/infrastructure/standalone/azure**
+* **az-variables.tf**
+  - new variables:
+    - "source_image_reference_openlogic_centos_sku": "8_2" or "7.7",
+    - "apply_kernel_optimizations": false | true
+    - "apply_mellanox_vma": false | true
+    - examples:
+      - **auto-run/azure.tp-sml.tfvars.json**
+
+
+**uc-non-persistent/infrastructure/standalone/bootstrap**
+* new: **vars/optimization.vars.yml**
+  - entries for kernel/OS version and mellanox/OS version
+* new: **bootstrap.opts.kernel.playbook.yml**
+  - applies kernel optimizations to all vms
+* new: **bootstrap.opts.mellanox.playbook.yml**
+  - applies mellanox vma driver
+
+**analytics**
+* **analytics/run-analysis.ipynb**
+  - includes optimization settings
+  - includes image references per node
+
 ## Version: 0.7.4
 Release Purpose: Test Spec Schema & tp-sml
 
