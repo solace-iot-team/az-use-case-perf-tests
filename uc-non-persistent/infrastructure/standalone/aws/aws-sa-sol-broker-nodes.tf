@@ -52,7 +52,7 @@ resource "aws_instance" "solace-broker-nodes" {
 
  # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
-    inline = ["echo 'SSH ready to rock'"]
+    inline = ["echo 'SSH ready to rock'", "sudo hostnamectl set-hostname ${var.tag_name_prefix}-solacebroker-node-${count.index}"]
 
     connection {
       host        = self.public_ip
