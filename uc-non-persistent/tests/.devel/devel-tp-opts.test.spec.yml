@@ -22,12 +22,12 @@
     run_specs:
 
       run_params:
-        total_num_samples: 1
+        total_num_samples: 10
         sample_duration_secs: 60
 
       run_defaults:
         load:
-          include: false
+          include: true
           subscribe:
             consumer_distribution_strategy: carbon_copy
             consumers:
@@ -43,7 +43,7 @@
             msg_rate_per_second: 100000
         monitors:
           latency:
-            include_latency_node_to_broker: false
+            include_latency_node_to_broker: true
             include_broker_node_to_broker: false
             msg_rate_per_second: 1000
             msg_payload_size_bytes: 200
