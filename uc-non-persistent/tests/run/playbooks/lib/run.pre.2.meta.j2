@@ -8,7 +8,7 @@
 {
   "meta": {
     "node_facts": {
-      "{{ inventory_hostname }}": {{ node_facts | to_nice_json }}
+      "{{ node_key }}": {{ node_facts | to_nice_json }}
     }
   }
 }

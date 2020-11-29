@@ -12,7 +12,7 @@ scriptName=$(basename $(test -L "$0" && readlink "$0" || echo "$0"));
 export infrastructureIds=(
   "aws.devel1"
   "azure.devel1"
-  "azure.devel2"
+  # "azure.devel2"
 )
 
 export ANSIBLE_VERBOSITY=3

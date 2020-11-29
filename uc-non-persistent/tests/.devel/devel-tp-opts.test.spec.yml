@@ -16,18 +16,18 @@
         config: devel1-standalone
       - cloud_provider: aws
         config: devel1-standalone
-      - cloud_provider: azure
-        config: devel2-standalone
+      # - cloud_provider: azure
+      #   config: devel2-standalone
 
     run_specs:
 
       run_params:
-        total_num_samples: 3
+        total_num_samples: 1
         sample_duration_secs: 60
 
       run_defaults:
         load:
-          include: true
+          include: false
           subscribe:
             consumer_distribution_strategy: carbon_copy
             consumers:
@@ -43,12 +43,12 @@
             msg_rate_per_second: 100000
         monitors:
           latency:
-            include_latency_node_to_broker: true
-            include_broker_node_to_broker: true
+            include_latency_node_to_broker: false
+            include_broker_node_to_broker: false
             msg_rate_per_second: 1000
             msg_payload_size_bytes: 200
           ping:
-            include: true
+            include: false
 
       runs:
 

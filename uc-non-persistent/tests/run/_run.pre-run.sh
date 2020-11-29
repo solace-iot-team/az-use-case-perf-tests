@@ -63,20 +63,19 @@ PRE_RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 ##############################################################################################################################
 # Pre-Run 2
 
-# NOTE: under devel
+  inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
+  playbook="$scriptDir/playbooks/pre-run.2.playbook.yml"
+  privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 
-  # inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  # playbook="$scriptDir/playbooks/pre-run.2.playbook.yml"
-  # privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
-  #
-  # ansible-playbook \
-  #                 --fork 1 \
-  #                 -i $inventoryFile \
-  #                 --private-key $privateKeyFile \
-  #                 $playbook \
-  #                 --extra-vars "RESULT_DIR=$resultDir"
-  #
-  # code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
+  ansible-playbook \
+                  --fork 1 \
+                  -i $inventoryFile \
+                  --private-key $privateKeyFile \
+                  $playbook \
+                  --extra-vars "RESULT_DIR=$resultDir"
+
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
+
 
 ###
 # The End.

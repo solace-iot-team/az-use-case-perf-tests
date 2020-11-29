@@ -6,7 +6,8 @@
 
 ---
 - name: "Pre-Run 2 Processing: Gather all facts and add to meta"
-  hosts: all
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  serial: 1
   gather_facts: yes
   pre_tasks:
     - include_vars:
@@ -14,6 +15,10 @@
         name: run
 
   tasks:
+
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
 
     - name: "Read & Check Environment vars"
       set_fact:
@@ -37,6 +42,7 @@
 
     - set_fact:
         node_facts: "{{ ansible_facts }}"
+        node_key: "{{ ansible_facts.hostname }}"
 
     - name: "Create Meta Content Additions"
       set_fact:
@@ -52,8 +58,6 @@
         content: "{{ final_meta | to_nice_json(indent=2) }}"
         dest: "{{ meta_result_file }}"
       delegate_to: localhost
-
-    - meta: end_play  
 
 ###
 # The End.
