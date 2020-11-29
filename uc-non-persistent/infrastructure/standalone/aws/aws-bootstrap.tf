@@ -39,7 +39,7 @@ EOT
   provisioner "local-exec" {
     when    = destroy
     # requires env var set: export ANSIBLE_PYTHON_INTERPRETER={path-to-python-3}
-    command = "../bootstrap/_run.bootstrap.destroy.sh azure.${self.triggers.tag_name_prefix}-standalone"
+    command = "../bootstrap/_run.bootstrap.destroy.sh aws.${self.triggers.tag_name_prefix}-standalone"
   }
   depends_on = [
       local_file.inventory_file
