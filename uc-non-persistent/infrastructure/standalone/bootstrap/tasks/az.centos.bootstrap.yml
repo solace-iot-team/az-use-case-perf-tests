@@ -40,12 +40,11 @@
     state: latest
   become: true
 
+- name: install htop
+  yum:
+    name: "htop"
+    update_cache: true
 
-# - name: install htop
-#   yum:
-#     name: "htop"
-#     update_cache: true
-#
 # - name: install sysstat
 #   yum:
 #     name: "sysstat"
