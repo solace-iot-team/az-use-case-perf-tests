@@ -22,10 +22,40 @@ _Note: Optimizations only apply to Azure._
 * new: **bootstrap.opts.mellanox.playbook.yml**
   - applies mellanox vma driver
 
+**uc-non-persistent/infrastructure/standalone/bootstrap/.devel**
+* **run.apply.kernel.optimizations.sh**
+  - example to apply kernel settings (sysctl) to existing infrastructure
+
 **analytics**
 * **analytics/run-analysis.ipynb**
-  - includes optimization settings
-  - includes image references per node
+  - added optimization settings
+  - added image references per node
+  - added cores and processor type
+
+**uc-non-persistent/infrastructure/standalone/templates**
+* **aws.inventory.tpl**, **az.inventory.tpl**
+  - added private ip addresses for every node
+
+**uc-non-persistent/shared-setup**
+* **{cloud-provider}.{config-id}.inventory.json**
+  - added private ip addresses for all nodes (prep for sockperf monitor)
+
+**uc-non-persistent/test-results/stats/{cloud-provider}.{config-id}/{run-id}**
+* **meta.json**
+  - added ansible facts for each node: **meta.node_facts.{hostname}.ansible_facts**
+  - added sysctl facts for each node: **meta.node_facts.{hostname}.sysctl_facts**
+
+**htop**
+* installed on every node
+  - run: ssh into node, run: htop
+
+**sysbench**
+* installed on every node
+  - run examples:
+  ````bash
+  sysbench --test=cpu --cpu-max-prime=20000 --time=60 --threads=12 run
+  sysbench --test=threads --time=60 --threads=12 run
+  ````
 
 ## Version: 0.7.4
 Release Purpose: Test Spec Schema & tp-sml
