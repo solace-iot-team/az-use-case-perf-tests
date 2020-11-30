@@ -22,6 +22,8 @@ _Note: Optimizations only apply to Azure._
 * new: **bootstrap.opts.mellanox.playbook.yml**
   - applies mellanox vma driver
 
+> :warning: depending on the assigned infratrucure, the mellanox driver may complain about 'unsupported' devices. bootstrapping uses the flag --skip-unsupported-devices-check to avoid failure. the ramifications of this have not been explored further.
+
 **uc-non-persistent/infrastructure/standalone/bootstrap/.devel**
 * **run.apply.kernel.optimizations.sh**
   - example to apply kernel settings (sysctl) to existing infrastructure

@@ -112,8 +112,9 @@
         timeout: 60
 
     - name: "Compile and install Mellanox OFED"
-      # command: ./mlnxofedinstall --guest --vma --skip-repo --skip-unsupported-devices-check --add-kernel-support
-      command: ./mlnxofedinstall --guest --vma --skip-repo --add-kernel-support
+      # depending on the infra, it might have unsupported devices
+      command: ./mlnxofedinstall --guest --vma --skip-repo --skip-unsupported-devices-check --add-kernel-support
+      # command: ./mlnxofedinstall --guest --vma --skip-repo --add-kernel-support
       become: yes
       args:
         chdir: "{{ mellanox_vars.working_dir }}/{{ mellanox_vars.ofed_file }}"
