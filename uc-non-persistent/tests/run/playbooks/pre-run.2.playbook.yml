@@ -40,9 +40,16 @@
         path: "{{result_dir}}"
         state: directory
 
+
+# shell: "sysctl -a | grep  fs.file-max | grep -o [0-9]*"
+    - name: "Gather sysctl settings"
+      command: "sysctl -a"
+      become: true
+      register: sysctl_result
+
     - set_fact:
-        node_facts: "{{ ansible_facts }}"
         node_key: "{{ ansible_facts.hostname }}"
+        sysctl_facts: "{{ sysctl_result.stdout_lines }}"
 
     - name: "Create Meta Content Additions"
       set_fact:

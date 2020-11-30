@@ -124,7 +124,7 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
 ##############################################################################################################################
-# Apply Optimizations
+# Apply Kernel Optimizations
   playbook=$(assertFile "$scriptDir/bootstrap.opts.kernel.playbook.yml") || exit
   ansible-playbook \
                     -i $inventoryFile \

@@ -230,10 +230,13 @@ class RunMeta():
         return f"{ref['publisher']}:{ref['offer']}:{ref['sku']}:{ref['version']}"
 
     def getNodeSpec(self, node):
+        node_name = node['name']
+        processor = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["processor"][2]
+        vcpus = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["processor_vcpus"]
         if self.cloud_provider == "azure":
-            return f"size: {node['size']}, image:{self.getAzureNodeImageReferenceAsDisplay(node)}"
+            return f"size: {node['size']}, image:{self.getAzureNodeImageReferenceAsDisplay(node)}, vcpus: {vcpus}, processor: {processor}"
         elif self.cloud_provider == "aws":
-            return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
+            return f"type: {node['node_details']['instance_type']}, vcpus: {vcpus}, processor: {processor}"
         else:
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 

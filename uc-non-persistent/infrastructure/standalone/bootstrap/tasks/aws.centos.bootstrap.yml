@@ -79,10 +79,15 @@
     name: "htop"
     update_cache: true
 
-# - name: install sysstat
-#   yum:
-#     name: "sysstat"
-#     update_cache: true
+- name: install sysbench
+  yum:
+    name: "sysbench"
+    update_cache: true
+
+- name: install sysstat
+  yum:
+    name: "sysstat"
+    update_cache: true
 
 ###
 # The End.

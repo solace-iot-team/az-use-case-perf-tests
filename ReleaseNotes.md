@@ -14,7 +14,6 @@ _Note: Optimizations only apply to Azure._
     - examples:
       - **auto-run/azure.tp-sml.tfvars.json**
 
-
 **uc-non-persistent/infrastructure/standalone/bootstrap**
 * new: **vars/optimization.vars.yml**
   - entries for kernel/OS version and mellanox/OS version
