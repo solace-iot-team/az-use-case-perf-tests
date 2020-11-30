@@ -118,6 +118,11 @@
       become: yes
       args:
         chdir: "{{ mellanox_vars.working_dir }}/{{ mellanox_vars.ofed_file }}"
+      register: mellanox_install_result
+
+    - name: "Log Mellanox Install Result"
+      debug:
+        msg: "{{ mellanox_install_result }}"
 
     - name: "Update initramfs"
       command: dracut -f
