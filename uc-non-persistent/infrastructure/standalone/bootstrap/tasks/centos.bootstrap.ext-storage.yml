@@ -12,15 +12,14 @@
     comment: Solace User
     uid: "{{ bootstrap.broker.ext_storage.solace_os_user_id }}"
 
-# Azure File system
-- name: Create a new primary partition for the attached volume
-  parted:
-    device: "{{ bootstrap.broker.ext_storage.az_solace_mount_dev }}"
-    number: 1
-    state: present
-  when: cloud_provider == "azure"
-
 # DOES NOT WORK! if needed, fix it
+# Azure File system
+# - name: Create a new primary partition for the attached volume
+#   parted:
+#     device: "{{ bootstrap.broker.ext_storage.az_solace_mount_dev }}"
+#     number: 1
+#     state: present
+#   when: cloud_provider == "azure"
 #
 # - name: Create a xfs filesystem on the newly created partition and check disk blocks
 #   filesystem:
