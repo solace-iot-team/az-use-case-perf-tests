@@ -39,12 +39,15 @@ rm -f $resultDir/*
 PRE_RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 
 ##############################################################################################################################
-# Pre-Run
+# Settings
 
   inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/playbooks/pre-run.playbook.yml"
   privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
+  export ANSIBLE_HOST_KEY_CHECKING=False
 
+##############################################################################################################################
+# Pre-Run
+  playbook="$scriptDir/playbooks/pre-run.playbook.yml"
   ansible-playbook \
                   --fork 1 \
                   -i $inventoryFile \
@@ -63,10 +66,7 @@ PRE_RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 ##############################################################################################################################
 # Pre-Run 2
 
-  inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
   playbook="$scriptDir/playbooks/pre-run.2.playbook.yml"
-  privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
-
   ansible-playbook \
                   --fork 1 \
                   -i $inventoryFile \

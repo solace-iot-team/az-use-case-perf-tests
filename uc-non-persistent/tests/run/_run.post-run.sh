@@ -33,6 +33,7 @@ resultDir="$resultDirBase/run.current"
 ##############################################################################################################################
 # Run
 
+  export ANSIBLE_HOST_KEY_CHECKING=False
   inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
   playbook="$scriptDir/playbooks/post-run.playbook.yml"
   privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
