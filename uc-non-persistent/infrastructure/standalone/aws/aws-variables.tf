@@ -126,6 +126,7 @@ variable "centOS_ami" {
   default = { # CentOS 7 (x86_64) - with Updates HVM
     eu-central-1 = "ami-095e1a4d3d632d215"
     us-west-1 = "ami-02676464a065c9c05"
+    eu-west-1 = "ami-04f5641b0d178a27a"
   }
 }
 

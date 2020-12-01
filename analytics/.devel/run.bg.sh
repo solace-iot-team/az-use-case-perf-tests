@@ -26,6 +26,7 @@ infrastructureIds=(
   "azure.devel1-standalone"
   # "azure.devel2-standalone"
   "aws.devel1-standalone"
+  # "aws.devel2-standalone"
 )
 
 export INFRASTRUCTURE_IDS="${infrastructureIds[*]}"
