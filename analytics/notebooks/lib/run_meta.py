@@ -224,8 +224,8 @@ class RunMeta():
         return self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumer_distribution_strategy"]
 
     def getAzureNodeImageReferenceAsDisplay(self, node):
-        import logging, json
-        logging.debug(f"node={json.dumps(node, indent=2)}")
+        # import logging, json
+        # logging.debug(f"node={json.dumps(node, indent=2)}")
         ref = node['node_details']['source_image_reference'][0]
         return f"{ref['publisher']}:{ref['offer']}:{ref['sku']}:{ref['version']}"
 
@@ -236,7 +236,8 @@ class RunMeta():
         if self.cloud_provider == "azure":
             return f"size: {node['size']}, image:{self.getAzureNodeImageReferenceAsDisplay(node)}, vcpus: {vcpus}, processor: {processor}"
         elif self.cloud_provider == "aws":
-            return f"type: {node['node_details']['instance_type']}, vcpus: {vcpus}, processor: {processor}"
+            image = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["distribution"] + " " + self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["distribution_version"]
+            return f"type: {node['node_details']['instance_type']}, image: {image}, vcpus: {vcpus}, processor: {processor}"
         else:
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
