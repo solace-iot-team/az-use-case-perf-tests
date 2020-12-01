@@ -13,6 +13,9 @@ _Note: Optimizations only apply to Azure._
     - "apply_mellanox_vma": false | true
     - examples:
       - **auto-run/azure.tp-sml.tfvars.json**
+  - supported combinations:
+    -  "source_image_reference_openlogic_centos_sku": "7.7" + "apply_kernel_optimizations": false | true + "apply_mellanox_vma": false
+    -  "source_image_reference_openlogic_centos_sku": "8_2" + "apply_kernel_optimizations": false | true + "apply_mellanox_vma": true | false
 
 **uc-non-persistent/infrastructure/standalone/bootstrap**
 * new: **vars/optimization.vars.yml**
@@ -58,6 +61,9 @@ _Note: Optimizations only apply to Azure._
   sysbench --test=cpu --cpu-max-prime=20000 --time=60 --threads=12 run
   sysbench --test=threads --time=60 --threads=12 run
   ````
+
+**terraform version**
+* tested with terraform version=Terraform v0.13.5
 
 ## Version: 0.7.4
 Release Purpose: Test Spec Schema & tp-sml
