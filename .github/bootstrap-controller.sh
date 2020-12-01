@@ -122,12 +122,12 @@ if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 #####################################################################################
 # Terraform
 
-# https://releases.hashicorp.com/terraform/0.13.4/terraform_0.13.4_linux_amd64.zip
-CMD="sudo wget -O ./terraform.zip https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip";
-echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
-
-CMD="sudo unzip -o ./terraform.zip -d /usr/local/bin";
-echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+# # https://releases.hashicorp.com/terraform/0.13.4/terraform_0.13.4_linux_amd64.zip
+# CMD="sudo wget -O ./terraform.zip https://releases.hashicorp.com/terraform/0.13.3/terraform_0.13.3_linux_amd64.zip";
+# echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
+#
+# CMD="sudo unzip -o ./terraform.zip -d /usr/local/bin";
+# echo ">>> cmd: $CMD"; $CMD; if [[ $? != 0 ]]; then echo ">>> ERROR: $scriptName:$CMD."; exit 1; fi
 
 #####################################################################################
 # Solace Docker Image
