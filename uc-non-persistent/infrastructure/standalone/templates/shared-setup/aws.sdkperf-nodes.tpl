@@ -5,7 +5,7 @@
       for node in latency_nodes: {
         "cloud_provider": "aws",
         "location": "${node.availability_zone}",
-        "name": "${node.host_id}",
+        "name": "${node.tags.Name}",
         "size": "${node.instance_type}",
         "public_ip": "${node.public_ip}",
         "private_ip": "${node.private_ip}",
@@ -21,7 +21,7 @@
         for node in publisher_nodes: {
           "cloud_provider": "aws",
           "location": "${node.availability_zone}",
-          "name": "${node.host_id}",
+          "name": "${node.tags.Name}",
           "size": "${node.instance_type}",
           "public_ip": "${node.public_ip}",
           "private_ip": "${node.private_ip}",
@@ -37,7 +37,7 @@
       for node in consumer_nodes: {
         "cloud_provider": "aws",
         "location": "${node.availability_zone}",
-        "name": "${node.host_id}",
+        "name": "${node.tags.Name}",
         "size": "${node.instance_type}",
         "public_ip": "${node.public_ip}",
         "private_ip": "${node.private_ip}",

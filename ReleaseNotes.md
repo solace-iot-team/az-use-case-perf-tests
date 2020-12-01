@@ -1,5 +1,70 @@
 # Release Notes
 
+## Version: 0.7.5
+Release Purpose: Azure VM Networking Optimizations
+
+_Note: Optimizations only apply to Azure._
+
+**uc-non-persistent/infrastructure/standalone/azure**
+* **az-variables.tf**
+  - new variables:
+    - "source_image_reference_openlogic_centos_sku": "8_2" or "7.7",
+    - "apply_kernel_optimizations": false | true
+    - "apply_mellanox_vma": false | true
+    - examples:
+      - **auto-run/azure.tp-sml.tfvars.json**
+  - supported combinations:
+    -  "source_image_reference_openlogic_centos_sku": "7.7" + "apply_kernel_optimizations": false | true + "apply_mellanox_vma": false
+    -  "source_image_reference_openlogic_centos_sku": "8_2" + "apply_kernel_optimizations": false | true + "apply_mellanox_vma": true | false
+
+**uc-non-persistent/infrastructure/standalone/bootstrap**
+* new: **vars/optimization.vars.yml**
+  - entries for kernel/OS version and mellanox/OS version
+* new: **bootstrap.opts.kernel.playbook.yml**
+  - applies kernel optimizations to all vms
+* new: **bootstrap.opts.mellanox.playbook.yml**
+  - applies mellanox vma driver
+
+> :warning: depending on the assigned infratrucure, the mellanox driver may complain about 'unsupported' devices. bootstrapping uses the flag --skip-unsupported-devices-check to avoid failure. the ramifications of this have not been explored further.
+
+**uc-non-persistent/infrastructure/standalone/bootstrap/.devel**
+* **run.apply.kernel.optimizations.sh**
+  - example to apply kernel settings (sysctl) to existing infrastructure
+
+**analytics**
+* **analytics/run-analysis.ipynb**
+  - added optimization settings
+  - added image references per node
+  - added cores and processor type
+
+**uc-non-persistent/infrastructure/standalone/templates**
+* **aws.inventory.tpl**, **az.inventory.tpl**
+  - added private ip addresses for every node
+
+**uc-non-persistent/shared-setup**
+* **{cloud-provider}.{config-id}.inventory.json**
+  - added private ip addresses for all nodes (prep for sockperf monitor)
+
+**uc-non-persistent/test-results/stats/{cloud-provider}.{config-id}/{run-id}**
+* **meta.json**
+  - added ansible facts for each node: **meta.node_facts.{hostname}.ansible_facts**
+  - added sysctl facts for each node: **meta.node_facts.{hostname}.sysctl_facts**
+
+**htop**
+* installed on every node
+  - run: ssh into node, run: htop
+
+**sysbench**
+* installed on every node
+  - run examples:
+  ````bash
+  sysbench --test=cpu --cpu-max-prime=20000 --time=60 --threads=12 run
+  sysbench --test=threads --time=60 --threads=12 run
+  ````
+
+**terraform version**
+* tested with terraform version=Terraform v0.13.5
+
 ## Version: 0.7.4
 Release Purpose: Test Spec Schema & tp-sml
 

@@ -52,6 +52,25 @@ variable "consumer_node_vm_count" {
   type = string
   default = "2"
 }
+variable "apply_kernel_optimizations" {
+  type = bool
+  default = false
+}
+variable "apply_mellanox_vma" {
+  type = bool
+  default = false
+}
+variable "source_image_reference_openlogic_centos_sku" {
+  type = string
+  default = "7.7"
+  validation {
+    # condition     = var.source_image_reference_openlogic_centos_sku == "7.7" || var.source_image_reference_openlogic_centos_sku == "8_2" || var.source_image_reference_openlogic_centos_sku == "8_2-gen2"
+    # error_message = "Invalid value provided for variable source_image_reference_openlogic_centos_sku. Allowed values: ['7.7', '8_2', '8_2-gen2']."
+    condition     = var.source_image_reference_openlogic_centos_sku == "7.7" || var.source_image_reference_openlogic_centos_sku == "8_2"
+    error_message = "Invalid value provided for variable source_image_reference_openlogic_centos_sku. Allowed values: ['7.7', '8_2']."
+  }
+}
+
 
 #
 # END CUSTOMIZATION

@@ -15,7 +15,6 @@ export VALIDATE_SPECS="True"
 
 # export ANSIBLE_VERBOSITY=0
 export ANSIBLE_VERBOSITY=3
-
 export LOG_DIR=$scriptDir/logs
 
 nohup ../_run.sh > $LOG_DIR/$scriptName.out 2>&1 &

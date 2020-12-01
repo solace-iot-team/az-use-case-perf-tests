@@ -16,7 +16,7 @@ env:
 
   DEBUG_FLAG: ${{ false }}
 
-  TEST_CONTROLLER_ID: "wfp-azperf"
+  TEST_CONTROLLER_ID: "wfpr-azperf"
   TEST_LOCATION: "westeurope"
   TEST_ZONE: "1"
   TEST_VM_ADMIN_USERNAME: "controller"

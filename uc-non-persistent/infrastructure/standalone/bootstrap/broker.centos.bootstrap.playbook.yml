@@ -55,17 +55,7 @@
         content: "{{ manifest }}"
         dest: "{{ manifest_dest }}"
       delegate_to: localhost
-
-    - name: Change sysctl-settings
-      sysctl:
-        name: '{{ item.key }}'
-        value: '{{ item.value }}'
-        sysctl_set: yes
-        state: present
-        reload: yes
-      with_dict: '{{ bootstrap.broker.centos.sysctl_conf }}'
-      become: true
-
+  
     - name: "Centos Bootstrap: AWS Setup Swap Tasks"
       include_tasks: ./tasks/aws.centos.bootstrap.yml
       when: cloud_provider == "aws"

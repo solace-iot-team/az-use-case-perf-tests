@@ -9,6 +9,7 @@ from .constants import *
 from .perf_error import PerfError
 from datetime import datetime
 import pytz
+import json
 
 class RunMeta():
     """ RunMeta """
@@ -39,6 +40,9 @@ class RunMeta():
 
     def getEnvZone(self):
         return self.metaJson["meta"]["env"]["zone"]
+
+    def getEnvOptimizationsDisplay(self):
+        return f'optimizations: kernel:{self.metaJson["meta"]["env"]["optimizations"]["apply_kernel_optimizations"]}, mellanox vma:{self.metaJson["meta"]["env"]["optimizations"]["apply_mellanox_vma"]}'
 
     """ Client Connections """
 
@@ -219,11 +223,21 @@ class RunMeta():
             return "n/a"
         return self.metaJson["meta"]["run_spec"]["load"]["subscribe"]["consumer_distribution_strategy"]
 
+    def getAzureNodeImageReferenceAsDisplay(self, node):
+        # import logging, json
+        # logging.debug(f"node={json.dumps(node, indent=2)}")
+        ref = node['node_details']['source_image_reference'][0]
+        return f"{ref['publisher']}:{ref['offer']}:{ref['sku']}:{ref['version']}"
+
     def getNodeSpec(self, node):
+        node_name = node['name']
+        processor = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["processor"][2]
+        vcpus = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["processor_vcpus"]
         if self.cloud_provider == "azure":
-            return f"size: {node['size']}"
+            return f"size: {node['size']}, image:{self.getAzureNodeImageReferenceAsDisplay(node)}, vcpus: {vcpus}, processor: {processor}"
         elif self.cloud_provider == "aws":
-            return f"type: {node['node_details']['instance_type']}, cores: {node['node_details']['cpu_core_count']}"
+            image = self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["distribution"] + " " + self.metaJson["meta"]["node_facts"][node_name]["ansible_facts"]["distribution_version"]
+            return f"type: {node['node_details']['instance_type']}, image: {image}, vcpus: {vcpus}, processor: {processor}"
         else:
             return f"ERROR: unknown node spec for cloud_provider:{self.cloud_provider}"
 
@@ -352,15 +366,15 @@ Cloud Provider: **{self.getDisplayNameCloudProvider()}**
 ## Run Settings
 * Description: "{self.getRunSpecDescription()}"
 
-|General                    |                                                   | | Infrastructure:           | cloud provider:{self.cloud_provider}                                        |      |   |
-|:--------------------------|:--------------------------------------------------|-|:--------------------------|:----------------------------------------------------------------------------|:-----|:--|
-|Run name:                  |{self.run_name}                                    | |{self.infrastructure}      |region: {self.getEnvRegion()}, zone: {self.getEnvZone()}                     |      |   |
-|Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>{self.getBrokerNodeSpec()}             |      |   |
-|Run Start:                 |{run_start}                                        | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>{self.getPublisherNodeSpec()}       |      |   |
-|Run End:                   |{run_end}                                          | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>{self.getConsumerNodeSpec()}        |      |   |
-|Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>{self.getMonitorNodeSpec()}          |      |   |
-|Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |Solace PubSub+             | {self.getSolacePubSubInfo()}                                                |      |   |
-|Number of Samples:         |{self.getRunSpecParamsTotalNumSamples()}           | |                           |                                                                             |      |   |
+|General                    |                                                   | | Infrastructure:           | cloud provider:{self.cloud_provider}                                                            |      |   |
+|:--------------------------|:--------------------------------------------------|-|:--------------------------|:------------------------------------------------------------------------------------------------|:-----|:--|
+|Run name:                  |{self.run_name}                                    | |{self.infrastructure}      |region: {self.getEnvRegion()}, zone: {self.getEnvZone()}<br/>{self.getEnvOptimizationsDisplay()} |      |   |
+|Run Id:                    |{self.run_id}                                      | |Broker Node:               |nodes: {self.getNumBrokerNodes()}<br/>{self.getBrokerNodeSpec()}                                 |      |   |
+|Run Start:                 |{run_start}                                        | |Load<br/>Publisher Nodes:  |nodes: {self.getNumPublisherNodes()}<br/>{self.getPublisherNodeSpec()}                           |      |   |
+|Run End:                   |{run_end}                                          | |Load<br/>Consumer Nodes:   |nodes: {self.getNumConsumerNodes()} <br/>{self.getConsumerNodeSpec()}                            |      |   |
+|Run Duration:              |{self.run_duration()}                              | |Monitor Node:              |nodes: {self.getNumMonitorNodes()} <br/>{self.getMonitorNodeSpec()}                              |      |   |
+|Sample Duration (secs):    |{self.getRunSpecParamsSampleDurationSecs()}        | |Solace PubSub+             | {self.getSolacePubSubInfo()}                                                                    |      |   |
+|Number of Samples:         |{self.getRunSpecParamsTotalNumSamples()}           | |                           |                                                                                                 |      |   |
 
 
 |Load|                                                                          | | Monitors   |                              |                                                                 |

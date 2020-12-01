@@ -39,12 +39,15 @@ rm -f $resultDir/*
 PRE_RUN_START_TS_EPOCH_SECS=$(date -u +%s);
 
 ##############################################################################################################################
-# Run
+# Settings
 
   inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
-  playbook="$scriptDir/playbooks/pre-run.playbook.yml"
   privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
+  export ANSIBLE_HOST_KEY_CHECKING=False
 
+##############################################################################################################################
+# Pre-Run
+  playbook="$scriptDir/playbooks/pre-run.playbook.yml"
   ansible-playbook \
                   --fork 1 \
                   -i $inventoryFile \
@@ -58,6 +61,18 @@ PRE_RUN_START_TS_EPOCH_SECS=$(date -u +%s);
                   --extra-vars "SHARED_SETUP_DIR=$SHARED_SETUP_DIR" \
                   --extra-vars "TEST_SPEC_FILE=$TEST_SPEC_FILE"
 
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
+
+##############################################################################################################################
+# Pre-Run 2
+
+  playbook="$scriptDir/playbooks/pre-run.2.playbook.yml"
+  ansible-playbook \
+                  --fork 1 \
+                  -i $inventoryFile \
+                  --private-key $privateKeyFile \
+                  $playbook \
+                  --extra-vars "RESULT_DIR=$resultDir"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - playbook exit: $scriptName"; echo; exit 1; fi
 

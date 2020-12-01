@@ -23,7 +23,8 @@ source $projectHome/.lib/functions.sh
   export UC_NON_PERSISTENT_INFRASTRUCTURE=$1
 
   if [ -z "$LOG_DIR" ]; then echo ">>> ERROR: - $scriptName - missing env var:LOG_DIR"; exit 1; fi
-
+  if [ -z "$APPLY_KERNEL_OPTIMIZATIONS" ]; then echo ">>> ERROR: - $scriptName - missing env var:APPLY_KERNEL_OPTIMIZATIONS"; exit 1; fi
+  if [ -z "$APPLY_MELLANOX_VMA" ]; then echo ">>> ERROR: - $scriptName - missing env var:APPLY_MELLANOX_VMA"; exit 1; fi
 
 ############################################################################################################################
 # Settings
@@ -60,6 +61,27 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
                     $playbook \
                     --extra-vars "PROJECT_DIR=$projectHome" \
                     --extra-vars "USE_CASE_DIR=$usecaseHome"
+
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+
+##############################################################################################################################
+# Prepare CentOS
+  playbook=$(assertFile "$scriptDir/bootstrap.prepare.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+
+
+##############################################################################################################################
+# Mellanox Driver
+  playbook=$(assertFile "$scriptDir/bootstrap.opts.mellanox.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    --extra-vars "APPLY_MELLANOX_VMA=$APPLY_MELLANOX_VMA"
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
@@ -101,7 +123,19 @@ privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit
 
   code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
 
-  echo ">>> SUCCESS: $scriptName"
+##############################################################################################################################
+# Apply Kernel Optimizations
+  playbook=$(assertFile "$scriptDir/bootstrap.opts.kernel.playbook.yml") || exit
+  ansible-playbook \
+                    -i $inventoryFile \
+                    --private-key $privateKeyFile \
+                    $playbook \
+                    --extra-vars "APPLY_KERNEL_OPTIMIZATIONS=$APPLY_KERNEL_OPTIMIZATIONS"
+
+  code=$?; if [[ $code != 0 ]]; then echo ">>> ERROR - $code - log:$ANSIBLE_LOG_PATH, script:$scriptName, playbook:$playbook"; exit 1; fi
+
+
+echo ">>> SUCCESS: $scriptName"
 
 
 ###

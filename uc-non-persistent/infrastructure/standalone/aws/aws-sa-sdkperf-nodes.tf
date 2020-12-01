@@ -42,7 +42,7 @@ resource "aws_instance" "latency-nodes" {
 
   # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
-    inline = ["echo 'SSH ready to rock'"]
+    inline = ["echo 'SSH ready to rock'", "sudo hostnamectl set-hostname ${var.tag_name_prefix}-latency-node-${count.index}"]
 
     connection {
       host        = self.public_ip
@@ -82,7 +82,7 @@ resource "aws_instance" "publisher-nodes" {
 
 # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
-    inline = ["echo 'SSH ready to rock'"]
+    inline = ["echo 'SSH ready to rock'", "sudo hostnamectl set-hostname ${var.tag_name_prefix}-publisher-node-${count.index}"]
 
     connection {
       host        = self.public_ip
@@ -123,7 +123,7 @@ resource "aws_instance" "consumer-nodes" {
 
 # Do not flag the aws_instance resource as completed, until the VM is able to accept SSH connections, otherwise the Ansible call will fail
   provisioner "remote-exec" {
-    inline = ["echo 'SSH ready to rock'"]
+    inline = ["echo 'SSH ready to rock'", "sudo hostnamectl set-hostname ${var.tag_name_prefix}-consumer-node-${count.index}"]
 
     connection {
       host        = self.public_ip

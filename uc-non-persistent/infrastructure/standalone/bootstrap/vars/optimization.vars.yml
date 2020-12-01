@@ -1,0 +1,100 @@
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+
+kernel:
+  # key: ansible_facts.distribution + '_' + ansible_facts.distribution_major_version
+  CentOS_8:
+    sysctl_conf:
+      # not tested
+      # net.core.netdev_max_backlog: 1000
+      # net.core.netdev_budget: 300
+      # net.core.somaxconn: 128
+
+      net.core.busy_poll: 50
+      net.core.busy_read: 50
+      net.core.rmem_default: 67108864
+      net.core.wmem_default: 67108864
+
+      # not tested
+      # net.ipv4.tcp_fastopen: 1
+      # net.ipv4.tcp_lowlatency: 1
+      # net.ipv4.tcp_sack: 1
+      # net.ipv4.tcp_rmem: "10240 87380 67108864"
+      # net.ipv4.tcp_wmem: "10240 87380 67108864"
+      # net.ipv4.tcp_max_syn_backlog: 1024
+      # net.ipv4.tcp_tw_reuse: 1
+      # net.ipv4.tcp_timestamps: 0
+      # net.ipv4.tcp_syn_retries: 5
+
+      # not tested:
+      # vm.dirty_ratio: 10
+      # vm.dirty_background_ratio: 3
+      # vm.dirty_bytes: 8192
+      # vm.dirty_background_bytes: 52428800
+      # vm.swappiness: 10
+
+      # these don't work
+      # net.ipv4.tcp_tw_recycle: 1
+
+
+  # key: ansible_facts.distribution + '_' + ansible_facts.distribution_major_version
+  CentOS_7:
+    sysctl_conf:
+      # # no diffs found between AWS and AZURE --------------------------
+      # net.ipv4.tcp_fastopen: 0
+      # net.ipv4.tcp_sack: 1
+      # net.ipv4.tcp_rmem: 4096 87380 6291456
+      # net.ipv4.tcp_wmem: 4096 16384 4194304
+      # # broker node: net.ipv4.tcp_max_syn_backlog: 2048
+      # # others: net.ipv4.tcp_max_syn_backlog: 512
+      # net.ipv4.tcp_tw_reuse: 0
+      # net.ipv4.tcp_timestamps: 1
+      # net.ipv4.tcp_syn_retries: 6
+      # vm.dirty_ratio: 30
+      # vm.dirty_background_ratio: 10
+      # vm.dirty_bytes: 0
+      # vm.dirty_background_bytes: 0
+      # net.core.busy_poll: 0
+      # net.core.busy_read: 0
+      # net.core.rmem_default: 212992
+      # net.core.wmem_default: 212992
+      # # END no diffs --------------------------
+
+      # OPTIMIZE --------------------------
+      net.ipv4.tcp_fastopen: 1
+      net.ipv4.tcp_sack: 1
+      net.ipv4.tcp_rmem: 10240 87380 6291456
+      net.ipv4.tcp_wmem: 10240 16384 4194304
+      # broker node: net.ipv4.tcp_max_syn_backlog: 2048
+      # others: net.ipv4.tcp_max_syn_backlog: 512
+      net.ipv4.tcp_tw_reuse: 1
+      net.ipv4.tcp_timestamps: 0
+      net.ipv4.tcp_syn_retries: 5
+      vm.dirty_ratio: 10
+      vm.dirty_background_ratio: 3
+      vm.dirty_bytes: 8192
+      vm.dirty_background_bytes: 52428800
+
+      net.core.busy_poll: 50
+      net.core.busy_read: 50
+      net.core.rmem_default: 67108864
+      net.core.wmem_default: 67108864
+
+
+      # END OPTIMIZE --------------------------
+
+mellanox:
+    CentOS_8:
+      ofed_dir: "MLNX_OFED-5.1-2.5.8.0"
+      ofed_file: "MLNX_OFED_LINUX-5.1-2.5.8.0-rhel8.2-x86_64"
+      working_dir: "/tmp/ofed_working_dir"
+      sysctl_conf:
+        kernel.shmmax: 1000000000
+        vm.nr_hugepages: 800
+
+###
+# The End.

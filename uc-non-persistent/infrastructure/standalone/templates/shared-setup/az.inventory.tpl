@@ -19,7 +19,8 @@
         "ansible_become": true,
         "ansible_python_interpreter": "/usr/bin/python",
         "boxname":"${broker_node.tags.Name}",
-        "sdkperf_root": "/opt/sdkperf"
+        "sdkperf_root": "/opt/sdkperf",
+        "private_ip_address": "${broker_node.private_ip_address}"
       },
       "broker_pubsub": {
         "ansible_connection": "local",
@@ -29,7 +30,8 @@
         "sempv2_username": "admin",
         "sempv2_password": "admin",
         "sempv2_timeout": "60",
-        "virtual_router": "primary"
+        "virtual_router": "primary",
+        "private_ip_address": "${broker_node.private_ip_address}"
       }
     }
   },
@@ -41,7 +43,8 @@
           "ansible_user": "${latency_node.admin_username}",
           "ansible_python_interpreter": "/usr/bin/python",
           "boxname":"${latency_node.tags.Name}",
-          "sdkperf_root": "/opt/sdkperf"
+          "sdkperf_root": "/opt/sdkperf",
+          "private_ip_address": "${latency_node.private_ip_address}"
         }
     }
   },
@@ -56,7 +59,8 @@
           "ansible_user": "${node.admin_username}",
           "ansible_python_interpreter": "/usr/bin/python",
           "boxname":"${node.tags.Name}",
-          "sdkperf_root": "/opt/sdkperf"
+          "sdkperf_root": "/opt/sdkperf",
+          "private_ip_address": "${node.private_ip_address}"
         },
 
       %{ endfor ~}
@@ -80,7 +84,8 @@
           "ansible_python_interpreter": "/usr/bin/python",
           "boxname":"${node.tags.Name}",
           "sdkperf_root": "/opt/sdkperf",
-          "consumer_node_number": "${node.tags.consumer_node_number}"
+          "consumer_node_number": "${node.tags.consumer_node_number}",
+          "private_ip_address": "${node.private_ip_address}"
         },
 
       %{ endfor ~}

@@ -41,6 +41,7 @@ statsName="vpn_stats"
 ##############################################################################################################################
 # Run
 
+  export ANSIBLE_HOST_KEY_CHECKING=False
   inventoryFile=$(assertFile "$SHARED_SETUP_DIR/$UC_NON_PERSISTENT_INFRASTRUCTURE.inventory.json") || exit
   playbook="$scriptDir/monitors/playbooks/broker.vpn-stats.last.playbook.yml"
   privateKeyFile=$(assertFile "$usecaseHome/keys/"$cloudProvider"_key") || exit

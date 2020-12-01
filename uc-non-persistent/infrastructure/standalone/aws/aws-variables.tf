@@ -45,6 +45,22 @@ variable "consumer_node_vm_count" {
   type = string
   default = "2"
 }
+variable "apply_kernel_optimizations" {
+  type = bool
+  default = false
+  validation {
+    condition     = var.apply_kernel_optimizations == false
+    error_message = "Invalid value provided for variable apply_kernel_optimizations. Allowed values: ['false']."
+  }
+}
+variable "apply_mellanox_vma" {
+  type = bool
+  default = false
+  validation {
+    condition     = var.apply_mellanox_vma == false
+    error_message = "Invalid value provided for variable apply_mellanox_vma. Allowed values: ['false']."
+  }
+}
 
 #
 # END CUSTOMIZATION
@@ -110,6 +126,7 @@ variable "centOS_ami" {
   default = { # CentOS 7 (x86_64) - with Updates HVM
     eu-central-1 = "ami-095e1a4d3d632d215"
     us-west-1 = "ami-02676464a065c9c05"
+    eu-west-1 = "ami-04f5641b0d178a27a"
   }
 }
 

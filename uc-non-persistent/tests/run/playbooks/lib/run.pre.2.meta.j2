@@ -1,0 +1,17 @@
+{#
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# ---------------------------------------------------------------------------------------------
+#}
+
+{
+  "meta": {
+    "node_facts": {
+      "{{ node_key }}": {
+          "ansible_facts": {{ ansible_facts | to_nice_json }},
+          "sysctl_facts": {{ sysctl_facts | to_nice_json }}
+      }
+    }
+  }
+}

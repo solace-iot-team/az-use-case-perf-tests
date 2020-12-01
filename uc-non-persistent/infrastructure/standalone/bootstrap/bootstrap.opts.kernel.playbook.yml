@@ -1,0 +1,62 @@
+
+# ---------------------------------------------------------------------------------------------
+# MIT License
+# Copyright (c) 2020, Solace Corporation, Ricardo Gomez-Ulmke (ricardo.gomez-ulmke@solace.com)
+# Copyright (c) 2020, Solace Corporation, Jochen Traunecker (jochen.traunecker@solace.com)
+# ---------------------------------------------------------------------------------------------
+
+---
+- name: "Bootstrap Kernel Optimizations"
+  hosts: sdkperf_publishers, sdkperf_consumers, sdkperf_latency, broker_centos
+  any_errors_fatal: true
+  gather_facts: yes
+  pre_tasks:
+    - include_vars:
+        file: optimization.vars.yml
+        name: optimization
+  vars:
+    apply_kernel_optimizations: "{{ APPLY_KERNEL_OPTIMIZATIONS | default(False) }}"
+
+  tasks:
+    - name: "CHECK NOT_A_HOST: end_host"
+      meta: end_host
+      when: inventory_hostname == 'NOT_A_HOST'
+
+    - name: "End Play if Kernel optimizations not selected"
+      debug:
+        msg: "Kernel optimizations not selected"
+      when: not (apply_kernel_optimizations|bool)
+    - meta: end_play
+      when: not (apply_kernel_optimizations|bool)
+
+    - name: "CHECK cloud_provider: azure only"
+      fail:
+        msg: "Optimizations only supported for cloud_provider=azure"
+      when: cloud_provider != "azure"
+
+    # - name: check some facts
+    #   debug:
+    #     msg:
+    #       - "distribution={{ ansible_facts.distribution }}"
+    #       - "distribution_major_version={{ ansible_facts.distribution_major_version }}"
+    #       - "distribution_release={{ ansible_facts.distribution_release }}"
+    #       - "distribution_version={{ ansible_facts.distribution_version }}"
+
+    - set_fact:
+        kernel_vars_key: "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}"
+    - set_fact:
+        kernel_vars: "{{ optimization.kernel[kernel_vars_key] }}"
+
+    - name: "Kernel Optimizations: sysctl"
+      sysctl:
+        name: '{{ item.key }}'
+        value: '{{ item.value }}'
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_dict: '{{ kernel_vars.sysctl_conf | ternary(kernel_vars.sysctl_conf, {} ) }}'
+      become: true
+
+
+###
+# The End.
