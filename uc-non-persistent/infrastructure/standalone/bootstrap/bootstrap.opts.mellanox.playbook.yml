@@ -36,13 +36,14 @@
 
     - set_fact:
         dist_key: "{{ ansible_facts.distribution }}_{{ ansible_facts.distribution_major_version }}"
-    - set_fact:
-        mellanox_vars: "{{ optimization.mellanox[dist_key] }}"
 
     - name: "CHECK centOS version: 8 only supported"
       fail:
         msg: "Mellanox Drivers only supported for centOS=8"
       when: dist_key != "CentOS_8"
+
+    - set_fact:
+        mellanox_vars: "{{ optimization.mellanox[dist_key] }}"
 
     - name: "Install EL Repo"
       yum:
