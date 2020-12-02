@@ -54,20 +54,20 @@
 
       runs:
 
-        - name: default_run
-          description: "default run: 1 publisher, 1 consumer/node, 100K/sec, 200 bytes"
+        # - name: default_run
+        #   description: "default run: 1 publisher, 1 consumer/node, 100K/sec, 200 bytes"
 
-        # - name: no_network
-        #   description: "no network: broker-node latency only, 200 bytes"
-        #   load:
-        #     include: false
-        #   monitors:
-        #     latency:
-        #       include_latency_node_to_broker: false
-        #       include_broker_node_to_broker: true
-        #       msg_rate_per_second: 1000
-        #     ping:
-        #       include: false
+        - name: no_network
+          description: "no network: broker-node latency only, 200 bytes"
+          load:
+            include: false
+          monitors:
+            latency:
+              include_latency_node_to_broker: false
+              include_broker_node_to_broker: true
+              msg_rate_per_second: 1000
+            ping:
+              include: false
 
 
 ###

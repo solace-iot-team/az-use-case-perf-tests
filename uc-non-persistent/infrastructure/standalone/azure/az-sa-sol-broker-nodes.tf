@@ -107,8 +107,8 @@ resource "azurerm_network_interface" "solacebroker-nodes-nic" {
   location               = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].location : data.azurerm_resource_group.input_resgroup[0].location
   resource_group_name    = var.az_resgrp_name == "" ? azurerm_resource_group.sdkperf_az_resgrp[0].name : var.az_resgrp_name
 
-  #accelerated networking not available for all VMs
-  enable_accelerated_networking = true
+  #accelerated networking not available for all SKUs
+  enable_accelerated_networking = var.solace_broker_node_enable_accelerated_networking
 
   ip_configuration {
     name                          = "internal"
@@ -161,6 +161,7 @@ resource "local_file" "broker_nodes_file" {
   content = templatefile("../templates/shared-setup/az.broker-nodes.tpl",
     {
       nodes = azurerm_linux_virtual_machine.solace-broker-nodes.*
+      enable_accelerated_networking = var.solace_broker_node_enable_accelerated_networking
     }
   )
   filename = "../../../shared-setup/azure.${var.tag_name_prefix}-standalone.broker-nodes.json"

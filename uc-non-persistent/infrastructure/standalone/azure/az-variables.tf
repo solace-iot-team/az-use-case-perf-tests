@@ -36,6 +36,10 @@ variable "solace_broker_node_vm_size" {
   # default = "Standard_F16s_v2"     # (16 Cores, 32GB RAM, 25600 max IOPS)
   # default = "Standard_D8s_v3"      # (8 Cores, 32GB RAM, 12800 max IOPS)
 }
+variable "solace_broker_node_enable_accelerated_networking" {
+    type = bool
+    default = true
+}
 variable "latency_node_vm_size" {
   type = string
   default = "Standard_F4s_v2"
